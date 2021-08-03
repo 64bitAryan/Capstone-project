@@ -9,22 +9,25 @@
         android:id="@+id/splashScreenFragment"
         android:name="com.project.findme.SplashScreenFragment"
         android:label="fragment_splash_screen"
-        tools:layout="@layout/fragment_splash_screen" >
-        <action
-            android:id="@+id/action_splashScreenFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_splashScreenFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_splash_screen" />
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.project.findme.auth.ui.LoginFragment"
-        android:label="fragment_login_user"
+        android:label="Login"
         tools:layout="@layout/fragment_login_user" />
     <fragment
         android:id="@+id/registerFragment"
         android:name="com.project.findme.auth.ui.RegisterFragment"
-        android:label="fragment_register_user"
+        android:label="Register"
         tools:layout="@layout/fragment_register_user" />
+    <action
+        app:popUpTo="@id/loginFragment"
+        app:popUpToInclusive="true"
+        android:id="@+id/action_global_registerFragment"
+        app:destination="@id/registerFragment" />
+    <action
+        app:popUpTo="@id/registerFragment"
+        app:popUpToInclusive="true"
+        android:id="@+id/action_global_loginFragment"
+        app:destination="@id/loginFragment" />
 </navigation>
