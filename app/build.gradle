@@ -4,6 +4,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {
@@ -53,6 +54,10 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
+    // Navigation Component
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
+
     // Firebase Auth
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.1'
 
@@ -87,8 +92,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
 
     //Activity ktx for ViewModel()
-    implementation "androidx.activity:activity-ktx:1.2.3"
-    implementation "androidx.fragment:fragment-ktx:1.3.5"
+    implementation "androidx.activity:activity-ktx:1.3.0"
+    implementation "androidx.fragment:fragment-ktx:1.3.6"
 
     //Material Dependency
     implementation "com.google.android.material:material:1.5.0-alpha01"

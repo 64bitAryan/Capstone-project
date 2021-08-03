@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/splash_screen_background"
+    android:orientation="vertical"
+    tools:context="com.project.findme.SplashScreenFragment">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="30dp"
+        android:src="@mipmap/ic_splash_icon_foreground" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_navigate_to_register_screen"
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:foregroundGravity="center_vertical"
+            android:text="Register" />
+
+        <Button
+            android:id="@+id/button_google_sign_in"
+            android:layout_width="0dp"
+            android:layout_height="90dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_weight="1"
+            android:drawableLeft="@mipmap/ic_google_icon"
+            android:text="Google"
+            android:textColor="@color/white" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/already_user_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="40dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="48dp"
+        android:text="Already User? \nLogin here"
+        android:textColor="@color/black" />
+
+</LinearLayout>

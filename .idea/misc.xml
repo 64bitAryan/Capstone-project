@@ -3,7 +3,15 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+<<<<<<< HEAD
         <entry key="..\:/FindME/app/src/main/res/layout/activity_main.xml" value="0.2" />
+=======
+        <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/button_background.xml" value="0.2169230769230769" />
+        <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_main.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_login_user.xml" value="0.22" />
+        <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_register_user.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_splash_screen.xml" value="0.20416666666666666" />
+>>>>>>> 5eb58ea18aaee1459682a202444e7819fd2a408c
       </map>
     </option>
   </component>

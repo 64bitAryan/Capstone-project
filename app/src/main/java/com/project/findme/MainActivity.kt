@@ -1,7 +1,8 @@
-package com.ryan.findme
+package com.project.findme
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.ryan.findme.R
 
 class MainActivity : AppCompatActivity() {
 
