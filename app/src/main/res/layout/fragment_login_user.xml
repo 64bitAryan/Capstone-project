@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,13 +9,18 @@
     tools:context="com.project.findme.auth.ui.LoginFragment">
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:id="@+id/edit_text_email_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="70dp"
         android:layout_marginRight="30dp"
-        android:hint="Enter your email">
+        android:hint="Enter your email"
+        app:startIconDrawable="@drawable/ic_email">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -24,6 +30,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:id="@+id/edit_text_password_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,7 +38,11 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="30dp"
         app:passwordToggleEnabled="true"
-        android:hint="Enter password">
+        android:hint="Enter password"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_email_login"
+        app:layout_constraintStart_toStartOf="@id/edit_text_email_login"
+        app:layout_constraintEnd_toEndOf="@id/edit_text_email_login"
+        app:startIconDrawable="@drawable/ic_lock">
 
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
@@ -42,14 +53,21 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/button_login_user"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
+        android:padding="12dp"
         android:layout_gravity="center"
         android:layout_marginTop="40dp"
         android:text="Login"
-        android:textSize="16sp"
-        android:textColor="@color/white"/>
+        android:textAllCaps="false"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_password_login"
+        app:layout_constraintStart_toStartOf="@+id/edit_text_password_login"
+        app:layout_constraintEnd_toEndOf="@+id/edit_text_password_login"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/custom_button"/>
 
     <TextView
         android:id="@+id/text_view_login_to_register"
@@ -61,7 +79,10 @@
         android:focusable="true"
         android:minHeight="48dp"
         android:text="New User? \nRegister Here!"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/button_login_user"
+        app:layout_constraintStart_toStartOf="@id/button_login_user"
+        app:layout_constraintEnd_toEndOf="@id/button_login_user"/>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
