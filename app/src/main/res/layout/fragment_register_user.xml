@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="30dp"
         android:hint="Enter your name">
 
@@ -98,5 +98,18 @@
         android:text="Register"
         android:textSize="16sp"
         android:layout_gravity="center"/>
+
+    <TextView
+        android:id="@+id/text_view_register_to_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="48dp"
+        android:text="Already user\n Sign in?"
+        android:textColor="@color/black" />
+
 
 </LinearLayout>
