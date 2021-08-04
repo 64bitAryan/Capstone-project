@@ -4,6 +4,7 @@ import android.app.NotificationManager
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         val navView = findViewById<NavigationView>(R.id.side_nav_view)
 
-        appBarConfiguration = AppBarConfiguration.Builder(R.id.splashScreenFragment).setOpenableLayout(drawerLayout)
+        appBarConfiguration = AppBarConfiguration.Builder(R.id.authScreenFragment).setOpenableLayout(drawerLayout)
             .build()
 
         setupActionBarWithNavController(navController, appBarConfiguration)
@@ -49,6 +50,18 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         NavigationUI.setupWithNavController(navView, navController)
+
+        navController.addOnDestinationChangedListener{_, destination, _ ->
+            if(destination.id == R.id.authScreenFragment){
+                actionBar?.hide()
+                bottomNavBar.visibility = View.GONE
+            }
+            else{
+                actionBar?.show()
+                bottomNavBar.visibility = View.VISIBLE
+            }
+        }
+
     }
 
     override fun onSupportNavigateUp(): Boolean {
