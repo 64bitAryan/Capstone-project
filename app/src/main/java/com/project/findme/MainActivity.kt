@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
         val navView = findViewById<NavigationView>(R.id.side_nav_view)
 
-        appBarConfiguration = AppBarConfiguration.Builder(R.id.splashScreenFragment).setOpenableLayout(drawerLayout)
+        appBarConfiguration = AppBarConfiguration.Builder(R.id.authScreenFragment).setOpenableLayout(drawerLayout)
             .build()
 
         setupActionBarWithNavController(navController, appBarConfiguration)

@@ -1,23 +1,23 @@
-package com.project.findme
+package com.project.findme.auth.ui
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.ryan.findme.R
-import com.ryan.findme.databinding.FragmentSplashScreenBinding
+import com.ryan.findme.databinding.FragmentAuthScreenBinding
 
-class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
+class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val binding = FragmentSplashScreenBinding.bind(view)
+        val binding = FragmentAuthScreenBinding.bind(view)
         binding.apply {
             buttonNavigateToRegisterScreen.setOnClickListener{
-                val action = SplashScreenFragmentDirections.actionGlobalRegisterFragment()
+                val action = AuthFragmentDirections.actionGlobalRegisterFragment()
                 findNavController().navigate(action)
             }
             textViewAlreadyUserLogin.setOnClickListener{
-                val action = SplashScreenFragmentDirections.actionGlobalLoginFragment()
+                val action = AuthFragmentDirections.actionGlobalLoginFragment()
                 findNavController().navigate(action)
             }
         }
