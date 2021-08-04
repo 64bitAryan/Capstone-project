@@ -79,14 +79,14 @@
             android:clickable="true"
             android:focusable="true"
             android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="16sp"
+            android:minHeight="48dp"
             android:text="Already have an account ?"
-            app:layout_constraintTop_toBottomOf="@+id/button_google_sign_in"
-            app:layout_constraintStart_toStartOf="@+id/button_google_sign_in"
-            app:layout_constraintEnd_toEndOf="@+id/button_google_sign_in"
             android:textColor="#3A3A3A"
-            />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/button_google_sign_in"
+            app:layout_constraintStart_toStartOf="@+id/button_google_sign_in"
+            app:layout_constraintTop_toBottomOf="@+id/button_google_sign_in" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
