@@ -1,4 +1,4 @@
-package com.project.findme.auth.ui
+package com.project.findme.authactivity.authfragments.ui
 
 import android.os.Bundle
 import android.view.View

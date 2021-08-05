@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/authScreenFragment"
-        android:name="com.project.findme.auth.ui.AuthFragment"
+        android:name="com.project.findme.authactivity.authfragments.ui.AuthFragment"
         android:label="fragment_auth_screen"
         tools:layout="@layout/fragment_auth_screen" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.project.findme.auth.ui.LoginFragment"
+        android:name="com.project.findme.authactivity.authfragments.ui.LoginFragment"
         android:label="Login"
         tools:layout="@layout/fragment_login_user" />
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.project.findme.auth.ui.RegisterFragment"
+        android:name="com.project.findme.authactivity.authfragments.ui.RegisterFragment"
         android:label="Register"
         tools:layout="@layout/fragment_register_user" />
     <action

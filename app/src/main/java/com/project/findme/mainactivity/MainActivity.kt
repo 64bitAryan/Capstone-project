@@ -1,10 +1,8 @@
-package com.project.findme
+package com.project.findme.mainactivity
 
-import android.app.NotificationManager
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -30,12 +28,9 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavBar = findViewById(R.id.bottom_nav_view)
 
-        val notificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.cancelAll()
 
         val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_main) as NavHostFragment
         navController = navHostFragment.findNavController()
 
         drawerLayout = findViewById(R.id.drawer_layout)
