@@ -9,9 +9,13 @@ import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentAuthScreenBinding
 
 class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        //To Hide ActionBar
         (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+
         super.onViewCreated(view, savedInstanceState)
+
         val binding = FragmentAuthScreenBinding.bind(view)
         binding.apply {
             buttonNavigateToRegisterScreen.setOnClickListener{
