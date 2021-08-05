@@ -67,7 +67,7 @@
             app:layout_constraintTop_toBottomOf="@+id/button_navigate_to_register_screen"
             app:layout_constraintStart_toStartOf="@+id/button_navigate_to_register_screen"
             app:layout_constraintEnd_toEndOf="@+id/button_navigate_to_register_screen"
-            android:drawableStart="@drawable/google_round" />
+            android:drawableStart="@drawable/custom_icon" />
 
 
         <TextView
