@@ -29,15 +29,15 @@ class MainActivity : AppCompatActivity() {
         bottomNavBar = findViewById(R.id.bottom_nav_view)
 
 
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_main) as NavHostFragment
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_main) as NavHostFragment
         navController = navHostFragment.findNavController()
 
         drawerLayout = findViewById(R.id.drawer_layout)
 
         val navView = findViewById<NavigationView>(R.id.side_nav_view)
 
-        appBarConfiguration = AppBarConfiguration.Builder(R.id.authScreenFragment).setOpenableLayout(drawerLayout)
+        appBarConfiguration = AppBarConfiguration.Builder(R.id.authScreenFragment)
+            .setOpenableLayout(drawerLayout)
             .build()
 
         setupActionBarWithNavController(navController, appBarConfiguration)
