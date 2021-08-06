@@ -12,8 +12,8 @@ import kotlinx.coroutines.withContext
 
 class DefaultAuthRepository: AuthRepository {
 
-    private val auth = FirebaseAuth.getInstance()
-    private val users = FirebaseFirestore.getInstance().collection("users")
+    val auth = FirebaseAuth.getInstance()
+    val users = FirebaseFirestore.getInstance().collection("users")
 
     override suspend fun register(
         email: String,

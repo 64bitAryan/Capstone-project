@@ -24,8 +24,10 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewModel = ViewModelProvider(requireActivity()).get(LoginViewModel::class.java)
         subscribeToObserve()
+
         binding = FragmentLoginUserBinding.bind(view)
 
         binding.apply {

@@ -15,17 +15,25 @@ import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
 @Module
+//ApplicationComponent is renamed to SingletonComponent
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
     @Singleton
     @Provides
-    fun provideApplicationContext(@ApplicationContext context: Context) = context
+    fun provideApplicationContext(
+        @ApplicationContext
+        context: Context
+    ) = context
+
+    @Singleton
+    @Provides
+    fun provideMainDispatcher() = Dispatchers.Main as CoroutineDispatcher
 
     @Singleton
     @Provides
     fun provideGlideInstance(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
     ) = Glide.with(context).setDefaultRequestOptions(
         RequestOptions()
             .placeholder(R.drawable.google_round)
@@ -33,7 +41,4 @@ object AppModule {
             .diskCacheStrategy(DiskCacheStrategy.DATA)
     )
 
-    @Singleton
-    @Provides
-    fun provideMainDispatcher() = Dispatchers.Main as CoroutineDispatcher
 }
