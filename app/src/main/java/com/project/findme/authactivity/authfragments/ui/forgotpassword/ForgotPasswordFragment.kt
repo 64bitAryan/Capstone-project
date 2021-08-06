@@ -2,25 +2,28 @@ package com.project.findme.authactivity.authfragments.ui.forgotpassword
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
-import com.project.findme.utils.exhaustive
+import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentForgotPasswordBinding
-import kotlinx.coroutines.flow.collect
 
 class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
 
-    private val viewModel: ForgotPasswordViewModel by viewModels()
+    private lateinit var viewModel: ForgotPasswordViewModel
+    private lateinit var binding : FragmentForgotPasswordBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val binding = FragmentForgotPasswordBinding.bind(view)
+        viewModel = ViewModelProvider(requireActivity()).get(ForgotPasswordViewModel::class.java)
+
+
+        binding = FragmentForgotPasswordBinding.bind(view)
 
         binding.apply {
 
@@ -29,26 +32,31 @@ class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
             editTextEmailForgot.addTextChangedListener {
                 viewModel.email = it.toString()
             }
+
+            subscribeToObserve()
+
             buttonForgotPassword.setOnClickListener {
-                viewModel.onForgotPasswordConfirmClick(editTextEmailForgot.text.toString())
+                viewModel.onForgotPasswordConfirmClick()
             }
-        }
 
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.forgotPasswordEvent.collect { event ->
-                when (event) {
-                    is ForgotPasswordViewModel.ForgotPasswordEvent.ShowErrorMessage -> {
-                        snackbar(event.msg)
-                        val action = ForgotPasswordFragmentDirections.actionGlobalLoginFragment()
-                        findNavController().navigate(action)
-                    }
-                    is ForgotPasswordViewModel.ForgotPasswordEvent.ShowPositiveMessage -> {
-                        snackbar(event.msg)
-                    }
-                }.exhaustive
+        }
+    }
+
+    private fun subscribeToObserve() {
+        binding = FragmentForgotPasswordBinding.inflate(layoutInflater)
+        viewModel.forgotPasswordStatus.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                binding.forgotPasswordProgressbar.isVisible = false
+                snackbar(it)
+            },
+            onLoading = {
+                binding.forgotPasswordProgressbar.isVisible = true
             }
-        }
-
+        ){
+            binding.forgotPasswordProgressbar.isVisible = false
+            snackbar("Reset link send to your email")
+            findNavController().navigate(ForgotPasswordFragmentDirections.actionGlobalLoginFragment())
+        })
     }
 
 }
