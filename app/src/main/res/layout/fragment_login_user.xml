@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.project.findme.authactivity.authfragments.ui.LoginFragment">
+    tools:context="com.project.findme.authactivity.authfragments.ui.login.LoginFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/text_layout_email_login"
@@ -71,6 +71,24 @@
         app:layout_constraintTop_toBottomOf="@+id/text_layout_password_login" />
 
     <TextView
+        android:id="@+id/text_view_forgot_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:minHeight="48dp"
+        android:text="Forgot Password?"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@id/button_login_user"
+        app:layout_constraintStart_toStartOf="@id/button_login_user"
+        app:layout_constraintTop_toBottomOf="@id/button_login_user" />
+
+
+    <TextView
         android:id="@+id/text_view_login_to_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -81,9 +99,10 @@
         android:gravity="center"
         android:minHeight="48dp"
         android:text="New User? \nRegister Here!"
+        android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="@id/button_login_user"
         app:layout_constraintStart_toStartOf="@id/button_login_user"
-        app:layout_constraintTop_toBottomOf="@id/button_login_user" />
+        app:layout_constraintTop_toBottomOf="@id/text_view_forgot_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

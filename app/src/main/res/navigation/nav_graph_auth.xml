@@ -12,12 +12,16 @@
         tools:layout="@layout/fragment_auth_screen" />
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.project.findme.authactivity.authfragments.ui.LoginFragment"
+        android:name="com.project.findme.authactivity.authfragments.ui.login.LoginFragment"
         android:label="Login"
-        tools:layout="@layout/fragment_login_user" />
+        tools:layout="@layout/fragment_login_user" >
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+    </fragment>
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.project.findme.authactivity.authfragments.ui.RegisterFragment"
+        android:name="com.project.findme.authactivity.authfragments.ui.register.RegisterFragment"
         android:label="Register"
         tools:layout="@layout/fragment_register_user" />
     <action
@@ -30,4 +34,9 @@
         app:popUpToInclusive="true"
         android:id="@+id/action_global_loginFragment"
         app:destination="@id/loginFragment" />
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.project.findme.authactivity.authfragments.ui.forgotpassword.ForgotPasswordFragment"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" />
 </navigation>
