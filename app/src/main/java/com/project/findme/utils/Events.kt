@@ -28,6 +28,7 @@ class EventObserver<T>(
             is Resource.Success -> {
                 content.data?.let(onSuccess)
             }
+
             is Resource.Error -> {
                 t.getContentIfNotHandled()?.let{
                     onError?.let { error ->
