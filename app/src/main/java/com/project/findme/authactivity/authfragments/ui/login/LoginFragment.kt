@@ -25,30 +25,10 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(LoginViewModel::class.java)
-
+        subscribeToObserve()
         binding = FragmentLoginUserBinding.bind(view)
 
         binding.apply {
-
-            editTextEmailLogin.setText(viewModel.email)
-            editTextPasswordLogin.setText(viewModel.email)
-
-            editTextEmailLogin.addTextChangedListener {
-                viewModel.email = it.toString()
-            }
-            editTextPasswordLogin.addTextChangedListener {
-                viewModel.password = it.toString()
-            }
-            textViewLoginToRegister.setOnClickListener {
-                val action = LoginFragmentDirections.actionGlobalRegisterFragment()
-                findNavController().navigate(action)
-            }
-            textViewForgotPassword.setOnClickListener {
-                val action = LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment()
-                findNavController().navigate(action)
-            }
-
-            subscribeToObserve()
 
             textViewLoginToRegister.setOnClickListener {
                 if(findNavController().previousBackStackEntry != null){

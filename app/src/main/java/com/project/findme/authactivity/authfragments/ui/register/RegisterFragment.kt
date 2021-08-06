@@ -19,37 +19,14 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
 
     private lateinit var viewModel: RegisterViewModel
     private lateinit var binding: FragmentRegisterUserBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(RegisterViewModel::class.java)
+        subscribeToObserve()
 
         binding = FragmentRegisterUserBinding.bind(view)
         binding.apply {
-
-            editTextUsernameRegister.setText(viewModel.uname)
-            editTextEmailRegister.setText(viewModel.email)
-            editTextPasswordRegister.setText(viewModel.password)
-            editTextConfirmPasswordRegister.setText(viewModel.cpassword)
-
-            editTextUsernameRegister.addTextChangedListener {
-                viewModel.uname = it.toString()
-            }
-            editTextEmailRegister.addTextChangedListener {
-                viewModel.email = it.toString()
-            }
-            editTextPasswordRegister.addTextChangedListener {
-                viewModel.password = it.toString()
-            }
-            editTextConfirmPasswordRegister.addTextChangedListener {
-                viewModel.cpassword = it.toString()
-            }
-
-            textViewRegisterToLogin.setOnClickListener {
-                val action = RegisterFragmentDirections.actionGlobalLoginFragment()
-                findNavController().navigate(action)
-            }
-
-            subscribeToObserve()
 
             buttonRegisterUser.setOnClickListener {
                 viewModel.register(
