@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.project.findme.authactivity.authfragments.ui.RegisterFragment">
+    tools:context="com.project.findme.authactivity.authfragments.ui.register.RegisterFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context="com.project.findme.authactivity.authfragments.ui.RegisterFragment">
+        tools:context="com.project.findme.authactivity.authfragments.ui.register.RegisterFragment">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/text_layout_username_register"

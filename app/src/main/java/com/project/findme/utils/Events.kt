@@ -1,8 +1,9 @@
 package com.project.findme.utils
 
-import android.app.usage.UsageEvents
 import androidx.lifecycle.Observer
-import java.util.*
+
+val <T> T.exhaustive: T
+    get() = this
 
 class Events<out T>(private val content: T) {
     var hasBeenHandled = false
