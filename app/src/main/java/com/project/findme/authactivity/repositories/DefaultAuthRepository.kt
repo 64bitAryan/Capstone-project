@@ -47,7 +47,7 @@ class DefaultAuthRepository: AuthRepository {
                 val result = auth.sendPasswordResetEmail(email).await()
                 Resource.Success(result)
             }catch (e: Exception) {
-                Log.d("Defaault Auth Activity: ", e.message.toString())
+                Log.d("Default Auth Activity: ", e.message.toString())
             }
         }
     }
