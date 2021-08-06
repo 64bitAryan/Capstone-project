@@ -33,30 +33,10 @@ class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
                 viewModel.email = it.toString()
             }
 
-            subscribeToObserve()
-
             buttonForgotPassword.setOnClickListener {
                 viewModel.onForgotPasswordConfirmClick()
             }
 
         }
     }
-
-    private fun subscribeToObserve() {
-        binding = FragmentForgotPasswordBinding.inflate(layoutInflater)
-        viewModel.forgotPasswordStatus.observe(viewLifecycleOwner, EventObserver(
-            onError = {
-                binding.forgotPasswordProgressbar.isVisible = false
-                snackbar(it)
-            },
-            onLoading = {
-                binding.forgotPasswordProgressbar.isVisible = true
-            }
-        ){
-            binding.forgotPasswordProgressbar.isVisible = false
-            snackbar("Reset link send to your email")
-            findNavController().navigate(ForgotPasswordFragmentDirections.actionGlobalLoginFragment())
-        })
-    }
-
 }

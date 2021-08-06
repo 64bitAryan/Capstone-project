@@ -1,5 +1,6 @@
 package com.project.findme.authactivity.repositories
 
+import android.util.Log
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -40,11 +41,13 @@ class DefaultAuthRepository: AuthRepository {
         }
     }
 
-    override suspend fun forgotPassword(email: String): Resource<AuthResult> {
+    override suspend fun forgotPassword(email: String) {
         return withContext(Dispatchers.IO) {
-            safeCall {
+            try {
                 val result = auth.sendPasswordResetEmail(email).await()
                 Resource.Success(result)
+            }catch (e: Exception) {
+                Log.d("Defaault Auth Activity: ", e.message.toString())
             }
         }
     }
