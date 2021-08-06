@@ -42,19 +42,19 @@ class RegisterViewModel @Inject constructor(
             state.set("password", value)
         }
 
-    var uname = state.get<String>("uname") ?: ""
+    var username = state.get<String>("uname") ?: ""
         set(value) {
             field = value
             state.set("uname", value)
         }
 
-    var cpassword = state.get<String>("cpassword") ?: ""
+    var repeatedPassword = state.get<String>("cpassword") ?: ""
         set(value) {
             field = value
             state.set("cpassword", value)
         }
 
-    fun register(email: String, username: String, password: String, repeatedPassword: String){
+    fun register(){
         val error = if(email.isEmpty() || username.isEmpty() || password.isEmpty()){
             applicationContext.getString(R.string.error_input_empty)
         } else if (password != repeatedPassword) {

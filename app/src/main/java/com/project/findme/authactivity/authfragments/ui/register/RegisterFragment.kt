@@ -5,7 +5,6 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.project.findme.utils.EventObserver
@@ -26,13 +25,13 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
         binding = FragmentRegisterUserBinding.bind(view)
         binding.apply {
 
-            editTextUsernameRegister.setText(viewModel.uname)
+            editTextUsernameRegister.setText(viewModel.username)
             editTextEmailRegister.setText(viewModel.email)
             editTextPasswordRegister.setText(viewModel.password)
-            editTextConfirmPasswordRegister.setText(viewModel.cpassword)
+            editTextConfirmPasswordRegister.setText(viewModel.repeatedPassword)
 
             editTextUsernameRegister.addTextChangedListener {
-                viewModel.uname = it.toString()
+                viewModel.username = it.toString()
             }
             editTextEmailRegister.addTextChangedListener {
                 viewModel.email = it.toString()
@@ -41,7 +40,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
                 viewModel.password = it.toString()
             }
             editTextConfirmPasswordRegister.addTextChangedListener {
-                viewModel.cpassword = it.toString()
+                viewModel.repeatedPassword = it.toString()
             }
 
             textViewRegisterToLogin.setOnClickListener {
@@ -52,21 +51,12 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
             subscribeToObserve()
 
             buttonRegisterUser.setOnClickListener {
-                viewModel.register(
-                    email = editTextEmailRegister.text.toString(),
-                    password = editTextPasswordRegister.text.toString(),
-                    repeatedPassword = editTextConfirmPasswordRegister.text.toString(),
-                    username = editTextUsernameRegister.text.toString()
-                )
+                viewModel.register()
             }
             textViewRegisterToLogin.setOnClickListener {
-                if(findNavController().previousBackStackEntry != null){
-                    findNavController().popBackStack()
-                } else {
-                    findNavController().navigate(
-                        RegisterFragmentDirections.actionGlobalLoginFragment()
-                    )
-                }
+                findNavController().navigate(
+                    RegisterFragmentDirections.actionGlobalLoginFragment()
+                )
             }
         }
     }
@@ -81,9 +71,10 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
             onLoading = {
                 binding.registerProgressbar.isVisible = true
             }
-        ){
+        ) {
             binding.registerProgressbar.isVisible = false
             snackbar(getString(R.string.success_registration))
+            findNavController().navigate(RegisterFragmentDirections.actionGlobalLoginFragment())
         })
     }
 }

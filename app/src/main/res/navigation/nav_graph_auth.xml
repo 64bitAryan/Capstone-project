@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/authScreenFragment"
         android:name="com.project.findme.authactivity.authfragments.ui.auth.AuthFragment"
-        android:label="fragment_auth_screen"
+        android:label="findME"
         tools:layout="@layout/fragment_auth_screen" />
     <fragment
         android:id="@+id/loginFragment"
@@ -37,6 +37,6 @@
     <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="com.project.findme.authactivity.authfragments.ui.forgotpassword.ForgotPasswordFragment"
-        android:label="fragment_forgot_password"
+        android:label="Forgot Password"
         tools:layout="@layout/fragment_forgot_password" />
 </navigation>

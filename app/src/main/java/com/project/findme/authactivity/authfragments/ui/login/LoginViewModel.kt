@@ -23,9 +23,6 @@ class LoginViewModel @Inject constructor(
     ) :
     ViewModel() {
 
-    private val _loginStatus = MutableLiveData<Events<Resource<AuthResult>>>()
-    val loginStatus: LiveData<Events<Resource<AuthResult>>> = _loginStatus
-
     var email = state.get<String>("email") ?: ""
         set(value) {
             field = value
@@ -38,8 +35,11 @@ class LoginViewModel @Inject constructor(
             state.set("password", value)
         }
 
-    fun login(email: String, password: String){
-        if(password.isEmpty() || email.isEmpty()){
+    private val _loginStatus = MutableLiveData<Events<Resource<AuthResult>>>()
+    val loginStatus: LiveData<Events<Resource<AuthResult>>> = _loginStatus
+
+    fun login(){
+        if(password.isBlank() || email.isBlank()){
             val error = applicationContext.getString(R.string.error_input_empty)
             _loginStatus.postValue(Events(Resource.Error(error)))
         } else {

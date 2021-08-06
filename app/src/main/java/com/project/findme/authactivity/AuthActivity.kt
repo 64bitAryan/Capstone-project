@@ -1,5 +1,6 @@
 package com.project.findme.authactivity
 
+import android.app.Application
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
@@ -10,6 +11,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.FirebaseApp
 import com.ryan.findme.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -21,7 +23,6 @@ class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
-
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_auth) as NavHostFragment

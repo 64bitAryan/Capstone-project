@@ -51,20 +51,13 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
             subscribeToObserve()
 
             textViewLoginToRegister.setOnClickListener {
-                if(findNavController().previousBackStackEntry != null){
-                    findNavController().popBackStack()
-                } else {
-                    findNavController().navigate(
-                        LoginFragmentDirections.actionGlobalRegisterFragment()
-                    )
-                }
+                findNavController().navigate(
+                    LoginFragmentDirections.actionGlobalRegisterFragment()
+                )
             }
 
             buttonLoginUser.setOnClickListener {
-                viewModel.login(
-                    email = editTextEmailLogin.text.toString(),
-                    password = editTextPasswordLogin.text.toString()
-                )
+                viewModel.login()
             }
 
         }
@@ -82,7 +75,7 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
             onLoading = {
                 binding.loginProgressbar.isVisible = true
             }
-        ){
+        ) {
             binding.loginProgressbar.isVisible = false
             Intent(requireContext(), MainActivity::class.java).also {
                 startActivity(it)
