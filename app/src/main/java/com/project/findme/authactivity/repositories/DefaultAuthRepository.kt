@@ -6,7 +6,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.project.findme.data.entity.User
 import com.project.findme.utils.Resource
 import com.project.findme.utils.safeCall
-import com.squareup.okhttp.Dispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext

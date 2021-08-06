@@ -1,19 +1,19 @@
-package com.project.findme.authactivity.authfragments.ui
+package com.project.findme.authactivity.authfragments.ui.auth
 
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentAuthScreenBinding
 
 class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        //To Hide ActionBar
-        (requireActivity() as AppCompatActivity).supportActionBar?.hide()
+    private val viewModel : AuthViewModel by viewModels()
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val binding = FragmentAuthScreenBinding.bind(view)
@@ -25,6 +25,9 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
             textViewAlreadyUserLogin.setOnClickListener{
                 val action = AuthFragmentDirections.actionGlobalLoginFragment()
                 findNavController().navigate(action)
+            }
+            buttonGoogleSignIn.setOnClickListener {
+                viewModel.onSignInGoogleButtonClick()
             }
         }
 
