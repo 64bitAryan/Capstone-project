@@ -32,9 +32,26 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
 
         binding.apply {
 
+            editTextEmailLogin.setText(viewModel.email)
+            editTextPasswordLogin.setText(viewModel.password)
+
+            editTextEmailLogin.addTextChangedListener{
+                viewModel.email = it.toString()
+            }
+
+            editTextPasswordLogin.addTextChangedListener {
+                viewModel.password = it.toString()
+            }
+
             textViewLoginToRegister.setOnClickListener {
                 findNavController().navigate(
                     LoginFragmentDirections.actionGlobalRegisterFragment()
+                )
+            }
+
+            textViewForgotPassword.setOnClickListener {
+                findNavController().navigate(
+                    LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment()
                 )
             }
 
