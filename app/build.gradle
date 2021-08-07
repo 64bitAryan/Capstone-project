@@ -42,7 +42,6 @@ android {
 
 dependencies {
 
-    implementation 'com.google.android.gms:play-services-auth:19.0.0'
     def hilt_version = '2.37'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -60,6 +59,7 @@ dependencies {
 
     // Firebase Auth
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.1'
+    implementation 'com.google.android.gms:play-services-auth:19.2.0'
 
     // Firebase Storage
     implementation platform('com.google.firebase:firebase-bom:28.2.0')

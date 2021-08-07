@@ -1,8 +1,12 @@
 package com.project.findme.authactivity.authfragments.ui.auth
 
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.*
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.GoogleAuthProvider
 import com.project.findme.authactivity.repositories.AuthRepository
 import com.project.findme.utils.Events
 import com.project.findme.utils.Resource
@@ -23,16 +27,18 @@ class AuthViewModel @Inject constructor(
     private val _googleRegisterStatus = MutableLiveData<Events<Resource<AuthResult>>>()
     val googleRegisterStatus: LiveData<Events<Resource<AuthResult>>> = _googleRegisterStatus
 
-    fun onSignInGoogleButtonClick() {
-
-        //No error Occurred
-        //Giving Value to Loading Resource
+    fun onSignInGoogleButtonClick(account: Task<GoogleSignInAccount>) {
         _googleRegisterStatus.postValue(Events(Resource.Loading()))
-
-        //Already Given Resource Success in Repository
-        viewModelScope.launch(dispatcher) {
-            val result = repository.googleRegister()
-            _googleRegisterStatus.postValue(Events(result))
+        account.let { googleAccount ->
+            viewModelScope.launch(dispatcher){
+                try {
+                    val credentials = GoogleAuthProvider.getCredential(googleAccount.result.idToken, null)
+                    val result = repository.googleRegister(credentials)
+                    _googleRegisterStatus.postValue(Events(result))
+                } catch (e: Exception){
+                    Toast.makeText(applicationContext, e.toString(), Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 }

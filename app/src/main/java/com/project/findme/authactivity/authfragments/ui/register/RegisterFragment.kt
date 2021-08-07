@@ -25,6 +25,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(RegisterViewModel::class.java)
+        subscribeToObserve()
 
         binding = FragmentRegisterUserBinding.bind(view)
         binding.apply {
@@ -46,8 +47,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
             editTextConfirmPasswordRegister.addTextChangedListener {
                 viewModel.repeatedPassword = it.toString()
             }
-
-            subscribeToObserve()
 
             buttonRegisterUser.setOnClickListener {
                 hideKeyboard(activity as Activity)
