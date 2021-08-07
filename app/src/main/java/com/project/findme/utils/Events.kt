@@ -2,9 +2,6 @@ package com.project.findme.utils
 
 import androidx.lifecycle.Observer
 
-val <T> T.exhaustive: T
-    get() = this
-
 class Events<out T>(private val content: T) {
     var hasBeenHandled = false
         private set
