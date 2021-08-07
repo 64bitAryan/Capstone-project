@@ -1,5 +1,6 @@
 package com.project.findme.authactivity.authfragments.ui.register
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.project.findme.utils.EventObserver
+import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentRegisterUserBinding
@@ -45,14 +47,10 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
                 viewModel.repeatedPassword = it.toString()
             }
 
-            textViewRegisterToLogin.setOnClickListener {
-                val action = RegisterFragmentDirections.actionGlobalLoginFragment()
-                findNavController().navigate(action)
-            }
-
             subscribeToObserve()
 
             buttonRegisterUser.setOnClickListener {
+                hideKeyboard(activity as Activity)
                 viewModel.register()
             }
             textViewRegisterToLogin.setOnClickListener {
