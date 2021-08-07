@@ -11,4 +11,6 @@ interface AuthRepository {
 
     suspend fun forgotPassword(email: String): Unit
 
+    suspend fun googleRegister(): Unit
+
 }
