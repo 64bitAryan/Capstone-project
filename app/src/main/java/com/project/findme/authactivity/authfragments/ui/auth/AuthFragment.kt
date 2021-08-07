@@ -8,7 +8,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentAuthScreenBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
 
     private val viewModel : AuthViewModel by viewModels()

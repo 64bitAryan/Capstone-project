@@ -2,9 +2,9 @@ package com.project.findme.authactivity.authfragments.ui.forgotpassword
 
 import android.content.Context
 import android.widget.Toast
-import androidx.lifecycle.*
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.project.findme.authactivity.repositories.AuthRepository
 import com.ryan.findme.R
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,8 +21,6 @@ class ForgotPasswordViewModel @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) :
     ViewModel() {
-
-    private val auth = Firebase.auth
 
     var email = state.get<String>("email") ?: ""
         set(value) {
@@ -43,7 +41,7 @@ class ForgotPasswordViewModel @Inject constructor(
             return
         }
         viewModelScope.launch(dispatcher) {
-            val result = repository.forgotPassword(email)
+            repository.forgotPassword(email)
         }
     }
 }

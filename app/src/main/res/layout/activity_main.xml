@@ -18,20 +18,24 @@
             android:layout_height="match_parent"
             android:layout_above="@id/bottom_nav_view"
             app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph_main"/>
+            app:navGraph="@navigation/nav_graph_main" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
             android:id="@+id/bottom_nav_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"/>
+            android:layout_alignParentBottom="true"
+            app:menu="@menu/bottom_nav_menu" />
+
     </RelativeLayout>
 
-<com.google.android.material.navigation.NavigationView
-    android:id="@+id/side_nav_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_gravity="start"
-    android:fitsSystemWindows="true"/>
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/side_nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/side_nav_menu" />
 
 </androidx.drawerlayout.widget.DrawerLayout>
