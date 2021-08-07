@@ -13,7 +13,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Homoe Fragment"
+        android:text="Home Fragment"
         android:textSize="20sp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

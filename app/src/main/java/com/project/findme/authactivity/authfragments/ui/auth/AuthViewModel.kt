@@ -1,35 +1,38 @@
 package com.project.findme.authactivity.authfragments.ui.auth
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.content.Context
+import androidx.lifecycle.*
+import com.google.firebase.auth.AuthResult
+import com.project.findme.authactivity.repositories.AuthRepository
+import com.project.findme.utils.Events
+import com.project.findme.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(private val state: SavedStateHandle) :
+class AuthViewModel @Inject constructor(
+    private val repository: AuthRepository,
+    private val applicationContext: Context,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Main
+) :
     ViewModel() {
 
-    private val authEventChannel = Channel<AuthViewModel.AuthEvent>()
-    val authEvent = authEventChannel.receiveAsFlow()
+    private val _googleRegisterStatus = MutableLiveData<Events<Resource<AuthResult>>>()
+    val googleRegisterStatus: LiveData<Events<Resource<AuthResult>>> = _googleRegisterStatus
 
-    fun onSignInGoogleButtonClick(){
+    fun onSignInGoogleButtonClick() {
 
-    }
+        //No error Occurred
+        //Giving Value to Loading Resource
+        _googleRegisterStatus.postValue(Events(Resource.Loading()))
 
-    private fun showErrorMessage(text: String) = viewModelScope.launch {
-        authEventChannel.send(AuthViewModel.AuthEvent.ShowErrorMessage(text))
-    }
-
-    private fun showPositiveMessage(text: String) = viewModelScope.launch {
-        authEventChannel.send(AuthViewModel.AuthEvent.ShowPositiveMessage(text))
-    }
-
-    sealed class AuthEvent {
-        data class ShowErrorMessage(val msg: String) : AuthEvent()
-        data class ShowPositiveMessage(val msg: String) : AuthEvent()
+        //Already Given Resource Success in Repository
+        viewModelScope.launch(dispatcher) {
+            val result = repository.googleRegister()
+            _googleRegisterStatus.postValue(Events(result))
+        }
     }
 }

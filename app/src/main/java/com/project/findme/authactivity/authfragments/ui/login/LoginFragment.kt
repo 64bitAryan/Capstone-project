@@ -1,5 +1,6 @@
 package com.project.findme.authactivity.authfragments.ui.login
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.project.findme.mainactivity.MainActivity
 import com.project.findme.utils.EventObserver
+import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentLoginUserBinding
@@ -56,6 +58,7 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
             }
 
             buttonLoginUser.setOnClickListener {
+                hideKeyboard(activity as Activity)
                 viewModel.login()
             }
 

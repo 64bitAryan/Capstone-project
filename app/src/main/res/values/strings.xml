@@ -46,4 +46,5 @@
     <string name="error_no_image_chosen">Please choose an image for the post</string>
     <string name="enter_comment">Enter comment</string>
     <string name="comments">Comments</string>
+    <string name="default_web_client_id">140607773096-sb96pemnt5ch4g9j9ogadb6isqu4urqm.apps.googleusercontent.com</string>
 </resources>
