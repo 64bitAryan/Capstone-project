@@ -39,7 +39,10 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
             }
 
             buttonLoginUser.setOnClickListener {
-                viewModel.login()
+                viewModel.login(
+                    editTextEmailLogin.text.toString(),
+                    editTextPasswordLogin.text.toString()
+                )
             }
 
         }

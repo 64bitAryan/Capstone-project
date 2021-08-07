@@ -11,6 +11,7 @@ import com.project.findme.utils.Constants.MIN_USERNAME_LENGTH
 import com.project.findme.utils.Events
 import com.project.findme.utils.Resource
 import com.ryan.findme.R
+import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
@@ -24,7 +25,7 @@ class RegisterViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val applicationContext: Context,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-    ) :
+) :
     ViewModel() {
 
     private val _registerStatus = MutableLiveData<Events<Resource<AuthResult>>>()
@@ -54,7 +55,7 @@ class RegisterViewModel @Inject constructor(
             state.set("cpassword", value)
         }
 
-    fun register(){
+    fun register(email: String, username: String, password: String, repeatedPassword: String){
         val error = if(email.isEmpty() || username.isEmpty() || password.isEmpty()){
             applicationContext.getString(R.string.error_input_empty)
         } else if (password != repeatedPassword) {

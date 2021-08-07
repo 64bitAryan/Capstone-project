@@ -17,7 +17,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class RegisterFragment : Fragment(R.layout.fragment_register_user) {
 
     private lateinit var viewModel: RegisterViewModel
+
     private lateinit var binding: FragmentRegisterUserBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(RegisterViewModel::class.java)
@@ -51,7 +53,12 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
             subscribeToObserve()
 
             buttonRegisterUser.setOnClickListener {
-                viewModel.register()
+                viewModel.register(
+                    email = editTextEmailRegister.text.toString(),
+                    username = editTextUsernameRegister.text.toString(),
+                    password = editTextPasswordRegister.text.toString(),
+                    repeatedPassword = editTextConfirmPasswordRegister.text.toString()
+                )
             }
             textViewRegisterToLogin.setOnClickListener {
                 findNavController().navigate(
