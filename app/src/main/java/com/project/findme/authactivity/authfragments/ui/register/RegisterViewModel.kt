@@ -55,7 +55,7 @@ class RegisterViewModel @Inject constructor(
             state.set("cpassword", value)
         }
 
-    fun register(email: String, username: String, password: String, repeatedPassword: String){
+    fun register(){
         val error = if(email.isEmpty() || username.isEmpty() || password.isEmpty()){
             applicationContext.getString(R.string.error_input_empty)
         } else if (password != repeatedPassword) {

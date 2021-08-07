@@ -53,12 +53,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
             subscribeToObserve()
 
             buttonRegisterUser.setOnClickListener {
-                viewModel.register(
-                    email = editTextEmailRegister.text.toString(),
-                    username = editTextUsernameRegister.text.toString(),
-                    password = editTextPasswordRegister.text.toString(),
-                    repeatedPassword = editTextConfirmPasswordRegister.text.toString()
-                )
+                viewModel.register()
             }
             textViewRegisterToLogin.setOnClickListener {
                 findNavController().navigate(
@@ -73,9 +68,14 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
         viewModel.registerStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
                 binding.registerProgressbar.isVisible = false
+                binding.buttonRegisterUser.isEnabled = true
+                binding.textViewRegisterToLogin.linksClickable = true
+
                 snackbar(it)
             },
             onLoading = {
+                binding.buttonRegisterUser.isEnabled = false
+                binding.textViewRegisterToLogin.linksClickable = false
                 binding.registerProgressbar.isVisible = true
             }
         ) {

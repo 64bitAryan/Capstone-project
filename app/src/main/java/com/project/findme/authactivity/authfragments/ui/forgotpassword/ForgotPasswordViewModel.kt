@@ -2,10 +2,11 @@ package com.project.findme.authactivity.authfragments.ui.forgotpassword
 
 import android.content.Context
 import android.widget.Toast
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.google.firebase.auth.AuthResult
 import com.project.findme.authactivity.repositories.AuthRepository
+import com.project.findme.utils.Events
+import com.project.findme.utils.Resource
 import com.ryan.findme.R
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,6 +23,9 @@ class ForgotPasswordViewModel @Inject constructor(
 ) :
     ViewModel() {
 
+    private val _forgotPasswordStatus = MutableLiveData<Events<Resource<Boolean>>>()
+    val forgotPasswordStatus:LiveData<Events<Resource<Boolean>>> = _forgotPasswordStatus
+
     var email = state.get<String>("email") ?: ""
         set(value) {
             field = value
@@ -37,11 +41,14 @@ class ForgotPasswordViewModel @Inject constructor(
         // If Error variable is Not empty
         error?.let {
             // Giving Value to Error Resource
-            Toast.makeText(applicationContext, it, Toast.LENGTH_LONG).show()
+            _forgotPasswordStatus.postValue(Events(Resource.Error(error)))
             return
         }
+
+        _forgotPasswordStatus.postValue(Events(Resource.Loading()))
         viewModelScope.launch(dispatcher) {
-            repository.forgotPassword(email)
+            val result = repository.forgotPassword(email)
+            _forgotPasswordStatus.postValue(Events(result))
         }
     }
 }

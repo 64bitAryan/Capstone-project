@@ -38,7 +38,7 @@ class LoginViewModel @Inject constructor(
             state.set("password", value)
         }
 
-    fun login(email: String, password: String){
+    fun login(){
         if(password.isBlank() || email.isBlank()){
             val error = applicationContext.getString(R.string.error_input_empty)
             _loginStatus.postValue(Events(Resource.Error(error)))
