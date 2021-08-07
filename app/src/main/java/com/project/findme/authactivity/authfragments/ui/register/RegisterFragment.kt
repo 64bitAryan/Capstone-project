@@ -3,6 +3,7 @@ package com.project.findme.authactivity.authfragments.ui.register
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment

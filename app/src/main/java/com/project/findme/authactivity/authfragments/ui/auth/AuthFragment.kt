@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -73,16 +74,27 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
             onError = {
                 binding.apply {
                     authProgressbar.isVisible = false
+                    buttonGoogleSignIn.isEnabled = true
+                    buttonNavigateToRegisterScreen.isEnabled = true
+                    textViewAlreadyUserLogin.isClickable = true
                 }
                 snackbar(it)
             },
             onLoading = {
                 binding.apply {
                     authProgressbar.isVisible = true
+                    buttonGoogleSignIn.isEnabled = false
+                    buttonNavigateToRegisterScreen.isEnabled = false
+                    textViewAlreadyUserLogin.isClickable = false
                 }
             }
         ){
-            binding.authProgressbar.isVisible = false
+            binding.apply {
+                authProgressbar.isVisible = false
+                buttonGoogleSignIn.isEnabled = false
+                buttonNavigateToRegisterScreen.isEnabled = false
+                textViewAlreadyUserLogin.isClickable = false
+            }
             val uid = it.user?.uid!!
             val username = it.user?.displayName.toString()
             val user = User(uid, username)

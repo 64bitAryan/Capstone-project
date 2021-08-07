@@ -1,6 +1,7 @@
 package com.project.findme.authactivity.authfragments.ui.auth
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.*
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -36,7 +37,7 @@ class AuthViewModel @Inject constructor(
                     val result = repository.googleRegister(credentials)
                     _googleRegisterStatus.postValue(Events(result))
                 } catch (e: Exception){
-                    Toast.makeText(applicationContext, e.toString(), Toast.LENGTH_LONG).show()
+                    _googleRegisterStatus.postValue(Events(Resource.Error("Plese Select an Account")))
                 }
             }
         }
