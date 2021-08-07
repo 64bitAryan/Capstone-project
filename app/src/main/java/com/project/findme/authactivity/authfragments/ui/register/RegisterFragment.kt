@@ -17,7 +17,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class RegisterFragment : Fragment(R.layout.fragment_register_user) {
 
     private lateinit var viewModel: RegisterViewModel
+
     private lateinit var binding: FragmentRegisterUserBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(RegisterViewModel::class.java)
@@ -66,9 +68,14 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
         viewModel.registerStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
                 binding.registerProgressbar.isVisible = false
+                binding.buttonRegisterUser.isEnabled = true
+                binding.textViewRegisterToLogin.linksClickable = true
+
                 snackbar(it)
             },
             onLoading = {
+                binding.buttonRegisterUser.isEnabled = false
+                binding.textViewRegisterToLogin.linksClickable = false
                 binding.registerProgressbar.isVisible = true
             }
         ) {

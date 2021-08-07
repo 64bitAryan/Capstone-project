@@ -9,7 +9,7 @@ interface AuthRepository {
 
     suspend fun login(email: String, password: String): Resource<AuthResult>
 
-    suspend fun forgotPassword(email: String): Unit
+    suspend fun forgotPassword(email: String): Resource<Boolean>
 
     suspend fun googleRegister(): Unit
 

@@ -71,11 +71,19 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
             onError = {
                 binding.apply {
                     loginProgressbar.isVisible = false
+                    buttonLoginUser.isEnabled = true
+                    textViewForgotPassword.isClickable = true
+                    textViewLoginToRegister.isClickable = true
                 }
                 snackbar(it)
             },
             onLoading = {
-                binding.loginProgressbar.isVisible = true
+                binding.apply {
+                    loginProgressbar.isVisible = true
+                    buttonLoginUser.isEnabled = false
+                    textViewForgotPassword.isClickable = false
+                    binding.textViewLoginToRegister.isClickable = false
+                }
             }
         ) {
             binding.loginProgressbar.isVisible = false

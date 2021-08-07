@@ -46,14 +46,13 @@ class DefaultAuthRepository: AuthRepository {
         }
     }
 
-    override suspend fun forgotPassword(email: String) {
-        return withContext(Dispatchers.IO) {
-            try {
-                val result = auth.sendPasswordResetEmail(email).await()
-                Resource.Success(result)
-            }catch (e: Exception) {
-                Log.d("Default Auth Activity: ", e.message.toString())
-            }
+    override suspend fun forgotPassword(email: String):Resource<Boolean> {
+         return withContext(Dispatchers.IO) {
+             safeCall {
+                 val result = auth.sendPasswordResetEmail(email).await()
+                 Resource.Success(result)
+                 Resource.Success(true)
+             }
         }
     }
 
