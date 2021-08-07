@@ -11,7 +11,9 @@ import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentForgotPasswordBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
 
     private lateinit var viewModel: ForgotPasswordViewModel
