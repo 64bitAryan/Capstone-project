@@ -2,6 +2,7 @@ package com.project.findme.mainactivity
 
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -13,6 +14,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.ryan.findme.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -54,6 +57,11 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         NavigationUI.setupWithNavController(navView, navController)
+
+        val headerView: View = navView.getHeaderView(0)
+        val userEmail = headerView.findViewById<TextView>(R.id.text_view_user_email)
+
+        userEmail.text = Firebase.auth.currentUser?.email ?: "guest@gmail.com"
 
     }
 

@@ -63,4 +63,14 @@ class DefaultAuthRepository: AuthRepository {
             }
         }
     }
+
+    override suspend fun signOut(): Resource<Boolean> {
+        return withContext(Dispatchers.IO){
+            safeCall {
+                val result = auth.signOut()
+                Resource.Success(result)
+                Resource.Success(true)
+            }
+        }
+    }
 }
