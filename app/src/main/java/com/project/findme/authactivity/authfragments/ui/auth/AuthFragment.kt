@@ -35,12 +35,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
         binding = FragmentAuthScreenBinding.bind(view)
         binding.apply {
             buttonNavigateToRegisterScreen.setOnClickListener{
-                val action = AuthFragmentDirections.actionGlobalRegisterFragment()
-                findNavController().navigate(action)
+                findNavController().navigate(AuthFragmentDirections.actionGlobalRegisterFragment())
             }
             textViewAlreadyUserLogin.setOnClickListener{
-                val action = AuthFragmentDirections.actionGlobalLoginFragment()
-                findNavController().navigate(action)
+                findNavController().navigate(AuthFragmentDirections.actionGlobalLoginFragment())
             }
             buttonGoogleSignIn.setOnClickListener {
                 viewModel.googleRegisterStatus

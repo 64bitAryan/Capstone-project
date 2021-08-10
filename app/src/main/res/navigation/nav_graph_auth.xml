@@ -3,31 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/authScreenFragment">
-
+    app:startDestination="@id/authFragment">
     <fragment
-        android:id="@+id/authScreenFragment"
+        android:id="@+id/authFragment"
         android:name="com.project.findme.authactivity.authfragments.ui.auth.AuthFragment"
-        android:label="findME"
+        android:label="fragment_auth_screen"
         tools:layout="@layout/fragment_auth_screen" />
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.project.findme.authactivity.authfragments.ui.register.RegisterFragment"
+        android:label="fragment_register_user"
+        tools:layout="@layout/fragment_register_user" />
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.project.findme.authactivity.authfragments.ui.login.LoginFragment"
-        android:label="Login"
-        tools:layout="@layout/fragment_login_user">
+        android:label="fragment_login_user"
+        tools:layout="@layout/fragment_login_user" >
         <action
             android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
             app:destination="@id/forgotPasswordFragment" />
     </fragment>
     <fragment
-        android:id="@+id/registerFragment"
-        android:name="com.project.findme.authactivity.authfragments.ui.register.RegisterFragment"
-        android:label="Register"
-        tools:layout="@layout/fragment_register_user" />
-    <fragment
         android:id="@+id/forgotPasswordFragment"
         android:name="com.project.findme.authactivity.authfragments.ui.forgotpassword.ForgotPasswordFragment"
-        android:label="Forgot Password"
+        android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
     <action
         android:id="@+id/action_global_registerFragment"

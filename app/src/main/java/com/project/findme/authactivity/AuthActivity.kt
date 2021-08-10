@@ -35,7 +35,7 @@ class AuthActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.authScreenFragment) {
+            if (destination.id == R.id.authFragment) {
                 actionBar?.hide()
             } else {
                 actionBar?.show()

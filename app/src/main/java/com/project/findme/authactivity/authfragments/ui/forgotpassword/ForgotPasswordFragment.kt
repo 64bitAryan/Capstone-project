@@ -59,7 +59,11 @@ class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
         ){
             binding.forgotPasswordProgressbar.isVisible = false
             when(it){
-                true -> snackbar("Link Send to your Registered Email")
+                true -> {
+                    snackbar("Link Send to your Registered Email")
+                    findNavController().navigate(ForgotPasswordFragmentDirections.actionGlobalLoginFragment())
+
+                }
                 false -> snackbar("Enter a valid Email or Register with new")
             }
         })

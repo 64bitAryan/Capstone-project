@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.project.findme.authactivity.AuthActivity
 import com.project.findme.utils.EventObserver
@@ -28,7 +29,10 @@ class SignOutDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return dialogView
+        return LayoutInflater.from(requireContext()).inflate(
+            R.layout.dialog_fragment_signout,
+            null
+        )
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -47,6 +51,7 @@ class SignOutDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel = ViewModelProvider(requireActivity()).get(SignOutViewModel::class.java)
         subscribeToObserve()
 
         binding = DialogFragmentSignoutBinding.inflate(layoutInflater)
@@ -57,6 +62,7 @@ class SignOutDialogFragment : DialogFragment() {
 
     private fun subscribeToObserve(){
         binding = DialogFragmentSignoutBinding.inflate(layoutInflater)
+        viewModel = ViewModelProvider(requireActivity()).get(SignOutViewModel::class.java)
         viewModel.signOutStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
                 binding.signOutProgressbar.isVisible = false
@@ -71,13 +77,15 @@ class SignOutDialogFragment : DialogFragment() {
             binding.signOutProgressbar.isVisible = false
             binding.positiveButtonDialog.isEnabled = true
             when(it){
-                true -> snackbar("Signed Out successfully")
+                true -> {
+                    snackbar("Signed Out successfully")
+                    Intent(activity, AuthActivity::class.java).also { intent ->
+                        startActivity(intent)
+                        activity?.finish()
+                        activity?.finishAffinity()
+                    }
+                }
                 false -> snackbar("Something went wrong")
-            }
-            Intent(activity, AuthActivity::class.java).also { intent ->
-                startActivity(intent)
-                activity?.finish()
-                activity?.finishAffinity()
             }
         })
     }
