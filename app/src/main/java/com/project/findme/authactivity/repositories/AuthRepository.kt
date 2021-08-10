@@ -17,6 +17,4 @@ interface AuthRepository {
 
     suspend fun googleRegister(credentials: AuthCredential): Resource<AuthResult>
 
-    suspend fun signOut() : Resource<Boolean>
-
 }
