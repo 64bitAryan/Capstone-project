@@ -46,4 +46,6 @@
     <string name="error_no_image_chosen">Please choose an image for the post</string>
     <string name="enter_comment">Enter comment</string>
     <string name="comments">Comments</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
 </resources>

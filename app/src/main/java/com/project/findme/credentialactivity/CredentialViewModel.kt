@@ -1,10 +1,8 @@
 package com.project.findme.credentialactivity
 
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import android.widget.RadioGroup
+import androidx.lifecycle.*
 import com.project.findme.credentialactivity.repository.CredentialRepository
 import com.project.findme.data.entity.Credential
 import com.project.findme.utils.Events
@@ -20,25 +18,47 @@ import javax.inject.Inject
 class CredentialViewModel @Inject constructor(
     val repository: CredentialRepository,
     val applicationContext: Context,
-    val dispatcher: CoroutineDispatcher = Dispatchers.Main
-): ViewModel() {
+    val dispatcher: CoroutineDispatcher = Dispatchers.Main,
+    private val state: SavedStateHandle
+) : ViewModel() {
     private val _credentialPostStatus = MutableLiveData<Events<Resource<Unit>>>()
-    val credentialPostStatus:LiveData<Events<Resource<Unit>>> = _credentialPostStatus
+    val credentialPostStatus: LiveData<Events<Resource<Unit>>> = _credentialPostStatus
+
+    var name = state.get<String>("name") ?: ""
+        set(value) {
+            field = value
+            state.set("name", value)
+        }
+
+    var profession = state.get<String>("profession") ?: ""
+        set(value) {
+            field = value
+            state.set("profession", value)
+        }
+
+    var gender = state.get<String>("gender") ?: ""
+        set(value) {
+            field = value
+            state.set("gender", value)
+        }
+
 
     fun postCredential(
         uid: String,
-        name: String,
-        profession: String,
         dob: String,
-        gender: String,
-        interests:List<String>
-    ){
-        val error = if(name.isEmpty() || profession.isEmpty() || dob.isEmpty() || gender.isEmpty() || interests.isEmpty()){
-            applicationContext.getString(R.string.error_input_empty)
-        } else null
+        radioGroup : RadioGroup,
+        interests: List<String>
+    ) {
+        val error =
+            if (name.isBlank() || profession.isBlank() || dob.isBlank() || interests.isEmpty()) {
+                applicationContext.getString(R.string.error_input_empty)
+            } else if(radioGroup.checkedRadioButtonId == -1){
+                "Please select Gender"
+            } else null
 
         error?.let {
             _credentialPostStatus.postValue(Events(Resource.Error(it)))
+            return
         }
         _credentialPostStatus.postValue(Events(Resource.Loading()))
         viewModelScope.launch(dispatcher) {
