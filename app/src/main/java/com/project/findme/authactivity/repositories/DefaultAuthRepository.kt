@@ -16,8 +16,9 @@ import com.project.findme.utils.safeCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.*
 
-class DefaultAuthRepository: AuthRepository {
+class DefaultAuthRepository : AuthRepository {
 
     val auth = FirebaseAuth.getInstance()
     val users = FirebaseFirestore.getInstance().collection("users")
@@ -27,7 +28,7 @@ class DefaultAuthRepository: AuthRepository {
         username: String,
         password: String
     ): Resource<AuthResult> {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             safeCall {
                 val result = auth.createUserWithEmailAndPassword(email, password).await()
                 val uid = result.user?.uid!!
@@ -47,7 +48,7 @@ class DefaultAuthRepository: AuthRepository {
     }
 
     override suspend fun login(email: String, password: String): Resource<AuthResult> {
-        return  withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO) {
             safeCall {
                 val result = auth.signInWithEmailAndPassword(email, password).await()
                 Resource.Success(result)
@@ -55,20 +56,31 @@ class DefaultAuthRepository: AuthRepository {
         }
     }
 
-    override suspend fun forgotPassword(email: String):Resource<Boolean> {
-         return withContext(Dispatchers.IO) {
-             safeCall {
-                 val result = auth.sendPasswordResetEmail(email).await()
-                 Resource.Success(result)
-                 Resource.Success(true)
-             }
+    override suspend fun forgotPassword(email: String): Resource<Boolean> {
+        return withContext(Dispatchers.IO) {
+            safeCall {
+                val result = auth.sendPasswordResetEmail(email).await()
+                Resource.Success(result)
+                Resource.Success(true)
+            }
         }
     }
 
-    override suspend fun googleRegister(credentials: AuthCredential): Resource<AuthResult>{
+    override suspend fun googleRegister(credentials: AuthCredential): Resource<AuthResult> {
         return withContext(Dispatchers.IO) {
             safeCall {
                 val result = auth.signInWithCredential(credentials).await()
+                Resource.Success(result)
+            }
+        }
+    }
+
+    override suspend fun searchUser(query: String): Resource<List<User>> {
+        return withContext(Dispatchers.IO) {
+            safeCall {
+                val result =
+                    users.whereGreaterThanOrEqualTo("userName", query.uppercase(Locale.ROOT))
+                        .get().await().toObjects(User::class.java)
                 Resource.Success(result)
             }
         }
