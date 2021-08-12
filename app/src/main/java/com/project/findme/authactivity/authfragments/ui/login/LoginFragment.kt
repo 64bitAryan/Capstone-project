@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.project.findme.credentialactivity.CredentialActivity
 import com.project.findme.mainactivity.MainActivity
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.hideKeyboard
@@ -87,7 +88,7 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
             }
         ) {
             binding.loginProgressbar.isVisible = false
-            Intent(requireContext(), MainActivity::class.java).also {
+            Intent(requireContext(), CredentialActivity::class.java).also {
                 startActivity(it)
                 requireActivity().finish()
             }

@@ -12,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FindME">
+        <activity android:name="com.project.findme.credentialactivity.CredentialActivity"/>
         <activity android:name="com.project.findme.authactivity.AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -4,10 +4,16 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/FindME/app/src/main/res/drawable/custom_icon.xml" value="0.17735042735042736" />
+        <entry key="..\:/FindME/app/src/main/res/layout/activity_credential.xml" value="0.16842105263157894" />
         <entry key="..\:/FindME/app/src/main/res/layout/activity_main.xml" value="0.15715579710144928" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_auth_screen.xml" value="0.15081521739130435" />
+        <entry key="..\:/FindME/app/src/main/res/layout/fragment_credential.xml" value="0.25" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_login_user.xml" value="0.1641025641025641" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_register_user.xml" value="0.1641025641025641" />
+        <entry key="..\:/FindME/app/src/main/res/layout/fragment_signout_dialog.xml" value="0.1322463768115942" />
+        <entry key="..\:/FindME/app/src/main/res/layout/layout_chip_choice.xml" value="0.11684782608695653" />
+        <entry key="..\:/FindME/app/src/main/res/layout/nav_header.xml" value="0.1322463768115942" />
+        <entry key="..\:/FindME/app/src/main/res/menu/side_nav_menu.xml" value="0.1641025641025641" />
         <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/button_background.xml" value="0.2169230769230769" />
         <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/custom_button.xml" value="0.21296296296296297" />
         <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/custom_icon.xml" value="0.20185185185185187" />

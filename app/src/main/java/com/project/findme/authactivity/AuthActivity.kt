@@ -3,11 +3,13 @@ package com.project.findme.authactivity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupActionBarWithNavController
 import com.google.firebase.auth.FirebaseAuth
+import com.project.findme.credentialactivity.CredentialActivity
 import com.project.findme.mainactivity.MainActivity
 import com.ryan.findme.R
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,7 +24,7 @@ class AuthActivity : AppCompatActivity() {
         setContentView(R.layout.activity_auth)
 
         if(FirebaseAuth.getInstance().currentUser != null) {
-            Intent(this, MainActivity::class.java).also {
+            Intent(this, CredentialActivity::class.java).also {
                 startActivity(it)
                 finish()
             }

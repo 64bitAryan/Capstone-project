@@ -11,9 +11,7 @@ import com.project.findme.utils.Constants.MIN_USERNAME_LENGTH
 import com.project.findme.utils.Events
 import com.project.findme.utils.Resource
 import com.ryan.findme.R
-import dagger.assisted.Assisted
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

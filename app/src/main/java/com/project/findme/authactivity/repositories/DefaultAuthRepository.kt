@@ -1,12 +1,14 @@
 package com.project.findme.authactivity.repositories
 
 import android.accounts.Account
+import android.net.Uri
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.project.findme.data.entity.User
 import com.project.findme.utils.Resource
@@ -31,6 +33,14 @@ class DefaultAuthRepository: AuthRepository {
                 val uid = result.user?.uid!!
                 val user = User(uid, username)
                 users.document(uid).set(user).await()
+
+                //Setting Display name and default photo uri
+                auth.currentUser?.updateProfile(
+                    userProfileChangeRequest {
+                        displayName = username
+                        photoUri = Uri.parse("https://firebasestorage.googleapis.com/v0/b/social-network-662a2.appspot.com/o/avatar.png?alt=media&token=69f56ce2-8fe2-4051-9e61-9e52182384c9")
+                    }
+                )
                 Resource.Success(result)
             }
         }

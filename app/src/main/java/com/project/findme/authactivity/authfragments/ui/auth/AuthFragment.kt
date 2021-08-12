@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import com.project.findme.credentialactivity.CredentialActivity
 import com.project.findme.data.entity.User
 import com.project.findme.mainactivity.MainActivity
 import com.project.findme.utils.EventObserver
@@ -40,7 +41,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
             textViewAlreadyUserLogin.setOnClickListener{
                 findNavController().navigate(AuthFragmentDirections.actionGlobalLoginFragment())
             }
-            buttonGoogleSignIn.setOnClickListener {
+            buttonGoogleSignIn.setOnClickListener { 
                 viewModel.googleRegisterStatus
                 val option = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
@@ -97,7 +98,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
             val username = it.user?.displayName.toString()
             val user = User(uid, username)
             users.document(uid).set(user)
-            Intent(requireContext(), MainActivity::class.java).also { intent ->
+
+            Intent(requireContext(), CredentialActivity::class.java).also { intent ->
                 startActivity(intent)
                 requireActivity().finish()
             }

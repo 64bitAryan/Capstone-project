@@ -37,7 +37,7 @@ class AuthViewModel @Inject constructor(
                     val result = repository.googleRegister(credentials)
                     _googleRegisterStatus.postValue(Events(result))
                 } catch (e: Exception){
-                    _googleRegisterStatus.postValue(Events(Resource.Error(e.message.toString())))
+                    _googleRegisterStatus.postValue(Events(Resource.Error("Please Select an Account")))
                 }
             }
         }
