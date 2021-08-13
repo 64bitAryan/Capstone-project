@@ -1,10 +1,10 @@
 package com.project.findme.credentialactivity
 
-import android.app.Activity
+import android.annotation.SuppressLint
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputType
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -17,18 +17,14 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.project.findme.mainactivity.MainActivity
 import com.project.findme.utils.EventObserver
+import com.project.findme.utils.hideKeyboard
 import com.ryan.findme.R
 import com.ryan.findme.databinding.ActivityCredentialBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import android.widget.DatePicker
-
-import android.app.DatePickerDialog.OnDateSetListener
-
-import android.app.DatePickerDialog
-import com.project.findme.utils.hideKeyboard
 import java.text.SimpleDateFormat
 import java.util.*
+import android.widget.ArrayAdapter
 
 
 @AndroidEntryPoint
@@ -37,8 +33,9 @@ class CredentialActivity : AppCompatActivity() {
     private lateinit var viewModel: CredentialViewModel
 
     private lateinit var binding: ActivityCredentialBinding
-    var interests = mutableSetOf<String>()
+    private var interests = mutableSetOf<String>()
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this).get(CredentialViewModel::class.java)
@@ -57,7 +54,25 @@ class CredentialActivity : AppCompatActivity() {
                         binding = ActivityCredentialBinding.inflate(layoutInflater)
                         setContentView(binding.root)
 
+                        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+                            this,
+                            android.R.layout.simple_dropdown_item_1line,
+                            professions
+                        )
+
+                        val adapterHobbies: ArrayAdapter<String> = ArrayAdapter<String>(
+                            this,
+                            android.R.layout.simple_dropdown_item_1line,
+                            hobbies
+                        )
+
                         binding.apply {
+
+                            credentialProfessionEt.threshold = 1
+                            credentialProfessionEt.setAdapter(adapter)
+
+                            credentialInterestEt.threshold = 1
+                            credentialInterestEt.setAdapter(adapterHobbies)
 
                             credentialUsernameEt.setText(viewModel.name)
                             credentialProfessionEt.setText(viewModel.profession)
@@ -82,6 +97,24 @@ class CredentialActivity : AppCompatActivity() {
                                     newCalendar.get(Calendar.DAY_OF_MONTH)
                                 ).show()
                             }
+
+                            /*credentialDobEt.setOnTouchListener { _, _ ->
+                                hideKeyboard(this@CredentialActivity)
+                                val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                                val newCalendar: Calendar = Calendar.getInstance()
+                                DatePickerDialog(
+                                    this@CredentialActivity,
+                                    { _, year, monthOfYear, dayOfMonth ->
+                                        val newDate: Calendar = Calendar.getInstance()
+                                        newDate.set(year, monthOfYear, dayOfMonth)
+                                        credentialDobEt.setText(dateFormatter.format(newDate.time))
+                                    },
+                                    newCalendar.get(Calendar.YEAR),
+                                    newCalendar.get(Calendar.MONTH),
+                                    newCalendar.get(Calendar.DAY_OF_MONTH)
+                                ).show()
+                                return@setOnTouchListener true
+                            }*/
 
                             credentialProfessionEt.addTextChangedListener { profession ->
                                 viewModel.profession = profession.toString()
@@ -140,6 +173,197 @@ class CredentialActivity : AppCompatActivity() {
         }
         binding.credentialInterestEt.text?.clear()
     }
+
+    private val hobbies = arrayOf(
+        "3d printing",
+        "amateur meteorology",
+        "art collecting",
+        "astronomy",
+        "backpacking travel",
+        "bartending",
+        "base jumping",
+        "beekeeping",
+        "billiards",
+        "bird watching",
+        "blogging",
+        "book collecting",
+        "bowling",
+        "build model rockets",
+        "camping",
+        "candle-making",
+        "choreography",
+        "climbing",
+        "collecting autograph",
+        "collecting cards",
+        "collecting coins",
+        "collecting comic books",
+        "collecting dolls",
+        "collecting insects",
+        "collecting records",
+        "collecting stamps",
+        "collecting video games",
+        "computer programming",
+        "cooking specialty foods",
+        "crocheting",
+        "cubing",
+        "dancing",
+        "dowsing",
+        "drone",
+        "electronics",
+        "equestrianism",
+        "fantasy sports",
+        "fashion",
+        "fishing",
+        "flower arranging",
+        "flying",
+        "foraging",
+        "fossil hunting",
+        "gardening",
+        "geocaching",
+        "ghost hunting",
+        "graffiti art",
+        "gymnastics",
+        "herping",
+        "high-power rocketry",
+        "hiking",
+        "hunting",
+        "hydroponic gardening",
+        "ice skating",
+        "interior decorating",
+        "jogging",
+        "kart racing",
+        "kayaking",
+        "knitting",
+        "martial arts",
+        "meditation",
+        "metal detecting",
+        "microscopy",
+        "mineral collecting",
+        "model building",
+        "mountain biking",
+        "mountaineering",
+        "movie collecting",
+        "mushroom hunting",
+        "observation hobby",
+        "painting",
+        "paper making",
+        "parkour",
+        "photography",
+        "ping pong",
+        "playing board games",
+        "pottery",
+        "quilting",
+        "racing",
+        "reading",
+        "river rafting",
+        "road biking",
+        "robotics",
+        "running",
+        "sailing",
+        "sand art",
+        "scouting",
+        "scuba diving",
+        "sculpting",
+        "sewing",
+        "shopping",
+        "skateboarding",
+        "skiing",
+        "soap-making",
+        "social media",
+        "social networking",
+        "speedcubing",
+        "surfing",
+        "swimming",
+        "taxidermy",
+        "table tennis",
+        "technology gadgets",
+        "topiary",
+        "treasure hunting",
+        "urban exploration",
+        "video gaming",
+        "walking",
+        "weightlifting",
+        "whale watching",
+        "wine collecting",
+        "worldbuilding",
+        "writing",
+        "yoga"
+    )
+
+    private val professions = arrayOf(
+        "accountant",
+        "actor",
+        "actress",
+        "air traffic controller",
+        "architect",
+        "artist",
+        "attorney",
+        "banker",
+        "bartender",
+        "barber",
+        "bookkeeper",
+        "builder",
+        "businessman",
+        "businesswoman",
+        "businessperson",
+        "butcher",
+        "carpenter",
+        "cashier",
+        "chef",
+        "coach",
+        "dental hygienist",
+        "dentist",
+        "designer",
+        "developer",
+        "dietitian",
+        "doctor",
+        "economist",
+        "editor",
+        "electrician",
+        "engineer",
+        "farmer",
+        "filmmaker",
+        "fisherman",
+        "flight attendant",
+        "jeweler",
+        "judge",
+        "lawyer",
+        "mechanic",
+        "musician",
+        "nutritionist",
+        "nurse",
+        "optician",
+        "painter",
+        "pharmacist",
+        "photographer",
+        "physician",
+        "physician's assistant",
+        "pilot",
+        "plumber",
+        "police officer",
+        "politician",
+        "professor",
+        "programmer",
+        "psychologist",
+        "receptionist",
+        "salesman",
+        "salesperson",
+        "saleswoman",
+        "secretary",
+        "singer",
+        "student",
+        "surgeon",
+        "teacher",
+        "therapist",
+        "translator",
+        "translator",
+        "undertaker",
+        "veterinarian",
+        "videographer",
+        "waiter",
+        "waitress",
+        "writer"
+    )
 
     private fun subscribeToObserve() {
         viewModel.credentialPostStatus.observe(this, EventObserver(
