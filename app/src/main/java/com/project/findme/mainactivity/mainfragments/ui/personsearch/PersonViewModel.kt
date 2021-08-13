@@ -15,10 +15,14 @@ import javax.inject.Inject
 class PersonViewModel @Inject constructor(
     private val repository: AuthRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main,
-    state: SavedStateHandle
+    private val state: SavedStateHandle
 ) : ViewModel() {
 
-    val searchQuery = state.getLiveData("searchQuery", "")
+    var searchQuery = state.get<String>("searchQuery") ?: ""
+        set(value) {
+            field = value
+            state.set("searchQuery", value)
+        }
 
     private val _searchPersonStatus = MutableLiveData<Events<Resource<List<User>>>>()
     val searchPersonStatus: LiveData<Events<Resource<List<User>>>> = _searchPersonStatus

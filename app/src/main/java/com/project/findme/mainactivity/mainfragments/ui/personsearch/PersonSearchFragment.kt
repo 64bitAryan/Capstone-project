@@ -37,10 +37,10 @@ class PersonSearchFragment : Fragment(R.layout.fragment_search_person){
 
         binding.apply {
 
-            editTextSearchField.setText(viewModel.searchQuery.toString())
+            editTextSearchField.setText(viewModel.searchQuery)
 
             editTextSearchField.addTextChangedListener {
-                viewModel.searchQuery.value = it.toString()
+                viewModel.searchQuery = it.toString()
                 viewModel.searchPerson()
             }
 
