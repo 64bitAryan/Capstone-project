@@ -46,14 +46,16 @@ class CredentialViewModel @Inject constructor(
     fun postCredential(
         uid: String,
         dob: String,
-        radioGroup : RadioGroup,
+        radioGroup: RadioGroup,
         interests: List<String>
     ) {
         val error =
-            if (name.isBlank() || profession.isBlank() || dob.isBlank() || interests.isEmpty()) {
+            if (name.isBlank() || profession.isBlank() || interests.isEmpty()) {
                 applicationContext.getString(R.string.error_input_empty)
-            } else if(radioGroup.checkedRadioButtonId == -1){
+            } else if (radioGroup.checkedRadioButtonId == -1) {
                 "Please select Gender"
+            } else if (dob.isBlank()) {
+                "Please Select D.O.B"
             } else null
 
         error?.let {

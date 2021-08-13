@@ -62,6 +62,7 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         NavigationUI.setupWithNavController(navView, navController)
 
+
         val drawerToggle = object : ActionBarDrawerToggle(
             this, drawerLayout, R.string.drawer_open, R.string.drawer_close
         ) {
