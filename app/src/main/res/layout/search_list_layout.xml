@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/image_view_profile_picture_search_list"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_alignParentStart="true"
@@ -26,7 +26,6 @@
         android:layout_marginRight="20dp"
         android:layout_marginTop="25dp"
         android:text="Username"
-        android:textColor="@color/black"
         android:textSize="16sp" />
 
     <TextView
@@ -42,7 +41,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:text="Description"
-        android:textColor="@color/black"
         android:textSize="14sp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

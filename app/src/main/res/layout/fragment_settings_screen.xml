@@ -6,14 +6,4 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.project.findme.mainactivity.mainfragments.ui.settings.SettingsFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:text="SETTINGS Fragment"
-        android:textSize="20sp"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

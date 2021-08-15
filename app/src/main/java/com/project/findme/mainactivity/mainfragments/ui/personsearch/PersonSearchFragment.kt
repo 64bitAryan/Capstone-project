@@ -1,84 +1,86 @@
 package com.project.findme.mainactivity.mainfragments.ui.personsearch
 
-import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.project.findme.authactivity.authfragments.ui.forgotpassword.ForgotPasswordFragmentDirections
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.project.findme.adapter.UserAdapter
+import com.project.findme.data.entity.User
+import com.project.findme.utils.Constants.SEARCH_TIME_DELAY
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
-import com.ryan.findme.databinding.FragmentForgotPasswordBinding
 import com.ryan.findme.databinding.FragmentSearchPersonBinding
+import com.squareup.okhttp.Dispatcher
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class PersonSearchFragment : Fragment(R.layout.fragment_search_person){
+class PersonSearchFragment : Fragment(R.layout.fragment_search_person) {
 
-    private lateinit var viewModel: PersonViewModel
-    private lateinit var binding : FragmentSearchPersonBinding
+    @Inject
+    lateinit var userAdapter: UserAdapter
+    val viewModel: PersonViewModel by viewModels()
+    private lateinit var binding: FragmentSearchPersonBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(requireActivity()).get(PersonViewModel::class.java)
-
         binding = FragmentSearchPersonBinding.bind(view)
 
-        binding.apply {
+        setUpRecyclerView(binding)
+        subscribeToObserve(binding)
+        
+        //viewModel.searchPerson("user")
 
-            editTextSearchField.setText(viewModel.searchQuery)
-
-            editTextSearchField.addTextChangedListener {
-                viewModel.searchQuery = it.toString()
-                viewModel.searchPerson()
+        var job: Job? = null
+        binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            job?.cancel()
+            job = lifecycleScope.launch {
+                delay(SEARCH_TIME_DELAY)
+                text?.let {
+                    viewModel.searchPerson(it.toString())
+                }
             }
+        }
 
-            buttonSearchPerson.setOnClickListener {
-                viewModel.searchPerson()
-            }
-
-            //recyclerViewSearchList.setAdapter()
+        userAdapter.setOnUserClickListener { user->
+            Toast.makeText(requireContext(), user.uid, Toast.LENGTH_LONG).show()
         }
     }
 
-    class UsersViewModel(itemView: View) : RecyclerView.ViewHolder(itemView){
-
-        fun setDetails(context : Context, userName : String, description : String, profilePicture : String){
-
-            val username = itemView.findViewById<TextView>(R.id.text_view_user_name_search_list)
-            val userDescription = itemView.findViewById<TextView>(R.id.text_view_description_search_list)
-            val profilepicture = itemView.findViewById<ImageView>(R.id.image_view_profile_picture_search_list)
-
-            username.text = userName
-            userDescription.text = description
-
-            Glide.with(context).load(profilePicture).into(profilepicture)
-
-        }
-    }
-
-    private fun subscribeToObserve(){
-        binding = FragmentSearchPersonBinding.inflate(layoutInflater)
+    private fun subscribeToObserve(binding: FragmentSearchPersonBinding) {
         viewModel.searchPersonStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
+                binding.searchProgressbar.isVisible = false
                 snackbar(it)
             },
             onLoading = {
+                binding.searchProgressbar.isVisible = true
+                userAdapter.users = listOf()
             }
-        ){
-
+        ) { userList ->
+            binding.searchProgressbar.isVisible = false
+            snackbar(userList.toString())
+            userAdapter.users = userList
         })
     }
 
+    fun setUpRecyclerView(binding: FragmentSearchPersonBinding) = binding.recyclerViewSearchList.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = userAdapter
+            itemAnimator = null
+        }
 }

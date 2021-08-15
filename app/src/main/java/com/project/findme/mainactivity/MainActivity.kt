@@ -1,6 +1,7 @@
 package com.project.findme.mainactivity
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -29,19 +30,26 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var bottomNavBar: BottomNavigationView
+    lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        drawerLayout = findViewById(R.id.drawer_layout)
+        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
+
+
         bottomNavBar = findViewById(R.id.bottom_nav_view)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
 
 
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_main) as NavHostFragment
         navController = navHostFragment.findNavController()
-
-        drawerLayout = findViewById(R.id.drawer_layout)
 
         val navView = findViewById<NavigationView>(R.id.side_nav_view)
 
@@ -63,30 +71,6 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(navView, navController)
 
 
-        val drawerToggle = object : ActionBarDrawerToggle(
-            this, drawerLayout, R.string.drawer_open, R.string.drawer_close
-        ) {
-            override fun onDrawerClosed(view: View) {
-                super.onDrawerClosed(view)
-                isDrawerIndicatorEnabled = true
-                supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            }
-
-            override fun onDrawerOpened(drawerView: View) {
-                super.onDrawerOpened(drawerView)
-                isDrawerIndicatorEnabled = false
-                supportActionBar?.setDisplayHomeAsUpEnabled(true)
-                setToolbarNavigationClickListener {
-                    it.setOnClickListener {
-                        onBackPressed()
-                    }
-                }
-            }
-        }
-
-        drawerLayout.addDrawerListener(drawerToggle)
-
-
         val headerView: View = navView.getHeaderView(0)
         val userEmail = headerView.findViewById<TextView>(R.id.text_view_user_email)
         val userName = headerView.findViewById<TextView>(R.id.text_view_user_name)
@@ -98,6 +82,14 @@ class MainActivity : AppCompatActivity() {
             TODO()
         }
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (toggle.onOptionsItemSelected(item)){
+            return true
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     override fun onSupportNavigateUp(): Boolean {

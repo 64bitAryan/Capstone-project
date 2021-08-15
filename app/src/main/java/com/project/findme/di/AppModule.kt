@@ -40,5 +40,4 @@ object AppModule {
             .error(R.drawable.google_round)
             .diskCacheStrategy(DiskCacheStrategy.DATA)
     )
-
 }
