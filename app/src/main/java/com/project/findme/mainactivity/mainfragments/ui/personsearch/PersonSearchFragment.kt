@@ -42,21 +42,22 @@ class PersonSearchFragment : Fragment(R.layout.fragment_search_person) {
 
         setUpRecyclerView(binding)
         subscribeToObserve(binding)
-        
-        //viewModel.searchPerson("user")
+
+        binding.etSearch.setText(viewModel.searchQuery)
 
         var job: Job? = null
         binding.etSearch.doOnTextChanged { text, _, _, _ ->
+            viewModel.searchQuery = text.toString()
             job?.cancel()
             job = lifecycleScope.launch {
                 delay(SEARCH_TIME_DELAY)
                 text?.let {
-                    viewModel.searchPerson(it.toString())
+                    viewModel.searchPerson()
                 }
             }
         }
 
-        userAdapter.setOnUserClickListener { user->
+        userAdapter.setOnUserClickListener { user ->
             Toast.makeText(requireContext(), user.uid, Toast.LENGTH_LONG).show()
         }
     }
@@ -73,12 +74,12 @@ class PersonSearchFragment : Fragment(R.layout.fragment_search_person) {
             }
         ) { userList ->
             binding.searchProgressbar.isVisible = false
-            snackbar(userList.toString())
             userAdapter.users = userList
         })
     }
 
-    fun setUpRecyclerView(binding: FragmentSearchPersonBinding) = binding.recyclerViewSearchList.apply {
+    fun setUpRecyclerView(binding: FragmentSearchPersonBinding) =
+        binding.recyclerViewSearchList.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = userAdapter
             itemAnimator = null
