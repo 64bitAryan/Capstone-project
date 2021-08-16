@@ -69,9 +69,12 @@ class PersonSearchFragment : Fragment(R.layout.fragment_search_person) {
         ) { userList ->
             binding.searchProgressbar.isVisible = false
             if(userList.isEmpty()){
-                snackbar("No such User found")
+                binding.recyclerViewSearchList.isVisible = false
+                binding.textViewEmptySearchList.isVisible = true
             }
             else{
+                binding.recyclerViewSearchList.isVisible = true
+                binding.textViewEmptySearchList.isVisible = false
                 userAdapter.users = userList
             }
         })
