@@ -2,8 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.project.findme.mainactivity.mainfragments.ui.settings.SettingsFragment">
+    tools:context="com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileFragment">
 
 </androidx.constraintlayout.widget.ConstraintLayout>

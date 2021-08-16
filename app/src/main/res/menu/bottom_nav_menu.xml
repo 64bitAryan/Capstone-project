@@ -19,8 +19,8 @@
         android:title="Chat"/>
 
     <item
-        android:id="@+id/settingsFragment"
-        android:icon="@drawable/ic_settings"
-        android:title="Settings"/>
+        android:id="@+id/userProfileFragment"
+        android:icon="@drawable/ic_person"
+        android:title="User Profile"/>
 
 </menu>
