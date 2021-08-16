@@ -22,16 +22,16 @@ class PersonViewModel @Inject constructor(
     private val state: SavedStateHandle
 ) : ViewModel() {
 
-//    var searchQuery = state.get<String>("searchQuery") ?: ""
-//        set(value) {
-//            field = value
-//            state.set("searchQuery", value)
-//        }
+    var searchQuery = state.get<String>("searchQuery") ?: ""
+        set(value) {
+            field = value
+            state.set("searchQuery", value)
+        }
 
     private val _searchPersonStatus = MutableLiveData<Events<Resource<List<User>>>>()
     val searchPersonStatus: LiveData<Events<Resource<List<User>>>> = _searchPersonStatus
 
-    fun searchPerson(searchQuery: String) {
+    fun searchPerson() {
         if(searchQuery.isEmpty()) return
 
         _searchPersonStatus.postValue(Events(Resource.Loading()))

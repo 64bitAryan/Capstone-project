@@ -11,7 +11,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.util.*
 
-class DefaultMainRepository() : MainRepository{
+class DefaultMainRepository() : MainRepository {
 
     val auth = FirebaseAuth.getInstance()
     val users = FirebaseFirestore.getInstance().collection("users")
@@ -19,7 +19,10 @@ class DefaultMainRepository() : MainRepository{
 
     override suspend fun searchUsers(query: String) = withContext(Dispatchers.IO) {
         safeCall {
-            val userResult = users.whereGreaterThanOrEqualTo("userName",query.toUpperCase(Locale.ROOT))
+            val userResult = users
+                .orderBy("userName")
+                .startAt(query)
+                .endAt(query + "\uf8ff")
                 .get().await().toObjects(User::class.java)
             Resource.Success(userResult)
         }
