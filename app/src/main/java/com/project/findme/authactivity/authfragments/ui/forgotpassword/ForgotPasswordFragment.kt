@@ -68,4 +68,11 @@ class ForgotPasswordFragment : Fragment(R.layout.fragment_forgot_password) {
             }
         })
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = FragmentForgotPasswordBinding.inflate(layoutInflater)
+        binding.editTextEmailForgot.setText("")
+    }
+
 }

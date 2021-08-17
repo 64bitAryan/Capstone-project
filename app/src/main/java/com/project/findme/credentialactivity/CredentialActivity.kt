@@ -98,24 +98,6 @@ class CredentialActivity : AppCompatActivity() {
                                 ).show()
                             }
 
-                            /*credentialDobEt.setOnTouchListener { _, _ ->
-                                hideKeyboard(this@CredentialActivity)
-                                val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                                val newCalendar: Calendar = Calendar.getInstance()
-                                DatePickerDialog(
-                                    this@CredentialActivity,
-                                    { _, year, monthOfYear, dayOfMonth ->
-                                        val newDate: Calendar = Calendar.getInstance()
-                                        newDate.set(year, monthOfYear, dayOfMonth)
-                                        credentialDobEt.setText(dateFormatter.format(newDate.time))
-                                    },
-                                    newCalendar.get(Calendar.YEAR),
-                                    newCalendar.get(Calendar.MONTH),
-                                    newCalendar.get(Calendar.DAY_OF_MONTH)
-                                ).show()
-                                return@setOnTouchListener true
-                            }*/
-
                             credentialProfessionEt.addTextChangedListener { profession ->
                                 viewModel.profession = profession.toString()
                             }
@@ -390,4 +372,16 @@ class CredentialActivity : AppCompatActivity() {
             }
         })
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = ActivityCredentialBinding.inflate(layoutInflater)
+        binding.credentialUsernameEt.setText("")
+        binding.credentialDobEt.setText("")
+        binding.credentialProfessionEt.setText("")
+        binding.credentialGenderRg.clearCheck()
+        binding.credentialInterestEt.setText("")
+        binding.credentialHobbiesCg.removeAllViews()
+    }
+
 }

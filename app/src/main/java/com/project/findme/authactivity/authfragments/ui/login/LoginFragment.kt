@@ -60,6 +60,7 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
 
             buttonLoginUser.setOnClickListener {
                 hideKeyboard(activity as Activity)
+                editTextPasswordLogin.setText("")
                 viewModel.login()
             }
 
@@ -94,4 +95,12 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
             }
         })
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = FragmentLoginUserBinding.inflate(layoutInflater)
+        binding.editTextEmailLogin.setText("")
+        binding.editTextPasswordLogin.setText("")
+    }
+
 }

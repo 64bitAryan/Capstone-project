@@ -51,6 +51,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
 
             buttonRegisterUser.setOnClickListener {
                 hideKeyboard(activity as Activity)
+                editTextPasswordRegister.setText("")
+                editTextConfirmPasswordRegister.setText("")
                 viewModel.register()
             }
             textViewRegisterToLogin.setOnClickListener {
@@ -81,5 +83,14 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
             snackbar(getString(R.string.success_registration))
             findNavController().navigate(RegisterFragmentDirections.actionGlobalLoginFragment())
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = FragmentRegisterUserBinding.inflate(layoutInflater)
+        binding.editTextUsernameRegister.setText("")
+        binding.editTextEmailRegister.setText("")
+        binding.editTextPasswordRegister.setText("")
+        binding.editTextConfirmPasswordRegister.setText("")
     }
 }
