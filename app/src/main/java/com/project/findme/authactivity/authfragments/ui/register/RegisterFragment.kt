@@ -3,6 +3,7 @@ package com.project.findme.authactivity.authfragments.ui.register
 import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -51,8 +52,6 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
 
             buttonRegisterUser.setOnClickListener {
                 hideKeyboard(activity as Activity)
-                editTextPasswordRegister.setText("")
-                editTextConfirmPasswordRegister.setText("")
                 viewModel.register()
             }
             textViewRegisterToLogin.setOnClickListener {
@@ -67,22 +66,36 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
         binding = FragmentRegisterUserBinding.inflate(layoutInflater)
         viewModel.registerStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                binding.registerProgressbar.isVisible = false
-                binding.buttonRegisterUser.isEnabled = true
-                binding.textViewRegisterToLogin.linksClickable = true
+                showProgress(false)
 
                 snackbar(it)
             },
             onLoading = {
-                binding.buttonRegisterUser.isEnabled = false
-                binding.textViewRegisterToLogin.linksClickable = false
-                binding.registerProgressbar.isVisible = true
+                showProgress(true)
             }
         ) {
-            binding.registerProgressbar.isVisible = false
+            showProgress(false)
             snackbar(getString(R.string.success_registration))
             findNavController().navigate(RegisterFragmentDirections.actionGlobalLoginFragment())
         })
+    }
+
+    private fun showProgress(bool: Boolean) {
+        binding.apply {
+            cvProgressRegister.isVisible = bool
+            if (bool) {
+                parentLayoutRegister.alpha = 0.5f
+                activity?.window!!.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+            } else {
+                parentLayoutRegister.alpha = 1f
+                activity?.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                editTextPasswordRegister.setText("")
+                editTextConfirmPasswordRegister.setText("")
+            }
+        }
     }
 
     override fun onDestroy() {

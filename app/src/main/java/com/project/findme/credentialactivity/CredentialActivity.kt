@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -85,7 +86,7 @@ class CredentialActivity : AppCompatActivity() {
                                 hideKeyboard(this@CredentialActivity)
                                 val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.US)
                                 val newCalendar: Calendar = Calendar.getInstance()
-                                DatePickerDialog(
+                                val dialog = DatePickerDialog(
                                     this@CredentialActivity,
                                     { _, year, monthOfYear, dayOfMonth ->
                                         val newDate: Calendar = Calendar.getInstance()
@@ -95,7 +96,11 @@ class CredentialActivity : AppCompatActivity() {
                                     newCalendar.get(Calendar.YEAR),
                                     newCalendar.get(Calendar.MONTH),
                                     newCalendar.get(Calendar.DAY_OF_MONTH)
-                                ).show()
+                                )
+
+                                dialog.datePicker.maxDate = newCalendar.timeInMillis
+                                dialog.show()
+
                             }
 
                             credentialProfessionEt.addTextChangedListener { profession ->
@@ -351,26 +356,38 @@ class CredentialActivity : AppCompatActivity() {
         viewModel.credentialPostStatus.observe(this, EventObserver(
             onError = {
                 binding.apply {
-                    credentialPb.isVisible = false
-                    addBt.isEnabled = true
-                    letsGoBt.isEnabled = true
+                    showProgress(false)
                 }
                 Toast.makeText(this, it, Toast.LENGTH_LONG).show()
             },
             onLoading = {
                 binding.apply {
-                    credentialPb.isVisible = true
-                    addBt.isEnabled = false
-                    letsGoBt.isEnabled = false
+                    showProgress(true)
                 }
             }
         ) {
-            binding.credentialPb.isVisible = false
+            showProgress(false)
             Intent(this, MainActivity::class.java).also {
                 startActivity(it)
                 finish()
             }
         })
+    }
+
+    private fun showProgress(bool: Boolean) {
+        binding.apply {
+            cvProgressCredential.isVisible = bool
+            if (bool) {
+                parentLayoutCredential.alpha = 0.5f
+                this@CredentialActivity.window!!.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+            } else {
+                parentLayoutCredential.alpha = 1f
+                this@CredentialActivity.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            }
+        }
     }
 
     override fun onDestroy() {

@@ -1,4 +1,4 @@
-package com.ryan.findme
+package com.project.findme
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

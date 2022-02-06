@@ -1,8 +1,5 @@
 package com.project.findme.authactivity.authfragments.ui.auth
 
-import android.content.Context
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.*
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.tasks.Task
@@ -20,7 +17,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val repository: AuthRepository,
-    private val applicationContext: Context,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) :
     ViewModel() {
