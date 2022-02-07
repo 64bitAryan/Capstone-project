@@ -6,8 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.WindowManager
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -103,6 +102,10 @@ class CredentialActivity : AppCompatActivity() {
 
                             }
 
+                            credentialDobEt.addTextChangedListener {
+                                viewModel.dob = it.toString()
+                            }
+
                             credentialProfessionEt.addTextChangedListener { profession ->
                                 viewModel.profession = profession.toString()
                             }
@@ -130,8 +133,6 @@ class CredentialActivity : AppCompatActivity() {
                                 hideKeyboard(this@CredentialActivity)
                                 viewModel.postCredential(
                                     uid = FirebaseAuth.getInstance().currentUser?.uid!!,
-                                    dob = credentialDobEt.text.toString(),
-                                    radioGroup = credentialGenderRg,
                                     interests = interests.toList()
                                 )
                             }
@@ -374,6 +375,15 @@ class CredentialActivity : AppCompatActivity() {
         })
     }
 
+    private fun saveClicked(){
+        hideKeyboard(this@CredentialActivity)
+        binding = ActivityCredentialBinding.inflate(layoutInflater)
+        viewModel.postCredential(
+            uid = FirebaseAuth.getInstance().currentUser?.uid!!,
+            interests = interests.toList()
+        )
+    }
+
     private fun showProgress(bool: Boolean) {
         binding.apply {
             cvProgressCredential.isVisible = bool
@@ -387,6 +397,22 @@ class CredentialActivity : AppCompatActivity() {
                 parentLayoutCredential.alpha = 1f
                 this@CredentialActivity.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.credential_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_save -> {
+                saveClicked()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
