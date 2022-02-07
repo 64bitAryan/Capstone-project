@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
@@ -85,7 +85,7 @@ class CredentialActivity : AppCompatActivity() {
                                 hideKeyboard(this@CredentialActivity)
                                 val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.US)
                                 val newCalendar: Calendar = Calendar.getInstance()
-                                DatePickerDialog(
+                                val dialog = DatePickerDialog(
                                     this@CredentialActivity,
                                     { _, year, monthOfYear, dayOfMonth ->
                                         val newDate: Calendar = Calendar.getInstance()
@@ -95,26 +95,16 @@ class CredentialActivity : AppCompatActivity() {
                                     newCalendar.get(Calendar.YEAR),
                                     newCalendar.get(Calendar.MONTH),
                                     newCalendar.get(Calendar.DAY_OF_MONTH)
-                                ).show()
+                                )
+
+                                dialog.datePicker.maxDate = newCalendar.timeInMillis
+                                dialog.show()
+
                             }
 
-                            /*credentialDobEt.setOnTouchListener { _, _ ->
-                                hideKeyboard(this@CredentialActivity)
-                                val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                                val newCalendar: Calendar = Calendar.getInstance()
-                                DatePickerDialog(
-                                    this@CredentialActivity,
-                                    { _, year, monthOfYear, dayOfMonth ->
-                                        val newDate: Calendar = Calendar.getInstance()
-                                        newDate.set(year, monthOfYear, dayOfMonth)
-                                        credentialDobEt.setText(dateFormatter.format(newDate.time))
-                                    },
-                                    newCalendar.get(Calendar.YEAR),
-                                    newCalendar.get(Calendar.MONTH),
-                                    newCalendar.get(Calendar.DAY_OF_MONTH)
-                                ).show()
-                                return@setOnTouchListener true
-                            }*/
+                            credentialDobEt.addTextChangedListener {
+                                viewModel.dob = it.toString()
+                            }
 
                             credentialProfessionEt.addTextChangedListener { profession ->
                                 viewModel.profession = profession.toString()
@@ -143,8 +133,6 @@ class CredentialActivity : AppCompatActivity() {
                                 hideKeyboard(this@CredentialActivity)
                                 viewModel.postCredential(
                                     uid = FirebaseAuth.getInstance().currentUser?.uid!!,
-                                    dob = credentialDobEt.text.toString(),
-                                    radioGroup = credentialGenderRg,
                                     interests = interests.toList()
                                 )
                             }
@@ -369,25 +357,74 @@ class CredentialActivity : AppCompatActivity() {
         viewModel.credentialPostStatus.observe(this, EventObserver(
             onError = {
                 binding.apply {
-                    credentialPb.isVisible = false
-                    addBt.isEnabled = true
-                    letsGoBt.isEnabled = true
+                    showProgress(false)
                 }
                 Toast.makeText(this, it, Toast.LENGTH_LONG).show()
             },
             onLoading = {
                 binding.apply {
-                    credentialPb.isVisible = true
-                    addBt.isEnabled = false
-                    letsGoBt.isEnabled = false
+                    showProgress(true)
                 }
             }
         ) {
-            binding.credentialPb.isVisible = false
+            showProgress(false)
             Intent(this, MainActivity::class.java).also {
                 startActivity(it)
                 finish()
             }
         })
     }
+
+    private fun saveClicked(){
+        hideKeyboard(this@CredentialActivity)
+        binding = ActivityCredentialBinding.inflate(layoutInflater)
+        viewModel.postCredential(
+            uid = FirebaseAuth.getInstance().currentUser?.uid!!,
+            interests = interests.toList()
+        )
+    }
+
+    private fun showProgress(bool: Boolean) {
+        binding.apply {
+            cvProgressCredential.isVisible = bool
+            if (bool) {
+                parentLayoutCredential.alpha = 0.5f
+                this@CredentialActivity.window!!.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+            } else {
+                parentLayoutCredential.alpha = 1f
+                this@CredentialActivity.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            }
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.credential_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_save -> {
+                saveClicked()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = ActivityCredentialBinding.inflate(layoutInflater)
+        binding.credentialUsernameEt.setText("")
+        binding.credentialDobEt.setText("")
+        binding.credentialProfessionEt.setText("")
+        binding.credentialGenderRg.clearCheck()
+        binding.credentialInterestEt.setText("")
+        binding.credentialHobbiesCg.removeAllViews()
+    }
+
 }

@@ -4,14 +4,13 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.project.findme.credentialactivity.CredentialActivity
-import com.project.findme.mainactivity.MainActivity
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
@@ -71,27 +70,46 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
         viewModel.loginStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
                 binding.apply {
-                    loginProgressbar.isVisible = false
-                    buttonLoginUser.isEnabled = true
-                    textViewForgotPassword.isClickable = true
-                    textViewLoginToRegister.isClickable = true
+                    showProgress(false)
                 }
                 snackbar(it)
             },
             onLoading = {
                 binding.apply {
-                    loginProgressbar.isVisible = true
-                    buttonLoginUser.isEnabled = false
-                    textViewForgotPassword.isClickable = false
-                    binding.textViewLoginToRegister.isClickable = false
+                    showProgress(true)
                 }
             }
         ) {
-            binding.loginProgressbar.isVisible = false
+            showProgress(false)
             Intent(requireContext(), CredentialActivity::class.java).also {
                 startActivity(it)
                 requireActivity().finish()
             }
         })
     }
+
+    private fun showProgress(bool: Boolean) {
+        binding.apply {
+            cvProgressLogin.isVisible = bool
+            if (bool) {
+                parentLayoutLogin.alpha = 0.5f
+                activity?.window!!.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+            } else {
+                parentLayoutLogin.alpha = 1f
+                activity?.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                editTextPasswordLogin.setText("")
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        binding = FragmentLoginUserBinding.inflate(layoutInflater)
+        binding.editTextEmailLogin.setText("")
+        binding.editTextPasswordLogin.setText("")
+    }
+
 }

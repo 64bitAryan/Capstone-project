@@ -36,6 +36,12 @@ class CredentialViewModel @Inject constructor(
             state.set("profession", value)
         }
 
+    var dob = state.get<String>("dob") ?: ""
+        set(value) {
+            field = value
+            state.set("dob", value)
+        }
+
     var gender = state.get<String>("gender") ?: ""
         set(value) {
             field = value
@@ -45,14 +51,12 @@ class CredentialViewModel @Inject constructor(
 
     fun postCredential(
         uid: String,
-        dob: String,
-        radioGroup: RadioGroup,
         interests: List<String>
     ) {
         val error =
             if (name.isBlank() || profession.isBlank() || interests.isEmpty()) {
                 applicationContext.getString(R.string.error_input_empty)
-            } else if (radioGroup.checkedRadioButtonId == -1) {
+            } else if (gender == "") {
                 "Please select Gender"
             } else if (dob.isBlank()) {
                 "Please Select D.O.B"
