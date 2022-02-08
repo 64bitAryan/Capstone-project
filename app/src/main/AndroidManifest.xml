@@ -14,15 +14,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FindME">
         <activity
-            android:name="com.project.findme.credentialactivity.CredentialActivity"
-            android:exported="true" />
-        <activity android:name="com.project.findme.authactivity.AuthActivity">
+            android:name="com.project.findme.SplashScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name="com.project.findme.credentialactivity.CredentialActivity" />
+        <activity android:name="com.project.findme.authactivity.AuthActivity" />
         <activity android:name="com.project.findme.mainactivity.MainActivity" />
     </application>
 
