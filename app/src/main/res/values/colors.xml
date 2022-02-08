@@ -8,4 +8,11 @@
     <color name="error_red">#CF6679</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="backgroundWhite">#F7F7F7</color>
+    <color name="backgroundBlack">#3c3f41</color>
+    <color name="color_primary">#4582fe</color>
+    <color name="color_primary_text">#8480D7</color>
+    <color name="color_secondary_text">#8c8c8c</color>
+    <color name="color_button">#382e7c</color>
+    <color name="accent">#EA4D69</color>
 </resources>
