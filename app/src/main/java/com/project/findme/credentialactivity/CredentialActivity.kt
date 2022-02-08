@@ -41,6 +41,8 @@ class CredentialActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(CredentialViewModel::class.java)
         subscribeToObserve()
 
+        supportActionBar?.hide()
+
         FirebaseAuth.getInstance().currentUser?.uid?.let {
             FirebaseFirestore.getInstance().collection("credentials").whereEqualTo("uid", it).get()
                 .addOnSuccessListener { document ->
