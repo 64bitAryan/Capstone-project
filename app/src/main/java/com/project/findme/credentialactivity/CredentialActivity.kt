@@ -38,109 +38,98 @@ class CredentialActivity : AppCompatActivity() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityCredentialBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         viewModel = ViewModelProvider(this).get(CredentialViewModel::class.java)
         subscribeToObserve()
 
-        FirebaseAuth.getInstance().currentUser?.uid?.let {
-            FirebaseFirestore.getInstance().collection("credentials").whereEqualTo("uid", it).get()
-                .addOnSuccessListener { document ->
-                    Log.d("QuerySnapShort", document.toString())
-                    if (!document.isEmpty) {
-                        Intent(this, MainActivity::class.java).also { intent ->
-                            startActivity(intent)
-                            finish()
-                        }
-                    } else {
-                        binding = ActivityCredentialBinding.inflate(layoutInflater)
-                        setContentView(binding.root)
 
-                        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
-                            this,
-                            android.R.layout.simple_dropdown_item_1line,
-                            professions
-                        )
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            professions
+        )
 
-                        val adapterHobbies: ArrayAdapter<String> = ArrayAdapter<String>(
-                            this,
-                            android.R.layout.simple_dropdown_item_1line,
-                            hobbies
-                        )
+        val adapterHobbies: ArrayAdapter<String> = ArrayAdapter<String>(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            hobbies
+        )
 
-                        binding.apply {
+        binding.apply {
 
-                            credentialProfessionEt.threshold = 1
-                            credentialProfessionEt.setAdapter(adapter)
+            credentialProfessionEt.threshold = 1
+            credentialProfessionEt.setAdapter(adapter)
 
-                            credentialInterestEt.threshold = 1
-                            credentialInterestEt.setAdapter(adapterHobbies)
+            credentialInterestEt.threshold = 1
+            credentialInterestEt.setAdapter(adapterHobbies)
 
-                            credentialUsernameEt.setText(viewModel.name)
-                            credentialProfessionEt.setText(viewModel.profession)
+            credentialUsernameEt.setText(viewModel.name)
+            credentialProfessionEt.setText(viewModel.profession)
 
-                            credentialUsernameEt.addTextChangedListener { name ->
-                                viewModel.name = name.toString()
-                            }
+            credentialUsernameEt.addTextChangedListener { name ->
+                viewModel.name = name.toString()
+            }
 
-                            credentialDobEt.setOnClickListener {
-                                hideKeyboard(this@CredentialActivity)
-                                val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.US)
-                                val newCalendar: Calendar = Calendar.getInstance()
-                                val dialog = DatePickerDialog(
-                                    this@CredentialActivity,
-                                    { _, year, monthOfYear, dayOfMonth ->
-                                        val newDate: Calendar = Calendar.getInstance()
-                                        newDate.set(year, monthOfYear, dayOfMonth)
-                                        credentialDobEt.setText(dateFormatter.format(newDate.time))
-                                    },
-                                    newCalendar.get(Calendar.YEAR),
-                                    newCalendar.get(Calendar.MONTH),
-                                    newCalendar.get(Calendar.DAY_OF_MONTH)
-                                )
+            credentialDobEt.setOnClickListener {
+                hideKeyboard(this@CredentialActivity)
+                val dateFormatter = SimpleDateFormat("dd-MM-yyyy", Locale.US)
+                val newCalendar: Calendar = Calendar.getInstance()
+                val dialog = DatePickerDialog(
+                    this@CredentialActivity,
+                    { _, year, monthOfYear, dayOfMonth ->
+                        val newDate: Calendar = Calendar.getInstance()
+                        newDate.set(year, monthOfYear, dayOfMonth)
+                        credentialDobEt.setText(dateFormatter.format(newDate.time))
+                    },
+                    newCalendar.get(Calendar.YEAR),
+                    newCalendar.get(Calendar.MONTH),
+                    newCalendar.get(Calendar.DAY_OF_MONTH)
+                )
 
-                                dialog.datePicker.maxDate = newCalendar.timeInMillis
-                                dialog.show()
+                dialog.datePicker.maxDate = newCalendar.timeInMillis
+                dialog.show()
 
-                            }
+            }
 
-                            credentialDobEt.addTextChangedListener {
-                                viewModel.dob = it.toString()
-                            }
+            credentialDobEt.addTextChangedListener {
+                viewModel.dob = it.toString()
+            }
 
-                            credentialProfessionEt.addTextChangedListener { profession ->
-                                viewModel.profession = profession.toString()
-                            }
+            credentialProfessionEt.addTextChangedListener { profession ->
+                viewModel.profession = profession.toString()
+            }
 
-                            credentialGenderRg.setOnCheckedChangeListener { _, checkedId ->
-                                when (checkedId) {
-                                    R.id.male_rb -> {
-                                        viewModel.gender = maleRb.text.toString()
-                                    }
-                                    R.id.female_rb -> {
-                                        viewModel.gender = femaleRb.text.toString()
-                                    }
-                                    R.id.other_rb -> {
-                                        viewModel.gender = otherRb.text.toString()
-                                    }
-                                }
-                            }
-
-                            addBt.setOnClickListener {
-                                val interest: String = credentialInterestEt.text.toString()
-                                addChipToGroup(this@CredentialActivity, interest)
-                            }
-
-                            letsGoBt.setOnClickListener {
-                                hideKeyboard(this@CredentialActivity)
-                                viewModel.postCredential(
-                                    uid = FirebaseAuth.getInstance().currentUser?.uid!!,
-                                    interests = interests.toList()
-                                )
-                            }
-                        }
+            credentialGenderRg.setOnCheckedChangeListener { _, checkedId ->
+                when (checkedId) {
+                    R.id.male_rb -> {
+                        viewModel.gender = maleRb.text.toString()
+                    }
+                    R.id.female_rb -> {
+                        viewModel.gender = femaleRb.text.toString()
+                    }
+                    R.id.other_rb -> {
+                        viewModel.gender = otherRb.text.toString()
                     }
                 }
+            }
+
+            addBt.setOnClickListener {
+                val interest: String = credentialInterestEt.text.toString()
+                addChipToGroup(this@CredentialActivity, interest)
+            }
+
+            letsGoBt.setOnClickListener {
+                hideKeyboard(this@CredentialActivity)
+                viewModel.postCredential(
+                    uid = FirebaseAuth.getInstance().currentUser?.uid!!,
+                    interests = interests.toList()
+                )
+            }
         }
     }
+
 
     private fun addChipToGroup(context: Context, interest: String) {
         val chip = Chip(context).apply {
@@ -375,15 +364,6 @@ class CredentialActivity : AppCompatActivity() {
         })
     }
 
-    private fun saveClicked(){
-        hideKeyboard(this@CredentialActivity)
-        binding = ActivityCredentialBinding.inflate(layoutInflater)
-        viewModel.postCredential(
-            uid = FirebaseAuth.getInstance().currentUser?.uid!!,
-            interests = interests.toList()
-        )
-    }
-
     private fun showProgress(bool: Boolean) {
         binding.apply {
             cvProgressCredential.isVisible = bool
@@ -397,22 +377,6 @@ class CredentialActivity : AppCompatActivity() {
                 parentLayoutCredential.alpha = 1f
                 this@CredentialActivity.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
-        }
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.credential_menu, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_save -> {
-                saveClicked()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
     }
 
