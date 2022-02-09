@@ -7,9 +7,13 @@
         <entry key="..\:/FindME/app/src/main/res/drawable/custom_icon.xml" value="0.17735042735042736" />
         <entry key="..\:/FindME/app/src/main/res/drawable/custom_search_layout.xml" value="0.18201754385964913" />
         <entry key="..\:/FindME/app/src/main/res/drawable/ic_person.xml" value="0.18201754385964913" />
-        <entry key="..\:/FindME/app/src/main/res/layout/activity_credential.xml" value="0.16842105263157894" />
+        <entry key="..\:/FindME/app/src/main/res/font/montserrat_bold.xml" value="0.193859649122807" />
+        <entry key="..\:/FindME/app/src/main/res/layout/activity_auth.xml" value="0.16842105263157894" />
+        <entry key="..\:/FindME/app/src/main/res/layout/activity_credential.xml" value="0.1" />
         <entry key="..\:/FindME/app/src/main/res/layout/activity_main.xml" value="0.15715579710144928" />
-        <entry key="..\:/FindME/app/src/main/res/layout/fragment_auth_screen.xml" value="0.15081521739130435" />
+        <entry key="..\:/FindME/app/src/main/res/layout/activity_splash_screen.xml" value="0.1403985507246377" />
+        <entry key="..\:/FindME/app/src/main/res/layout/fragment_auth_screen.xml" value="0.1" />
+        <entry key="..\:/FindME/app/src/main/res/layout/fragment_chat_screen.xml" value="0.16842105263157894" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_credential.xml" value="0.25" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_login_user.xml" value="0.1641025641025641" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_register_user.xml" value="0.1641025641025641" />

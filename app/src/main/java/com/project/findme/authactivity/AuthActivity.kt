@@ -22,8 +22,6 @@ class AuthActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_auth) as NavHostFragment
         navController = navHostFragment.findNavController()
 
-        supportActionBar?.hide()
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.authFragment) {
                 actionBar?.hide()
