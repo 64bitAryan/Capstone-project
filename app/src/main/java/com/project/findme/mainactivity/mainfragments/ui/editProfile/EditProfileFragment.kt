@@ -98,7 +98,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             }
 
             btnUpdateProfile.setOnClickListener {
-                hideKeyboard((activity as Activity))
+                hideKeyboard(activity as Activity)
+                viewModel.updateProfile(interests.toList())
             }
 
         }
@@ -138,8 +139,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             }
         ) {
             showProgress(false)
-            when(it){
-                true ->{
+            when (it) {
+                true -> {
                     snackbar("Password changed successfully!")
                 }
                 false -> snackbar("Error occurred!")
