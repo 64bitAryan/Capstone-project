@@ -18,17 +18,17 @@ class AuthActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
 
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment_auth) as NavHostFragment
         navController = navHostFragment.findNavController()
 
-        supportActionBar?.hide()
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.authFragment) {
-                actionBar?.hide()
+                supportActionBar?.hide()
             } else {
-                actionBar?.show()
+                supportActionBar?.show()
             }
         }
 

@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -37,14 +38,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         drawerLayout = findViewById(R.id.drawer_layout)
-        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
+        toggle =
+            ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
 
 
         bottomNavBar = findViewById(R.id.bottom_nav_view)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
 
 
         val navHostFragment =
@@ -79,13 +80,14 @@ class MainActivity : AppCompatActivity() {
         userEmail.text = Firebase.auth.currentUser?.email ?: "guest@gmail.com"
         userName.text = Firebase.auth.currentUser?.displayName ?: "Guest"
         profile.setOnClickListener {
-            TODO()
+            navController.navigate(R.id.action_global_userProfileFragment)
+            drawerLayout.closeDrawer(GravityCompat.START)
         }
 
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (toggle.onOptionsItemSelected(item)){
+        if (toggle.onOptionsItemSelected(item)) {
             return true
         }
 
