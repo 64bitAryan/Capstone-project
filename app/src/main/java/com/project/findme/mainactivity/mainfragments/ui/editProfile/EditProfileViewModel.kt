@@ -54,4 +54,23 @@ class EditProfileViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateProfile(interests: List<String>) {
+
+        val error = if (username.isEmpty() || description.isEmpty() || profession.isEmpty()) {
+            applicationContext.getString(R.string.error_input_empty)
+        } else null
+
+        error?.let {
+            _updateProfileStatus.postValue(Events(Resource.Error(error)))
+            return
+        }
+
+        _updateProfileStatus.postValue(Events(Resource.Loading()))
+
+        viewModelScope.launch(dispatcher) {
+            val result = repository.updateProfile(username, description, profession, interests)
+            _updateProfileStatus.postValue(Events(result))
+        }
+    }
 }
