@@ -23,9 +23,19 @@
         android:id="@+id/userProfileFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileFragment"
         android:label="User Profile"
-        tools:layout="@layout/fragment_user_profile" />
+        tools:layout="@layout/fragment_user_profile" >
+        <action
+            android:id="@+id/action_userProfileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
     <dialog
         android:id="@+id/signOutDialogFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.signout.SignOutDialogFragment"
         android:label="SignOutDialogFragment" />
+    <action android:id="@+id/action_global_userProfileFragment" app:destination="@id/userProfileFragment" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.project.findme.mainactivity.mainfragments.ui.editProfile.EditProfileFragment"
+        android:label="Edit Profile"
+        tools:layout="@layout/fragment_edit_profile" />
 </navigation>
