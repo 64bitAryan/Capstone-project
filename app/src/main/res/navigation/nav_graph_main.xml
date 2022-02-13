@@ -8,11 +8,7 @@
         android:id="@+id/homeFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.home.HomeFragment"
         android:label="Home"
-        tools:layout="@layout/fragment_home_screen" >
-        <action
-            android:id="@+id/action_homeFragment_to_createPostFragment"
-            app:destination="@id/createPostFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_home_screen" />
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.chat.ChatFragment"
@@ -22,11 +18,7 @@
         android:id="@+id/personSearchFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.personsearch.PersonSearchFragment"
         android:label="Search"
-        tools:layout="@layout/fragment_search_person" >
-        <action
-            android:id="@+id/action_personSearchFragment_to_searchedProfileFragment"
-            app:destination="@id/searchedProfileFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_search_person" />
     <fragment
         android:id="@+id/userProfileFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileFragment"
@@ -35,79 +27,15 @@
         <action
             android:id="@+id/action_userProfileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
-        <action
-            android:id="@+id/action_userProfileFragment_to_listFollowersFragmentUser"
-            app:destination="@id/listFollowersFragmentUser" />
     </fragment>
     <dialog
         android:id="@+id/signOutDialogFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.signout.SignOutDialogFragment"
         android:label="SignOutDialogFragment" />
-    <fragment
-        android:id="@+id/createPostFragment"
-        android:name="com.project.findme.mainactivity.mainfragments.ui.createPost.CreatePostFragment"
-        android:label="Create Post" >
-        <action
-            android:id="@+id/action_createPostFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
+    <action android:id="@+id/action_global_userProfileFragment" app:destination="@id/userProfileFragment" />
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.editProfile.EditProfileFragment"
         android:label="Edit Profile"
-        tools:layout="@layout/fragment_edit_profile" >
-        <action
-            android:id="@+id/action_editProfileFragment_to_userProfileFragment"
-            app:destination="@id/userProfileFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/changePasswordFragment"
-        android:name="com.project.findme.mainactivity.mainfragments.ui.changePassword.ChangePasswordFragment"
-        android:label="Change Password"
-        tools:layout="@layout/fragment_change_password" />
-    <fragment
-        android:id="@+id/searchedProfileFragment"
-        android:name="com.project.findme.mainactivity.mainfragments.ui.searchedProfile.SearchedProfileFragment"
-        android:label="{username}"
-        tools:layout="@layout/fragment_searched_profile">
-        <argument
-            android:name="uid"
-            app:argType="string" />
-        <argument
-            android:name="username"
-            app:argType="string" />
-        <action
-            android:id="@+id/action_searchedProfileFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
-        <action
-            android:id="@+id/action_searchedProfileFragment_to_listFollowersFragment"
-            app:destination="@id/listFollowersFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/listFollowersFragment"
-        android:name="com.project.findme.mainactivity.mainfragments.ui.listFollowers.ListFollowersFragment"
-        android:label="{username}"
-        tools:layout="@layout/fragment_lists_followers">
-        <argument
-            android:name="uid"
-            app:argType="string" />
-        <argument
-            android:name="type"
-            app:argType="string" />
-        <argument
-            android:name="username"
-            app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/listFollowersFragmentUser"
-        android:name="com.project.findme.mainactivity.mainfragments.ui.listFollowersUser.ListFollowersFragmentUser"
-        android:label="{username}"
-        tools:layout="@layout/fragment_lists_followers_user">
-        <argument
-            android:name="type"
-            app:argType="string" />
-        <argument
-            android:name="username"
-            app:argType="string" />
-    </fragment>
+        tools:layout="@layout/fragment_edit_profile" />
 </navigation>
