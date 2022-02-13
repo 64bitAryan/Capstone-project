@@ -6,14 +6,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.project.findme.mainactivity.mainfragments.ui.home.HomeFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/post_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:text="Home Fragment"
-        android:textSize="20sp"/>
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/create_post_fb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="35dp"
+        android:src="@drawable/ic_add"
+        tools:listitem="@layout/item_post"
+        tools:itemCount="10"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
