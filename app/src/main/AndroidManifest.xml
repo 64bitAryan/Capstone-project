@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.ryan.findme">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -24,8 +25,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity" />
 
         <activity
             android:name="com.project.findme.credentialactivity.CredentialActivity"/>
