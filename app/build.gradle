@@ -28,11 +28,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = '1.8'
     }
 
     buildFeatures {
@@ -42,8 +42,7 @@ android {
 
 dependencies {
 
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.1.1'
-    implementation 'com.google.firebase:firebase-analytics-ktx:20.1.2'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.0.1'
     def hilt_version = '2.37'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -60,16 +59,16 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
     // Firebase Auth
-    implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
-    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+    implementation 'com.google.firebase:firebase-auth-ktx:21.0.1'
+    implementation 'com.google.android.gms:play-services-auth:20.1.0'
 
     // Firebase Storage
     implementation platform('com.google.firebase:firebase-bom:28.2.0')
-    implementation 'com.google.firebase:firebase-storage:20.0.1'
+    implementation 'com.google.firebase:firebase-storage:20.0.0'
     implementation 'com.google.firebase:firebase-storage-ktx'
 
     // Firebase Firestore
-    implementation 'com.google.firebase:firebase-firestore:24.1.1'
+    implementation 'com.google.firebase:firebase-firestore:24.0.1'
 
     //Firebase UI
     implementation 'com.firebaseui:firebase-ui-firestore:8.0.0'
@@ -83,12 +82,12 @@ dependencies {
 
     // Lifecycle components
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
 
     // Kotlin components and coroutines
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.2"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.1"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.1"
 
@@ -101,18 +100,15 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.4.1"
 
     //Material Dependency
-    implementation "com.google.android.material:material:1.7.0-alpha01"
+    implementation "com.google.android.material:material:1.6.0-alpha02"
 
     // Paging 3
-    def paging_version = "3.1.1"
+    def paging_version = "3.1.0"
     implementation "androidx.paging:paging-runtime-ktx:$paging_version"
 
     // Circular Image View
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-    //Image Crop
-    implementation 'com.github.CanHub:Android-Image-Cropper:3.2.1'
-
-    //Swipe refresh
-    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+    // Android Image Cropper
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
 }
