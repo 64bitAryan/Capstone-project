@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -38,14 +39,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         drawerLayout = findViewById(R.id.drawer_layout)
-        toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
+        toggle =
+            ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
 
 
         bottomNavBar = findViewById(R.id.bottom_nav_view)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
 
 
         val navHostFragment =
@@ -71,6 +72,13 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         NavigationUI.setupWithNavController(navView, navController)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.editProfileFragment || destination.id == R.id.createPostFragment) {
+                bottomNavBar.visibility = View.GONE
+            } else {
+                bottomNavBar.visibility = View.VISIBLE
+            }
+        }
 
         val headerView: View = navView.getHeaderView(0)
         val userEmail = headerView.findViewById<TextView>(R.id.text_view_user_email)
@@ -87,7 +95,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (toggle.onOptionsItemSelected(item)){
+        if (toggle.onOptionsItemSelected(item)) {
+            if (navController.currentDestination?.id == R.id.editProfileFragment
+                || navController.currentDestination?.id == R.id.createPostFragment
+            ) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+                return super.onOptionsItemSelected(item)
+            }
             return true
         }
 

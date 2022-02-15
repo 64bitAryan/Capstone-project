@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.view.WindowManager
 import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContract
@@ -34,14 +35,14 @@ class CreatePostFragment: Fragment(R.layout.fragment_createpost_screen) {
     private lateinit var binding: FragmentCreatepostScreenBinding
 
     private val cropActivityResultContract = object: ActivityResultContract<String, Uri?>() {
-        override fun createIntent(context: Context, input: String?): Intent {
+        override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
+            return CropImage.getActivityResult(intent)?.uri
+        }
+
+        override fun createIntent(context: Context, input: String): Intent {
             return CropImage.activity()
                 .setGuidelines(CropImageView.Guidelines.ON)
                 .getIntent(requireContext())
-        }
-
-        override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
-            return CropImage.getActivityResult(intent)?.uri
         }
     }
 
@@ -87,26 +88,37 @@ class CreatePostFragment: Fragment(R.layout.fragment_createpost_screen) {
         viewModel.createPostStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
                 binding.apply {
-                    createPostProgressbar.isVisible = false
-                    addImageBt.isActivated = true
-                    createPostBt.isActivated = true
+                    showProgress(false)
                 }
                 snackbar(it)
             },
             onLoading = {
                 binding.apply {
-                    createPostProgressbar.isVisible = true
-                    addImageBt.isActivated = false
-                    createPostBt.isActivated = false
+                    showProgress(true)
                 }
             }
         ){
             binding.apply {
-                createPostProgressbar.isVisible = false
-                addImageBt.isActivated = true
-                createPostBt.isActivated = true
+                showProgress(false)
             }
             findNavController().popBackStack()
         })
     }
+
+    private fun showProgress(bool: Boolean) {
+        binding.apply {
+            cvProgressPost.isVisible = bool
+            if (bool) {
+                parentLayoutPost.alpha = 0.5f
+                activity?.window!!.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+            } else {
+                parentLayoutPost.alpha = 1f
+                activity?.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            }
+        }
+    }
+
 }
