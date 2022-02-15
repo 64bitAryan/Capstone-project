@@ -7,6 +7,7 @@ import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
@@ -79,7 +80,8 @@ class MainActivity : AppCompatActivity() {
         userEmail.text = Firebase.auth.currentUser?.email ?: "guest@gmail.com"
         userName.text = Firebase.auth.currentUser?.displayName ?: "Guest"
         profile.setOnClickListener {
-            TODO()
+            navController.navigate(R.id.userProfileFragment)
+            drawerLayout.closeDrawer(GravityCompat.START)
         }
 
     }
