@@ -18,7 +18,7 @@ class UserProfileFragment: Fragment(R.layout.fragment_user_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        viewModel = ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java)
 
         binding = FragmentUserProfileBinding.bind(view)
         binding.apply {

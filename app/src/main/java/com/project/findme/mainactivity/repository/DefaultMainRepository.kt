@@ -2,7 +2,10 @@ package com.project.findme.mainactivity.repository
 
 import android.net.Uri
 import android.widget.Toast
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
@@ -55,6 +58,54 @@ class DefaultMainRepository() : MainRepository {
             )
             posts.document(postId).set(post).await()
             Resource.Success(Any())
+        }
+    }
+
+    override suspend fun updatePassword(
+        oldPassword: String,
+        newPassword: String
+    ): Resource<Boolean> {
+        return withContext(Dispatchers.IO) {
+            safeCall {
+                val user = Firebase.auth.currentUser
+
+                val credential = EmailAuthProvider
+                    .getCredential(user?.email!!, oldPassword)
+
+                val result = user.reauthenticate(credential).await()
+                val result1 = user.updatePassword(newPassword).await()
+
+                Resource.Success(result)
+                Resource.Success(result1)
+                Resource.Success(true)
+            }
+        }
+    }
+
+    override suspend fun updateProfile(
+        username: String,
+        description: String,
+        profession: String,
+        interests: List<String>
+    ): Resource<Boolean> {
+        return withContext(Dispatchers.IO) {
+            safeCall {
+
+                val user = Firebase.auth.currentUser
+                val profileUpdate =
+                    UserProfileChangeRequest.Builder().setDisplayName(username).build()
+
+                val result = user!!.updateProfile(profileUpdate).await()
+                val result1 = users.document(user.uid)
+                    .update("userName", username, "description", description)
+                val result2 = cred.document(user.uid)
+                    .update("interest", interests, "profession", profession)
+
+                Resource.Success(result)
+                Resource.Success(result1)
+                Resource.Success(result2)
+                Resource.Success(true)
+            }
         }
     }
 

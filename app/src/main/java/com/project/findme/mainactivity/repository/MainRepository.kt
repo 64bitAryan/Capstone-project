@@ -17,4 +17,13 @@ interface MainRepository{
 
     suspend fun createPost(imageUri: Uri, title: String, description:String): Resource<Any>
 
+    suspend fun updatePassword(oldPassword: String, newPassword: String): Resource<Boolean>
+
+    suspend fun updateProfile(
+        username: String,
+        description: String,
+        profession: String,
+        interests: List<String>
+    ): Resource<Boolean>
+
 }
