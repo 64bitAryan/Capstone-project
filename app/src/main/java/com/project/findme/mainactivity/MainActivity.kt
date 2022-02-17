@@ -96,13 +96,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
-            if (navController.currentDestination?.id == R.id.editProfileFragment
+            return if (navController.currentDestination?.id == R.id.editProfileFragment
                 || navController.currentDestination?.id == R.id.createPostFragment
             ) {
                 drawerLayout.closeDrawer(GravityCompat.START)
-                return super.onOptionsItemSelected(item)
+                super.onOptionsItemSelected(item)
+            } else{
+                true
             }
-            return true
         }
 
         return super.onOptionsItemSelected(item)
