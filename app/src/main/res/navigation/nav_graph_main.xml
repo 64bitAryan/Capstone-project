@@ -49,4 +49,9 @@
         android:name="com.project.findme.mainactivity.mainfragments.ui.editProfile.EditProfileFragment"
         android:label="Edit Profile"
         tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/changePasswordFragment"
+        android:name="com.project.findme.mainactivity.mainfragments.ui.changePassword.ChangePasswordFragment"
+        android:label="Change Password"
+        tools:layout="@layout/fragment_change_password" />
 </navigation>

@@ -56,8 +56,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             etUsernameEditProfile.setText(viewModel.username)
             etDescriptionEditProfile.setText(viewModel.description)
             etProfessionEditProfile.setText(viewModel.profession)
-            etEditUserPassword.setText(viewModel.oldPassword)
-            etEditUserNewPassword.setText(viewModel.newPassword)
 
             etUsernameEditProfile.addTextChangedListener {
                 viewModel.username = it.toString()
@@ -71,22 +69,9 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 viewModel.profession = it.toString()
             }
 
-            etEditUserPassword.addTextChangedListener {
-                viewModel.oldPassword = it.toString()
-            }
-
-            etEditUserNewPassword.addTextChangedListener {
-                viewModel.newPassword = it.toString()
-            }
-
             addBt.setOnClickListener {
                 val interest: String = etInterestsEditProfile.text.toString()
                 addChipToGroup(requireContext(), interest)
-            }
-
-            btnChangePassword.setOnClickListener {
-                hideKeyboard(activity as Activity)
-                viewModel.changePassword()
             }
 
             btnUpdateProfile.setOnClickListener {
@@ -133,7 +118,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             showProgress(false)
             when (it) {
                 true -> {
-                    snackbar("Password changed successfully!")
+                    snackbar("User profile updated successfully!")
                 }
                 false -> snackbar("Error occurred!")
             }

@@ -1,134 +1,164 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.project.findme.mainactivity.mainfragments.ui.editProfile.EditProfileFragment">
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_progress_edit_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:translationZ="40dp"
+        android:visibility="invisible"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp">
+
+            <ProgressBar
+                android:id="@+id/progress_bar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="Updating Profile...\nPlease wait"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/progress_bar" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parent_layout_edit_profile"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cv_progress_edit_profile"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="40dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <ImageView
+            android:id="@+id/iv_profile_picture_edit_user"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="20dp"
+            android:clickable="true"
+            android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:translationZ="40dp"
-            android:visibility="invisible">
+            app:srcCompat="@drawable/ic_person" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp">
-
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/tv_progress"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/progress_bar"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:gravity="center"
-                    android:text="Updating Profile...\nPlease wait" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/parent_layout_edit_profile"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_layout_username_edit_profile"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:hint="Username"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_profile_picture_edit_user"
+            app:startIconDrawable="@drawable/ic_person">
 
-            <ImageView
-                android:id="@+id/iv_profile_picture_edit_user"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_person"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:clickable="true"
-                android:focusable="true" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_layout_username_edit_profile"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/iv_profile_picture_edit_user"
-                app:startIconDrawable="@drawable/ic_person"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_username_edit_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="30dp"
-                android:hint="Username">
+                android:inputType="text" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_username_edit_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-            </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_layout_description_edit_profile"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:hint="Description"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_layout_username_edit_profile"
+            app:startIconDrawable="@drawable/ic_chat">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_layout_description_edit_profile"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_layout_username_edit_profile"
-                app:startIconDrawable="@drawable/ic_chat"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_description_edit_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="30dp"
-                android:hint="Description">
+                android:inputType="text" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_description_edit_profile"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-            </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/text_layout_profession_edit_profile"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="30dp"
+            android:hint="Profession"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_layout_description_edit_profile"
+            app:startIconDrawable="@drawable/ic_person">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/text_layout_profession_edit_profile"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_layout_description_edit_profile"
-                app:startIconDrawable="@drawable/ic_person"
+            <AutoCompleteTextView
+                android:id="@+id/et_profession_edit_profile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="30dp"
-                android:hint="Profession">
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:paddingStart="15dp"
+                android:paddingTop="15dp"
+                android:paddingEnd="15dp"
+                android:paddingBottom="10dp"
+                tools:ignore="LabelFor" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <RelativeLayout
+            android:id="@+id/relative_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text_layout_profession_edit_profile">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_layout_interests_edit_profile"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="30dp"
+                android:hint="Hobbies or Interest">
 
                 <AutoCompleteTextView
-                    android:id="@+id/et_profession_edit_profile"
+                    android:id="@+id/et_interests_edit_profile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:imeOptions="actionDone"
@@ -139,166 +169,59 @@
                     android:paddingBottom="10dp"
                     tools:ignore="LabelFor" />
 
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <RelativeLayout
-                android:id="@+id/relative_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_layout_profession_edit_profile"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/text_layout_interests_edit_profile"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="30dp"
-                    android:hint="Hobbies or Interest">
-
-                    <AutoCompleteTextView
-                        android:id="@+id/et_interests_edit_profile"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:imeOptions="actionDone"
-                        android:inputType="text"
-                        android:paddingStart="15dp"
-                        android:paddingTop="15dp"
-                        android:paddingEnd="15dp"
-                        android:paddingBottom="10dp"
-                        tools:ignore="LabelFor" />
-
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/add_bt"
-                    app:layout_constraintEnd_toEndOf="@+id/text_layout_interests_edit_profile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginTop="48dp"
-                    android:layout_marginEnd="34dp"
-                    android:background="@color/color_primary"
-                    android:text="Add"
-                    android:textAllCaps="false" />
-
-            </RelativeLayout>
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/edit_profile_hobbies_cg"
-                style="@style/Widget.MaterialComponents.ChipGroup"
-                app:chipSpacing="2dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/relative_layout"
-                app:layout_goneMarginEnd="30dp"
-                app:layout_goneMarginStart="30dp"
-                app:layout_goneMarginTop="20dp"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="30dp"
-                android:orientation="horizontal">
-
-            </com.google.android.material.chip.ChipGroup>
-
-            <TextView
-                android:id="@+id/tv_change_password"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/edit_profile_hobbies_cg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="10dp"
-                android:text="Change Password:"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/user_password"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_change_password"
-                app:passwordToggleEnabled="true"
-                app:startIconDrawable="@drawable/ic_lock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="30dp"
-                android:hint="Enter your current password">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_edit_user_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:maxLines="1" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/user_new_password"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/user_password"
-                app:passwordToggleEnabled="true"
-                app:startIconDrawable="@drawable/ic_lock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="30dp"
-                android:hint="Enter new password"
-                android:visibility="visible">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_edit_user_new_password"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_change_password"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/user_new_password"
+                android:id="@+id/add_bt"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginEnd="20dp"
-                android:padding="10dp"
-                android:text="Change Password"
-                android:textAllCaps="false" />
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="34dp"
+                android:background="@color/color_primary"
+                android:text="Add"
+                android:textAllCaps="false"
+                app:layout_constraintEnd_toEndOf="@+id/text_layout_interests_edit_profile" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_update_profile"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/btn_change_password"
-                app:layout_constraintVertical_bias="1.0"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginBottom="20dp"
-                android:text="Save"
-                android:textAllCaps="false" />
+        </RelativeLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/edit_profile_hobbies_cg"
+            style="@style/Widget.MaterialComponents.ChipGroup"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="30dp"
+            android:orientation="horizontal"
+            app:chipSpacing="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/relative_layout"
+            app:layout_goneMarginEnd="30dp"
+            app:layout_goneMarginStart="30dp"
+            app:layout_goneMarginTop="20dp">
 
+        </com.google.android.material.chip.ChipGroup>
+
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_update_profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="20dp"
+            android:text="Save"
+            android:textAllCaps="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/edit_profile_hobbies_cg"
+            app:layout_constraintVertical_bias="1.0" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

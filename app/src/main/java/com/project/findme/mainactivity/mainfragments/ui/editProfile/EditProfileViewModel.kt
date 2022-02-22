@@ -41,37 +41,6 @@ class EditProfileViewModel @Inject constructor(
             state.set("profession", value)
         }
 
-    var oldPassword = state.get<String>("oldPassword") ?: ""
-        set(value) {
-            field = value
-            state.set("oldPassword", value)
-        }
-
-    var newPassword = state.get<String>("newPassword") ?: ""
-        set(value) {
-            field = value
-            state.set("newPassword", value)
-        }
-
-    fun changePassword() {
-
-        val error = if (oldPassword.isEmpty() || newPassword.isEmpty()) {
-            applicationContext.getString(R.string.error_input_empty)
-        } else null
-
-        error?.let {
-            _updateProfileStatus.postValue(Events(Resource.Error(error)))
-            return
-        }
-
-        _updateProfileStatus.postValue(Events(Resource.Loading()))
-
-        viewModelScope.launch(dispatcher) {
-            val result = repository.updatePassword(oldPassword, newPassword)
-            _updateProfileStatus.postValue(Events(result))
-        }
-    }
-
     fun updateProfile(interests: List<String>) {
 
         val error = if (username.isEmpty() || description.isEmpty() || profession.isEmpty()) {
