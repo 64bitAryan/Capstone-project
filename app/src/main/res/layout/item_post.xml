@@ -117,6 +117,17 @@
             android:ellipsize="end"
             android:maxLength="60"/>
 
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/delete_btn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/delete_outline"
+            android:background="@drawable/button_translucent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </com.google.android.material.card.MaterialCardView>
