@@ -1,5 +1,6 @@
 package com.project.findme.mainactivity.mainfragments.ui.userProfile
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
@@ -7,10 +8,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.project.findme.data.entity.User
+import com.project.findme.utils.EventObserver
+import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentUserProfileBinding
 
-class UserProfileFragment: Fragment(R.layout.fragment_user_profile) {
+class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private lateinit var viewModel: UserProfileViewModel
     private lateinit var binding: FragmentUserProfileBinding
@@ -19,6 +23,9 @@ class UserProfileFragment: Fragment(R.layout.fragment_user_profile) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java)
+        subscribeToObserve()
+
+        viewModel.updateUI()
 
         binding = FragmentUserProfileBinding.bind(view)
         binding.apply {
@@ -28,6 +35,35 @@ class UserProfileFragment: Fragment(R.layout.fragment_user_profile) {
                     UserProfileFragmentDirections.actionUserProfileFragmentToEditProfileFragment()
                 )
             }
+        }
+    }
+
+    private fun subscribeToObserve() {
+
+        viewModel.userProfileStatus.observe(viewLifecycleOwner, EventObserver(
+
+            onError = {
+                showProgress(false)
+                snackbar(it)
+            },
+            onLoading = {
+                showProgress(true)
+            }
+        ) { user ->
+            updateUI(user)
+            showProgress(false)
+        })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateUI(user: User){
+        binding.apply {
+            tvNameUserProfile.text = user.userName
+            tvDescriptionUserProfile.text = user.description
+            tvFollowersUserProfile.text = user.follows.size.toString() + " Followers"
+            tvFollowingsUserProfile.text = user.followings.size.toString() + " Followings"
+            btnFollowUser.visibility = View.INVISIBLE
+            btnMessageUser.visibility = View.INVISIBLE
         }
     }
 

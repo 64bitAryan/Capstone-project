@@ -41,7 +41,7 @@ class DefaultMainRepository() : MainRepository {
         imageUri: Uri,
         title: String,
         description: String
-    ): Resource<Any> = withContext(Dispatchers.IO){
+    ): Resource<Any> = withContext(Dispatchers.IO) {
         safeCall {
             val uid = auth.uid!!
             val postId = UUID.randomUUID().toString()
@@ -106,6 +106,14 @@ class DefaultMainRepository() : MainRepository {
                 Resource.Success(result2)
                 Resource.Success(true)
             }
+        }
+    }
+
+    override suspend fun updateProfileUI(): Resource<User> = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = auth.currentUser!!.uid
+            val user = users.document(uid).get().await().toObject(User::class.java)
+            Resource.Success(user!!)
         }
     }
 

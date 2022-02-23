@@ -48,7 +48,11 @@
         android:id="@+id/editProfileFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.editProfile.EditProfileFragment"
         android:label="Edit Profile"
-        tools:layout="@layout/fragment_edit_profile" />
+        tools:layout="@layout/fragment_edit_profile" >
+        <action
+            android:id="@+id/action_editProfileFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/changePasswordFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.changePassword.ChangePasswordFragment"

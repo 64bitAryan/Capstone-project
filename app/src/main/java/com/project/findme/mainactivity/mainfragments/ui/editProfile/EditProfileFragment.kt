@@ -1,5 +1,6 @@
 package com.project.findme.mainactivity.mainfragments.ui.editProfile
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
@@ -10,7 +11,10 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
+import com.project.findme.data.entity.User
+import com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileFragmentDirections
 import com.project.findme.utils.Constants.hobbies
 import com.project.findme.utils.Constants.professions
 import com.project.findme.utils.EventObserver
@@ -30,6 +34,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
         viewModel = ViewModelProvider(requireActivity()).get(EditProfileViewModel::class.java)
         subscribeToObserve()
+        viewModel.updateUI()
 
         binding = FragmentEditProfileBinding.bind(view)
 
@@ -105,6 +110,20 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     private fun subscribeToObserve() {
 
+        viewModel.updateUIStatus.observe(viewLifecycleOwner, EventObserver(
+
+            onError = {
+                showProgress(false)
+                snackbar(it)
+            },
+            onLoading = {
+                showProgress(true)
+            }
+        ) { user ->
+            updateUI(user)
+            showProgress(false)
+        })
+
         viewModel.updateProfileStatus.observe(viewLifecycleOwner, EventObserver(
 
             onError = {
@@ -119,10 +138,26 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             when (it) {
                 true -> {
                     snackbar("User profile updated successfully!")
+                    binding.etUsernameEditProfile.setText("")
+                    binding.etDescriptionEditProfile.setText("")
+                    binding.etProfessionEditProfile.setText("")
+                    findNavController().navigate(EditProfileFragmentDirections.actionEditProfileFragmentToUserProfileFragment())
                 }
                 false -> snackbar("Error occurred!")
             }
         })
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun updateUI(user: User) {
+        binding.apply {
+            etUsernameEditProfile.setText(user.userName)
+            etDescriptionEditProfile.setText(user.description)
+            etProfessionEditProfile.setText(user.credential.profession)
+            for (interest in user.credential.interest) {
+                addChipToGroup(requireContext(), interest)
+            }
+        }
     }
 
     private fun showProgress(bool: Boolean) {

@@ -2,6 +2,7 @@ package com.project.findme.mainactivity.mainfragments.ui.editProfile
 
 import android.content.Context
 import androidx.lifecycle.*
+import com.project.findme.data.entity.User
 import com.project.findme.mainactivity.repository.MainRepository
 import com.project.findme.utils.Events
 import com.project.findme.utils.Resource
@@ -22,6 +23,9 @@ class EditProfileViewModel @Inject constructor(
 
     private val _updateProfileStatus = MutableLiveData<Events<Resource<Boolean>>>()
     val updateProfileStatus: LiveData<Events<Resource<Boolean>>> = _updateProfileStatus
+
+    private val _updateUIStatus = MutableLiveData<Events<Resource<User>>>()
+    val updateUIStatus: LiveData<Events<Resource<User>>> = _updateUIStatus
 
     var username = state.get<String>("username") ?: ""
         set(value) {
@@ -57,6 +61,15 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch(dispatcher) {
             val result = repository.updateProfile(username, description, profession, interests)
             _updateProfileStatus.postValue(Events(result))
+        }
+    }
+
+    fun updateUI(){
+        _updateUIStatus.postValue(Events(Resource.Loading()))
+
+        viewModelScope.launch(dispatcher) {
+            val user = repository.updateProfileUI()
+            _updateUIStatus.postValue(Events(user))
         }
     }
 
