@@ -9,6 +9,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import com.project.findme.data.entity.Credential
 import com.project.findme.data.entity.Post
 import com.project.findme.data.entity.User
 import com.project.findme.utils.Resource
@@ -97,13 +98,17 @@ class DefaultMainRepository() : MainRepository {
 
                 val result = user!!.updateProfile(profileUpdate).await()
                 val result1 = users.document(user.uid)
-                    .update("userName", username, "description", description)
+                    .update("userName", username, "description", description).await()
                 val result2 = cred.document(user.uid)
-                    .update("interest", interests, "profession", profession)
+                    .update("interest", interests, "profession", profession).await()
+
+                val credential = cred.document(user.uid).get().await().toObject(Credential::class.java)
+                val result3 = users.document(user.uid).update("credential", credential).await()
 
                 Resource.Success(result)
                 Resource.Success(result1)
                 Resource.Success(result2)
+                Resource.Success(result3)
                 Resource.Success(true)
             }
         }
