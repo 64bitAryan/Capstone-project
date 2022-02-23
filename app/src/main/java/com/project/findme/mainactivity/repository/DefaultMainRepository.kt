@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.project.findme.data.entity.Post
@@ -16,6 +17,7 @@ import com.project.findme.utils.safeCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.lang.IllegalStateException
 import java.util.*
 
 class DefaultMainRepository() : MainRepository {
@@ -106,6 +108,35 @@ class DefaultMainRepository() : MainRepository {
                 Resource.Success(result2)
                 Resource.Success(true)
             }
+        }
+    }
+
+    override suspend fun getPostForProfile(uid: String) = withContext(Dispatchers.IO) {
+        safeCall {
+            val profilePosts = posts.whereEqualTo("authorUid", uid)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(Post::class.java)
+                .onEach { post ->
+                    val user = getUser(post.authorUid).data!!
+                    post.authorProfilePictureUrl = user.profilePicture
+                    post.authorUsername = user.userName
+                    post.isLiked = uid in post.likedBy
+                }
+            Resource.Success(profilePosts)
+        }
+    }
+
+    override suspend fun getUser(uid: String) = withContext(Dispatchers.IO) {
+        safeCall{
+            val user = users.document(uid).get().await().toObject(User::class.java)
+                ?: throw IllegalStateException()
+            val currentUid = FirebaseAuth.getInstance().uid!!
+            val currentUser = users.document(currentUid).get().await().toObject(User::class.java)
+                ?: throw IllegalStateException()
+            user.isFollowing = uid in currentUser.follows
+            Resource.Success(user)
         }
     }
 

@@ -4,6 +4,7 @@ import android.accounts.AuthenticatorDescription
 import android.net.Uri
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.project.findme.data.entity.Post
 import com.project.findme.data.entity.User
 import com.project.findme.utils.Resource
 import com.project.findme.utils.safeCall
@@ -26,4 +27,8 @@ interface MainRepository{
         interests: List<String>
     ): Resource<Boolean>
 
+
+    suspend fun getPostForProfile(uid: String): Resource<List<Post>>
+    
+    suspend fun getUser(uid: String): Resource<User>
 }
