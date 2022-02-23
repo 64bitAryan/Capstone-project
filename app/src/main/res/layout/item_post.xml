@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/material_cv"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="@color/white"
@@ -12,147 +12,83 @@
     app:cardUseCompatPadding="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraint_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/effect_fade">
+        android:layout_height="match_parent">
 
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/post_iv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_width="match_parent"
             android:layout_height="380dp"
-            android:scaleType="fitXY"
             android:src="@drawable/testimage"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:scaleType = "centerCrop"/>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/home_profile_info"
+        <androidx.appcompat.widget.AppCompatImageView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/effect_fade"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/post_profile_pic"
+            app:layout_constraintTop_toTopOf="@id/post_iv"
+            app:layout_constraintStart_toStartOf="@id/post_iv"
+            android:layout_margin="12dp"
+            android:src="@drawable/test2"
+            android:layout_width="55dp"
+            android:translationZ="14dp"
+            android:layout_height="55dp"/>
+
+        <TextView
+            android:id="@+id/post_username_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintStart_toEndOf="@+id/post_profile_pic"
+            android:text="Obi-Wan Kenobi"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="12dp"/>
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/post_profile_pic"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_margin="12dp"
-                android:src="@drawable/test2"
-                android:translationZ="14dp"
-                app:civ_border_color="@color/color_primary"
-                app:civ_border_width="2dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/post_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/post_username_tv"
+            app:layout_constraintStart_toEndOf="@id/post_profile_pic"
+            android:text="conquer the world"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="6dp"/>
 
-            <TextView
-                android:id="@+id/post_username_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="20dp"
-                android:text="Obi-Wan Kenobi"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@+id/post_profile_pic"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/post_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="6dp"
-                android:text="conquer the world"
-                app:layout_constraintStart_toEndOf="@id/post_profile_pic"
-                app:layout_constraintTop_toBottomOf="@+id/post_username_tv" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <ImageButton
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/post_like_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
             android:layout_marginEnd="12dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/button_translucent"
-            android:padding="10dp"
-            android:src="@drawable/ic_heart"
-            app:layout_constraintBottom_toBottomOf="@id/constraint_layout"
-            app:layout_constraintStart_toStartOf="@+id/constraint_layout"
-            app:layout_constraintTop_toBottomOf="@+id/post_iv"
-            app:layout_goneMarginStart="10dp" />
-
-        <TextView
-            android:id="@+id/tv_likes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="16dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:minWidth="48dp"
-            android:minHeight="48dp"
+            android:layout_marginStart="16dp"
             android:text="24k"
-            android:gravity="center"
-            android:textColor="@color/mediumDarkBackground"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/constraint_layout"
-            app:layout_constraintStart_toEndOf="@id/post_like_btn"
-            app:layout_constraintTop_toBottomOf="@id/post_iv" />
+            android:drawableStart="@drawable/ic_heart"
+            android:background="@drawable/button_translucent"
+            android:paddingLeft="10dp"/>
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/post_comment_btn"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/post_like_btn"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/button_translucent"
+            android:layout_marginStart="12dp"
             android:src="@drawable/ic_outline_comment"
-            app:layout_constraintStart_toEndOf="@+id/tv_likes"
-            app:layout_constraintTop_toBottomOf="@+id/post_iv" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/delete_btn"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:layout_marginEnd="12dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/button_translucent"
-            android:src="@drawable/delete_outline"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <TextView
-            android:id="@+id/description_tv"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="6dp"
-            android:layout_marginBottom="12dp"
-            android:ellipsize="end"
-            android:maxLength="60"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/delete_btn"
-            app:layout_constraintStart_toEndOf="@id/post_comment_btn"
-            app:layout_constraintTop_toBottomOf="@id/post_iv" />
-
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/delete_btn"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="12dp"
-            android:src="@drawable/delete_outline"
             android:background="@drawable/button_translucent"/>
 
         <androidx.appcompat.widget.AppCompatImageButton
