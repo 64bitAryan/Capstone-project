@@ -24,8 +24,8 @@
         android:label="Search"
         tools:layout="@layout/fragment_search_person" >
         <action
-            android:id="@+id/action_personSearchFragment_to_userProfileFragment"
-            app:destination="@id/userProfileFragment" />
+            android:id="@+id/action_personSearchFragment_to_searchedProfileFragment"
+            app:destination="@id/searchedProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/userProfileFragment"
@@ -35,11 +35,6 @@
         <action
             android:id="@+id/action_userProfileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
-        <argument
-            android:name="uid"
-            app:argType="string"
-            app:nullable="true"
-            android:defaultValue="@null" />
     </fragment>
     <dialog
         android:id="@+id/signOutDialogFragment"
@@ -67,4 +62,16 @@
         android:name="com.project.findme.mainactivity.mainfragments.ui.changePassword.ChangePasswordFragment"
         android:label="Change Password"
         tools:layout="@layout/fragment_change_password" />
+    <fragment
+        android:id="@+id/searchedProfileFragment"
+        android:name="com.project.findme.mainactivity.mainfragments.ui.searchedProfile.SearchedProfileFragment"
+        android:label="Username"
+        tools:layout="@layout/fragment_searched_profile" >
+        <argument
+            android:name="uid"
+            app:argType="string" />
+        <argument
+            android:name="username"
+            app:argType="string" />
+    </fragment>
 </navigation>

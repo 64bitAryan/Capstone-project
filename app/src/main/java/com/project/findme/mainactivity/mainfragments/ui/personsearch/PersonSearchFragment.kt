@@ -54,8 +54,9 @@ class PersonSearchFragment : Fragment(R.layout.fragment_search_person) {
 
         userAdapter.setOnUserClickListener { user ->
             findNavController().navigate(
-                PersonSearchFragmentDirections.actionPersonSearchFragmentToUserProfileFragment(
-                    user.uid
+                PersonSearchFragmentDirections.actionPersonSearchFragmentToSearchedProfileFragment(
+                    uid = user.uid,
+                    username = user.userName
                 )
             )
         }
