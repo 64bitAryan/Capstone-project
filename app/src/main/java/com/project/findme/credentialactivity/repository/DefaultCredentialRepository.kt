@@ -13,6 +13,7 @@ class DefaultCredentialRepository: CredentialRepository {
 
     val auth = FirebaseAuth.getInstance()
     val cred = FirebaseFirestore.getInstance().collection("credentials")
+    val users = FirebaseFirestore.getInstance().collection("users")
 
     override suspend fun postCredentials(
         credential: Credential
@@ -21,6 +22,7 @@ class DefaultCredentialRepository: CredentialRepository {
             safeCall {
                 val uid = auth.currentUser?.uid!!
                 val result = cred.document(uid).set(credential).await()
+                users.document(uid).update("credential", credential).await()
                 Resource.Success(result)
             }
         }

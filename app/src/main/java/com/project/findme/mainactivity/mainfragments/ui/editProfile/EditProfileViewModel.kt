@@ -1,10 +1,10 @@
 package com.project.findme.mainactivity.mainfragments.ui.editProfile
 
 import android.content.Context
-import android.util.Patterns
 import androidx.lifecycle.*
+import com.project.findme.data.entity.Post
+import com.project.findme.data.entity.User
 import com.project.findme.mainactivity.repository.MainRepository
-import com.project.findme.utils.Constants
 import com.project.findme.utils.Events
 import com.project.findme.utils.Resource
 import com.ryan.findme.R
@@ -18,12 +18,8 @@ import javax.inject.Inject
 class EditProfileViewModel @Inject constructor(
     private val state: SavedStateHandle,
     private val repository: MainRepository,
-    private val applicationContext: Context,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
-
-    private val _updateProfileStatus = MutableLiveData<Events<Resource<Boolean>>>()
-    val updateProfileStatus: LiveData<Events<Resource<Boolean>>> = _updateProfileStatus
 
     var username = state.get<String>("username") ?: ""
         set(value) {
@@ -43,42 +39,15 @@ class EditProfileViewModel @Inject constructor(
             state.set("profession", value)
         }
 
-    var oldPassword = state.get<String>("oldPassword") ?: ""
-        set(value) {
-            field = value
-            state.set("oldPassword", value)
-        }
-
-    var newPassword = state.get<String>("newPassword") ?: ""
-        set(value) {
-            field = value
-            state.set("newPassword", value)
-        }
-
-    fun changePassword() {
-
-        val error = if (oldPassword.isEmpty() || newPassword.isEmpty()) {
-            applicationContext.getString(R.string.error_input_empty)
-        } else null
-
-        error?.let {
-            _updateProfileStatus.postValue(Events(Resource.Error(error)))
-            return
-        }
-
-        _updateProfileStatus.postValue(Events(Resource.Loading()))
-
-        viewModelScope.launch(dispatcher) {
-            val result = repository.updatePassword(oldPassword, newPassword)
-            _updateProfileStatus.postValue(Events(result))
-        }
-    }
+    private val _updateProfileStatus = MutableLiveData<Events<Resource<Unit>>>()
+    val updateProfileStatus: LiveData<Events<Resource<Unit>>> = _updateProfileStatus
 
     fun updateProfile(interests: List<String>) {
 
-        val error = if (username.isEmpty() || description.isEmpty() || profession.isEmpty()) {
-            applicationContext.getString(R.string.error_input_empty)
-        } else null
+        val error =
+            if (username.isEmpty() || description.isEmpty() || profession.isEmpty() || interests.isEmpty()) {
+                "The field must not be empty!"
+            } else null
 
         error?.let {
             _updateProfileStatus.postValue(Events(Resource.Error(error)))
@@ -86,10 +55,21 @@ class EditProfileViewModel @Inject constructor(
         }
 
         _updateProfileStatus.postValue(Events(Resource.Loading()))
-
         viewModelScope.launch(dispatcher) {
             val result = repository.updateProfile(username, description, profession, interests)
-            _updateProfileStatus.postValue(Events(result))
+            _updateProfileStatus.postValue(Events(Resource.Success(result)))
+        }
+    }
+
+    private val _updateUIStatus = MutableLiveData<Events<Resource<User>>>()
+    val updateUIStatus: LiveData<Events<Resource<User>>> = _updateUIStatus
+
+    fun updateUI(uid: String) {
+        _updateUIStatus.postValue(Events(Resource.Loading()))
+
+        viewModelScope.launch(dispatcher) {
+            val user = repository.updateProfileUI(uid)
+            _updateUIStatus.postValue(Events(user))
         }
     }
 }

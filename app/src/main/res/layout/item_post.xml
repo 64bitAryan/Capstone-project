@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="8dp"
+    app:cardMaxElevation="10dp"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/post_iv"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="380dp"
+            android:src="@drawable/testimage"
+            android:scaleType = "centerCrop"/>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="@drawable/effect_fade"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/post_profile_pic"
+            app:layout_constraintTop_toTopOf="@id/post_iv"
+            app:layout_constraintStart_toStartOf="@id/post_iv"
+            android:layout_margin="12dp"
+            android:src="@drawable/test2"
+            android:layout_width="55dp"
+            android:translationZ="14dp"
+            android:layout_height="55dp"/>
+
+        <TextView
+            android:id="@+id/post_username_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@+id/post_profile_pic"
+            android:text="Obi-Wan Kenobi"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="20dp"
+            android:layout_marginStart="12dp"/>
+
+        <TextView
+            android:id="@+id/post_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/post_username_tv"
+            app:layout_constraintStart_toEndOf="@id/post_profile_pic"
+            android:text="conquer the world"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="6dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/post_like_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="16dp"
+            android:text="24k"
+            android:drawableStart="@drawable/ic_heart"
+            android:background="@drawable/button_translucent"
+            android:paddingLeft="10dp"/>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/post_comment_btn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/post_like_btn"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="12dp"
+            android:src="@drawable/ic_outline_comment"
+            android:background="@drawable/button_translucent"/>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/delete_btn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="12dp"
+            android:src="@drawable/delete_outline"
+            android:background="@drawable/button_translucent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

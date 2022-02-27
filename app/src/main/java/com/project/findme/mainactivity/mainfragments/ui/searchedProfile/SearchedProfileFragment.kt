@@ -1,64 +1,61 @@
-package com.project.findme.mainactivity.mainfragments.ui.userProfile
+package com.project.findme.mainactivity.mainfragments.ui.searchedProfile
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
-import com.google.firebase.auth.FirebaseAuth
-import com.project.findme.adapter.PostAdapter
 import com.project.findme.adapter.PostAdapterProfile
 import com.project.findme.data.entity.User
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
-import com.ryan.findme.databinding.FragmentUserProfileBinding
+import com.ryan.findme.databinding.FragmentSearchedProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
+class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
 
     @Inject
     lateinit var postAdapter: PostAdapterProfile
 
     @Inject
     lateinit var glide: RequestManager
-    private lateinit var viewModel: UserProfileViewModel
-    private lateinit var binding: FragmentUserProfileBinding
+    private lateinit var viewModel: SearchedProfileViewModel
+    private lateinit var binding: FragmentSearchedProfileBinding
+    private val args: SearchedProfileFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(SearchedProfileViewModel::class.java)
         subscribeToObserve()
 
-        binding = FragmentUserProfileBinding.bind(view)
+        binding = FragmentSearchedProfileBinding.bind(view)
 
-        FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.updateUI(it) }
-        FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.getPost(it) }
+        viewModel.updateUI(args.uid)
+        viewModel.getPost(args.uid)
 
         setUpRecyclerView()
 
         binding.apply {
 
-            ivEditProfile.setOnClickListener {
-                findNavController().navigate(
-                    UserProfileFragmentDirections.actionUserProfileFragmentToEditProfileFragment()
-                )
+            swipeRefreshLayoutSearchedProfile.setOnRefreshListener {
+                viewModel.updateUI(args.uid)
+                viewModel.getPost(args.uid)
             }
 
-            swipeRefreshLayoutProfile.setOnRefreshListener {
-                FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.updateUI(it) }
-                FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.getPost(it) }
+            btnFollowUser.setOnClickListener {
+
+            }
+
+            btnMessageUser.setOnClickListener {
+
             }
         }
 
@@ -66,7 +63,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private fun subscribeToObserve() {
 
-        viewModel.userProfileStatus.observe(viewLifecycleOwner, EventObserver(
+        viewModel.searchedProfileStatus.observe(viewLifecycleOwner, EventObserver(
 
             onError = {
                 showProgress(false)
@@ -95,7 +92,7 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     }
 
     private fun setUpRecyclerView() {
-        binding.postRvProfile.apply {
+        binding.postRvSearchedProfile.apply {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = postAdapter
         }
@@ -103,15 +100,15 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
 
     private fun showProgress(bool: Boolean) {
         binding.apply {
-            swipeRefreshLayoutProfile.isRefreshing = bool
+            swipeRefreshLayoutSearchedProfile.isRefreshing = bool
             if (bool) {
-                parentLayoutProfile.alpha = 0.5f
+                parentLayoutSearchedProfile.alpha = 0.5f
                 activity?.window!!.setFlags(
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                     WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                 )
             } else {
-                parentLayoutProfile.alpha = 1f
+                parentLayoutSearchedProfile.alpha = 1f
                 activity?.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
         }
@@ -120,11 +117,11 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     @SuppressLint("SetTextI18n")
     private fun updateUI(user: User) {
         binding.apply {
-            tvNameUserProfile.text = user.userName
-            tvDescriptionUserProfile.text = user.description
-            tvFollowersUserProfile.text = user.follows.size.toString() + " Followers"
-            tvFollowingsUserProfile.text = user.followings.size.toString() + " Followings"
-            glide.load(user.profilePicture).into(ivProfilePictureUserProfile)
+            tvNameSearchedProfile.text = user.userName
+            tvDescriptionSearchedProfile.text = user.description
+            tvFollowersSearchedProfile.text = user.follows.size.toString() + " Followers"
+            tvFollowingsSearchedProfile.text = user.followings.size.toString() + " Followings"
+            glide.load(user.profilePicture).into(ivProfilePictureSearchedProfile)
         }
     }
 }

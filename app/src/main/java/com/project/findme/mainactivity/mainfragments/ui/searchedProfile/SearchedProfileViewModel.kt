@@ -1,4 +1,4 @@
-package com.project.findme.mainactivity.mainfragments.ui.userProfile
+package com.project.findme.mainactivity.mainfragments.ui.searchedProfile
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,20 +16,20 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserProfileViewModel @Inject constructor(
+class SearchedProfileViewModel @Inject constructor(
     private val repository: MainRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
 
-    private val _userProfileStatus = MutableLiveData<Events<Resource<User>>>()
-    val userProfileStatus: LiveData<Events<Resource<User>>> = _userProfileStatus
+    private val _searchedProfileStatus = MutableLiveData<Events<Resource<User>>>()
+    val searchedProfileStatus: LiveData<Events<Resource<User>>> = _searchedProfileStatus
 
     fun updateUI(uid: String) {
-        _userProfileStatus.postValue(Events(Resource.Loading()))
+        _searchedProfileStatus.postValue(Events(Resource.Loading()))
 
         viewModelScope.launch(dispatcher) {
             val user = repository.updateProfileUI(uid)
-            _userProfileStatus.postValue(Events(user))
+            _searchedProfileStatus.postValue(Events(user))
         }
     }
 

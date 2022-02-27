@@ -10,7 +10,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.project.findme.credentialactivity.CredentialActivity
+import com.project.findme.mainactivity.MainActivity
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
@@ -37,7 +40,7 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
             editTextEmailLogin.setText(viewModel.email)
             editTextPasswordLogin.setText(viewModel.password)
 
-            editTextEmailLogin.addTextChangedListener{
+            editTextEmailLogin.addTextChangedListener {
                 viewModel.email = it.toString()
             }
 
@@ -81,9 +84,25 @@ class LoginFragment : Fragment(R.layout.fragment_login_user) {
             }
         ) {
             showProgress(false)
-            Intent(requireContext(), CredentialActivity::class.java).also {
-                startActivity(it)
-                requireActivity().finish()
+            FirebaseAuth.getInstance().currentUser?.uid?.let {
+                FirebaseFirestore.getInstance().collection("credentials").whereEqualTo("uid", it)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (!document.isEmpty) {
+                            Intent(requireContext(), MainActivity::class.java).also { intent ->
+                                startActivity(intent)
+                                requireActivity().finish()
+                            }
+                        } else {
+                            Intent(
+                                requireContext(),
+                                CredentialActivity::class.java
+                            ).also { intent ->
+                                startActivity(intent)
+                                requireActivity().finish()
+                            }
+                        }
+                    }
             }
         })
     }

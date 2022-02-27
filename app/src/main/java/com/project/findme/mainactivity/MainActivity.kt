@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -71,6 +72,13 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
         NavigationUI.setupWithNavController(navView, navController)
 
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.editProfileFragment || destination.id == R.id.createPostFragment) {
+                bottomNavBar.visibility = View.GONE
+            } else {
+                bottomNavBar.visibility = View.VISIBLE
+            }
+        }
 
         val headerView: View = navView.getHeaderView(0)
         val userEmail = headerView.findViewById<TextView>(R.id.text_view_user_email)
@@ -80,7 +88,7 @@ class MainActivity : AppCompatActivity() {
         userEmail.text = Firebase.auth.currentUser?.email ?: "guest@gmail.com"
         userName.text = Firebase.auth.currentUser?.displayName ?: "Guest"
         profile.setOnClickListener {
-            navController.navigate(R.id.action_global_userProfileFragment)
+            navController.navigate(R.id.userProfileFragment)
             drawerLayout.closeDrawer(GravityCompat.START)
         }
 
@@ -88,7 +96,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
-            return true
+            return if (navController.currentDestination?.id == R.id.editProfileFragment
+                || navController.currentDestination?.id == R.id.createPostFragment
+                || navController.currentDestination?.id == R.id.changePasswordFragment
+                || navController.currentDestination?.id == R.id.searchedProfileFragment
+            ) {
+                drawerLayout.closeDrawer(GravityCompat.START)
+                super.onOptionsItemSelected(item)
+            } else {
+                true
+            }
         }
 
         return super.onOptionsItemSelected(item)
