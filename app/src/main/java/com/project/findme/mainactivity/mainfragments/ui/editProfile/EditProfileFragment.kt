@@ -4,17 +4,19 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.chip.Chip
+import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.data.entity.User
-import com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileFragmentDirections
 import com.project.findme.utils.Constants.hobbies
 import com.project.findme.utils.Constants.professions
 import com.project.findme.utils.EventObserver
@@ -22,7 +24,9 @@ import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentEditProfileBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     private lateinit var viewModel: EditProfileViewModel
@@ -33,10 +37,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel = ViewModelProvider(requireActivity()).get(EditProfileViewModel::class.java)
-        subscribeToObserve()
-        viewModel.updateUI()
 
         binding = FragmentEditProfileBinding.bind(view)
+
+        FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.updateUI(it) }
+        subscribeToObserve()
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
             requireContext(),
@@ -57,10 +62,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
             etInterestsEditProfile.threshold = 1
             etInterestsEditProfile.setAdapter(adapterHobbies)
-
-            etUsernameEditProfile.setText(viewModel.username)
-            etDescriptionEditProfile.setText(viewModel.description)
-            etProfessionEditProfile.setText(viewModel.profession)
 
             etUsernameEditProfile.addTextChangedListener {
                 viewModel.username = it.toString()
@@ -85,10 +86,10 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             }
 
         }
-
     }
 
     private fun addChipToGroup(context: Context, interest: String) {
+
         val chip = Chip(context).apply {
             id = View.generateViewId()
             text = interest
@@ -105,6 +106,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             interests.remove(chip.text.toString())
             binding.editProfileHobbiesCg.removeView(chip)
         }
+
         binding.etInterestsEditProfile.text?.clear()
     }
 
@@ -125,7 +127,6 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         })
 
         viewModel.updateProfileStatus.observe(viewLifecycleOwner, EventObserver(
-
             onError = {
                 showProgress(false)
                 snackbar(it)
@@ -135,22 +136,16 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             }
         ) {
             showProgress(false)
-            when (it) {
-                true -> {
-                    snackbar("User profile updated successfully!")
-                    binding.etUsernameEditProfile.setText("")
-                    binding.etDescriptionEditProfile.setText("")
-                    binding.etProfessionEditProfile.setText("")
-                    findNavController().navigate(EditProfileFragmentDirections.actionEditProfileFragmentToUserProfileFragment())
-                }
-                false -> snackbar("Error occurred!")
-            }
+            snackbar("User profile updated successfully!")
+            findNavController().popBackStack()
         })
+
     }
 
     @SuppressLint("SetTextI18n")
     private fun updateUI(user: User) {
         binding.apply {
+            editProfileHobbiesCg.removeAllViews()
             etUsernameEditProfile.setText(user.userName)
             etDescriptionEditProfile.setText(user.description)
             etProfessionEditProfile.setText(user.credential.profession)
@@ -174,6 +169,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 activity?.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        interests = mutableSetOf()
     }
 
 }

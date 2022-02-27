@@ -9,6 +9,7 @@ import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.project.findme.adapter.UserAdapter
 import com.project.findme.utils.Constants.SEARCH_TIME_DELAY
@@ -52,7 +53,11 @@ class PersonSearchFragment : Fragment(R.layout.fragment_search_person) {
         }
 
         userAdapter.setOnUserClickListener { user ->
-            Toast.makeText(requireContext(), user.uid, Toast.LENGTH_LONG).show()
+            findNavController().navigate(
+                PersonSearchFragmentDirections.actionPersonSearchFragmentToUserProfileFragment(
+                    user.uid
+                )
+            )
         }
     }
 
@@ -68,11 +73,10 @@ class PersonSearchFragment : Fragment(R.layout.fragment_search_person) {
             }
         ) { userList ->
             binding.searchProgressbar.isVisible = false
-            if(userList.isEmpty()){
+            if (userList.isEmpty()) {
                 binding.recyclerViewSearchList.isVisible = false
                 binding.textViewEmptySearchList.isVisible = true
-            }
-            else{
+            } else {
                 binding.recyclerViewSearchList.isVisible = true
                 binding.textViewEmptySearchList.isVisible = false
                 userAdapter.users = userList

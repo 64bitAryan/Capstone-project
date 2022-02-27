@@ -22,7 +22,11 @@
         android:id="@+id/personSearchFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.personsearch.PersonSearchFragment"
         android:label="Search"
-        tools:layout="@layout/fragment_search_person" />
+        tools:layout="@layout/fragment_search_person" >
+        <action
+            android:id="@+id/action_personSearchFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/userProfileFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileFragment"
@@ -31,6 +35,11 @@
         <action
             android:id="@+id/action_userProfileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
+        <argument
+            android:name="uid"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <dialog
         android:id="@+id/signOutDialogFragment"

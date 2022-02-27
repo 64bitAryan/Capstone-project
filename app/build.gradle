@@ -111,4 +111,7 @@ dependencies {
 
     //Image Crop
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+
+    //Swipe refresh
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 }

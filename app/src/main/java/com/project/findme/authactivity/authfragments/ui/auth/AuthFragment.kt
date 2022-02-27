@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.project.findme.credentialactivity.CredentialActivity
 import com.project.findme.data.entity.User
@@ -26,7 +27,7 @@ const val REQUEST_CODE_SIGN_IN = 0
 @AndroidEntryPoint
 class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
 
-    private val viewModel : AuthViewModel by viewModels()
+    private val viewModel: AuthViewModel by viewModels()
     private lateinit var binding: FragmentAuthScreenBinding
     private val users = FirebaseFirestore.getInstance().collection("users")
 
@@ -35,13 +36,13 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
         subscribeToObserver()
         binding = FragmentAuthScreenBinding.bind(view)
         binding.apply {
-            buttonNavigateToRegisterScreen.setOnClickListener{
+            buttonNavigateToRegisterScreen.setOnClickListener {
                 findNavController().navigate(AuthFragmentDirections.actionGlobalRegisterFragment())
             }
-            textViewAlreadyUserLogin.setOnClickListener{
+            textViewAlreadyUserLogin.setOnClickListener {
                 findNavController().navigate(AuthFragmentDirections.actionGlobalLoginFragment())
             }
-            buttonGoogleSignIn.setOnClickListener { 
+            buttonGoogleSignIn.setOnClickListener {
                 viewModel.googleRegisterStatus
                 val option = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
@@ -59,7 +60,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if(requestCode == REQUEST_CODE_SIGN_IN) {
+        if (requestCode == REQUEST_CODE_SIGN_IN) {
             val account = GoogleSignIn.getSignedInAccountFromIntent(data)
             account.let {
                 viewModel.onSignInGoogleButtonClick(it)
@@ -67,7 +68,7 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
         }
     }
 
-    private fun subscribeToObserver(){
+    private fun subscribeToObserver() {
         binding = FragmentAuthScreenBinding.inflate(layoutInflater)
         viewModel.googleRegisterStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
@@ -87,9 +88,8 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
                     textViewAlreadyUserLogin.isClickable = false
                 }
             }
-        ){
+        ) {
             binding.apply {
-                authProgressbar.isVisible = false
                 buttonGoogleSignIn.isEnabled = false
                 buttonNavigateToRegisterScreen.isEnabled = false
                 textViewAlreadyUserLogin.isClickable = false
@@ -99,9 +99,26 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
             val user = User(uid, username)
             users.document(uid).set(user)
 
-            Intent(requireContext(), CredentialActivity::class.java).also { intent ->
-                startActivity(intent)
-                requireActivity().finish()
+            FirebaseAuth.getInstance().currentUser?.uid?.let {
+                FirebaseFirestore.getInstance().collection("credentials").whereEqualTo("uid", it)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        binding.authProgressbar.isVisible = false
+                        if (!document.isEmpty) {
+                            Intent(requireContext(), MainActivity::class.java).also { intent ->
+                                startActivity(intent)
+                                requireActivity().finish()
+                            }
+                        } else {
+                            Intent(
+                                requireContext(),
+                                CredentialActivity::class.java
+                            ).also { intent ->
+                                startActivity(intent)
+                                requireActivity().finish()
+                            }
+                        }
+                    }
             }
         })
     }

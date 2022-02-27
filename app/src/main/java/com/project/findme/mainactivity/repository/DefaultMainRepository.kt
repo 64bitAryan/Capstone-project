@@ -1,12 +1,14 @@
 package com.project.findme.mainactivity.repository
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.project.findme.data.entity.Credential
@@ -14,7 +16,9 @@ import com.project.findme.data.entity.Post
 import com.project.findme.data.entity.User
 import com.project.findme.utils.Resource
 import com.project.findme.utils.safeCall
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -65,7 +69,7 @@ class DefaultMainRepository() : MainRepository {
     override suspend fun updatePassword(
         oldPassword: String,
         newPassword: String
-    ): Resource<Boolean> {
+    ): Resource<Any> {
         return withContext(Dispatchers.IO) {
             safeCall {
                 val user = Firebase.auth.currentUser
@@ -73,12 +77,13 @@ class DefaultMainRepository() : MainRepository {
                 val credential = EmailAuthProvider
                     .getCredential(user?.email!!, oldPassword)
 
-                val result = user.reauthenticate(credential).await()
-                val result1 = user.updatePassword(newPassword).await()
+                val result = user.reauthenticate(credential).addOnSuccessListener {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        user.updatePassword(newPassword).await()
+                    }
+                }
 
                 Resource.Success(result)
-                Resource.Success(result1)
-                Resource.Success(true)
             }
         }
     }
@@ -88,7 +93,7 @@ class DefaultMainRepository() : MainRepository {
         description: String,
         profession: String,
         interests: List<String>
-    ): Resource<Boolean> {
+    ) {
         return withContext(Dispatchers.IO) {
             safeCall {
 
@@ -96,29 +101,65 @@ class DefaultMainRepository() : MainRepository {
                 val profileUpdate =
                     UserProfileChangeRequest.Builder().setDisplayName(username).build()
 
-                val result = user!!.updateProfile(profileUpdate).await()
-                val result1 = users.document(user.uid)
-                    .update("userName", username, "description", description).await()
-                val result2 = cred.document(user.uid)
-                    .update("interest", interests, "profession", profession).await()
-
-                val credential = cred.document(user.uid).get().await().toObject(Credential::class.java)
-                val result3 = users.document(user.uid).update("credential", credential).await()
+                val result = user!!.updateProfile(profileUpdate).addOnSuccessListener {
+                    cred.document(user.uid)
+                        .update("interest", interests, "profession", profession)
+                        .addOnSuccessListener {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                val credential = cred.document(user.uid).get().await()
+                                    .toObject(Credential::class.java)
+                                users.document(user.uid)
+                                    .update(
+                                        "userName",
+                                        username,
+                                        "description",
+                                        description,
+                                        "credential",
+                                        credential
+                                    ).await()
+                            }
+                        }
+                }
 
                 Resource.Success(result)
-                Resource.Success(result1)
-                Resource.Success(result2)
-                Resource.Success(result3)
-                Resource.Success(true)
             }
         }
     }
 
-    override suspend fun updateProfileUI(): Resource<User> = withContext(Dispatchers.IO) {
+    override suspend fun updateProfileUI(uid: String): Resource<User> = withContext(Dispatchers.IO) {
         safeCall {
-            val uid = auth.currentUser!!.uid
+            val user = users.document(uid).get().await().toObject(User::class.java)!!
+            Resource.Success(user)
+        }
+    }
+
+    override suspend fun getPostForProfile(uid: String): Resource<List<Post>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val profilePosts = posts.whereEqualTo("authorUid", uid)
+                    .orderBy("date", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
+                    .toObjects(Post::class.java)
+                    .onEach { post ->
+                        val user = getUser(post.authorUid).data!!
+                        post.authorProfilePictureUrl = user.profilePicture
+                        post.authorUsername = user.userName
+                        post.isLiked = uid in post.likedBy
+                    }
+                Resource.Success(profilePosts)
+            }
+        }
+
+    override suspend fun getUser(uid: String): Resource<User> = withContext(Dispatchers.IO) {
+        safeCall {
             val user = users.document(uid).get().await().toObject(User::class.java)
-            Resource.Success(user!!)
+                ?: throw IllegalStateException()
+            val currentUid = FirebaseAuth.getInstance().uid!!
+            val currentUser = users.document(currentUid).get().await().toObject(User::class.java)
+                ?: throw IllegalStateException()
+            user.isFollowing = uid in currentUser.follows
+            Resource.Success(user)
         }
     }
 

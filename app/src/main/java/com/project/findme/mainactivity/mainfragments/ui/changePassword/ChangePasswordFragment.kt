@@ -62,12 +62,7 @@ class ChangePasswordFragment : Fragment(R.layout.fragment_change_password) {
             }
         ) {
             showProgress(false)
-            when (it) {
-                true -> {
-                    snackbar("Password changed successfully!")
-                }
-                false -> snackbar("Error occurred!")
-            }
+            snackbar("Password changed successfully!")
         })
     }
 
