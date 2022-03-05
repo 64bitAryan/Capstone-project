@@ -100,6 +100,7 @@ class MainActivity : AppCompatActivity() {
                 || navController.currentDestination?.id == R.id.createPostFragment
                 || navController.currentDestination?.id == R.id.changePasswordFragment
                 || navController.currentDestination?.id == R.id.searchedProfileFragment
+                || navController.currentDestination?.id == R.id.listFollowersFragment
             ) {
                 drawerLayout.closeDrawer(GravityCompat.START)
                 super.onOptionsItemSelected(item)

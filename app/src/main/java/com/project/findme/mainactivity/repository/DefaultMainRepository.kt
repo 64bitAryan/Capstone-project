@@ -7,6 +7,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
@@ -38,7 +39,9 @@ class DefaultMainRepository() : MainRepository {
                 .startAt(query)
                 .endAt(query + "\uf8ff")
                 .get().await().toObjects(User::class.java)
-            Resource.Success(userResult)
+            val cur =
+                users.document(auth.currentUser!!.uid).get().await().toObject(User::class.java)!!
+            Resource.Success(userResult - cur)
         }
     }
 
@@ -93,7 +96,7 @@ class DefaultMainRepository() : MainRepository {
         description: String,
         profession: String,
         interests: List<String>
-    ) {
+    ): Resource<Any> {
         return withContext(Dispatchers.IO) {
             safeCall {
 
@@ -126,12 +129,13 @@ class DefaultMainRepository() : MainRepository {
         }
     }
 
-    override suspend fun updateProfileUI(uid: String): Resource<User> = withContext(Dispatchers.IO) {
-        safeCall {
-            val user = users.document(uid).get().await().toObject(User::class.java)!!
-            Resource.Success(user)
+    override suspend fun updateProfileUI(uid: String): Resource<User> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                Resource.Success(user)
+            }
         }
-    }
 
     override suspend fun getPostForProfile(uid: String): Resource<List<Post>> =
         withContext(Dispatchers.IO) {
@@ -162,5 +166,62 @@ class DefaultMainRepository() : MainRepository {
             Resource.Success(user)
         }
     }
+
+    override suspend fun followUser(uid: String): Resource<User> = withContext(Dispatchers.IO) {
+        safeCall {
+            val currentUser = auth.currentUser?.uid!!
+            users.document(currentUser).update("followings", FieldValue.arrayUnion(uid)).await()
+            users.document(uid).update("follows", FieldValue.arrayUnion(currentUser)).await()
+
+            val user = users.document(uid).get().await().toObject(User::class.java)!!
+            Resource.Success(user)
+        }
+    }
+
+    override suspend fun getUsers(uid: String, type: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                when (type) {
+                    "Followers" -> {
+                        val user = users.document(uid).get().await().toObject(User::class.java)!!
+                        val userList = mutableListOf<User>()
+                        for (u in user.follows) {
+                            val cur = users.document(u).get().await().toObject(User::class.java)!!
+                            userList.add(cur)
+                        }
+                        return@safeCall Resource.Success(userList)
+                    }
+                    "Followings" -> {
+                        val user = users.document(uid).get().await().toObject(User::class.java)!!
+                        val userList = mutableListOf<User>()
+                        for (u in user.followings) {
+                            val cur = users.document(u).get().await().toObject(User::class.java)!!
+                            userList.add(cur)
+                        }
+                        return@safeCall Resource.Success(userList)
+                    }
+                    "mutual" -> {
+                        val user = users.document(uid).get().await().toObject(User::class.java)!!
+                        val userList = mutableListOf<User>()
+                        for (u in user.follows) {
+                            val cur = users.document(u).get().await().toObject(User::class.java)!!
+                            userList.add(cur)
+                        }
+                        val curUser = users.document(auth.currentUser!!.uid).get().await()
+                            .toObject(User::class.java)!!
+                        val userList1 = mutableListOf<User>()
+                        for (u in curUser.follows) {
+                            val cur = users.document(u).get().await().toObject(User::class.java)!!
+                            userList1.add(cur)
+                        }
+                        return@safeCall Resource.Success((userList intersect userList1).toList())
+                    }
+                    else -> {
+                        return@safeCall Resource.Success(listOf())
+                    }
+                }
+
+            }
+        }
 
 }

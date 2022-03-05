@@ -43,4 +43,12 @@ class SearchedProfileViewModel @Inject constructor(
             _post.postValue(Events(result))
         }
     }
+
+    fun followUser(uid: String){
+        _searchedProfileStatus.postValue(Events(Resource.Loading()))
+        viewModelScope.launch(dispatcher) {
+            val user = repository.followUser(uid)
+            _searchedProfileStatus.postValue(Events(user))
+        }
+    }
 }

@@ -88,19 +88,15 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
                     textViewAlreadyUserLogin.isClickable = false
                 }
             }
-        ) {
+        ) { authResult ->
             binding.apply {
                 buttonGoogleSignIn.isEnabled = false
                 buttonNavigateToRegisterScreen.isEnabled = false
                 textViewAlreadyUserLogin.isClickable = false
             }
-            val uid = it.user?.uid!!
-            val username = it.user?.displayName.toString()
-            val user = User(uid, username)
-            users.document(uid).set(user)
 
-            FirebaseAuth.getInstance().currentUser?.uid?.let {
-                FirebaseFirestore.getInstance().collection("credentials").whereEqualTo("uid", it)
+            FirebaseAuth.getInstance().currentUser?.uid?.let { id ->
+                FirebaseFirestore.getInstance().collection("credentials").whereEqualTo("uid", id)
                     .get()
                     .addOnSuccessListener { document ->
                         binding.authProgressbar.isVisible = false
@@ -110,6 +106,10 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
                                 requireActivity().finish()
                             }
                         } else {
+                            val uid = authResult.user?.uid!!
+                            val username = authResult.user?.displayName.toString()
+                            val user = User(uid, username)
+                            users.document(uid).set(user)
                             Intent(
                                 requireContext(),
                                 CredentialActivity::class.java

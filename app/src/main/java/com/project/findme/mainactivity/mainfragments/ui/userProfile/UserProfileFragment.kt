@@ -56,6 +56,24 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 )
             }
 
+            tvFollowersUserProfile.setOnClickListener {
+                findNavController().navigate(
+                    UserProfileFragmentDirections.actionUserProfileFragmentToListFollowersFragmentUser(
+                        type = "Followers",
+                        username = FirebaseAuth.getInstance().currentUser?.displayName!!
+                    )
+                )
+            }
+
+            tvFollowingsUserProfile.setOnClickListener {
+                findNavController().navigate(
+                    UserProfileFragmentDirections.actionUserProfileFragmentToListFollowersFragmentUser(
+                        type = "Followings",
+                        username = FirebaseAuth.getInstance().currentUser?.displayName!!
+                    )
+                )
+            }
+
             swipeRefreshLayoutProfile.setOnRefreshListener {
                 FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.updateUI(it) }
                 FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.getPost(it) }
@@ -122,8 +140,8 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         binding.apply {
             tvNameUserProfile.text = user.userName
             tvDescriptionUserProfile.text = user.description
-            tvFollowersUserProfile.text = user.follows.size.toString() + " Followers"
-            tvFollowingsUserProfile.text = user.followings.size.toString() + " Followings"
+            tvFollowersUserProfile.text = user.follows.size.toString() + "\nFollowers"
+            tvFollowingsUserProfile.text = user.followings.size.toString() + "\nFollowings"
             glide.load(user.profilePicture).into(ivProfilePictureUserProfile)
         }
     }

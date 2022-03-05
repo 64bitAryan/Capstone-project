@@ -39,8 +39,8 @@ class EditProfileViewModel @Inject constructor(
             state.set("profession", value)
         }
 
-    private val _updateProfileStatus = MutableLiveData<Events<Resource<Unit>>>()
-    val updateProfileStatus: LiveData<Events<Resource<Unit>>> = _updateProfileStatus
+    private val _updateProfileStatus = MutableLiveData<Events<Resource<Any>>>()
+    val updateProfileStatus: LiveData<Events<Resource<Any>>> = _updateProfileStatus
 
     fun updateProfile(interests: List<String>) {
 

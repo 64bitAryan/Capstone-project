@@ -35,6 +35,9 @@
         <action
             android:id="@+id/action_userProfileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_userProfileFragment_to_listFollowersFragmentUser"
+            app:destination="@id/listFollowersFragmentUser" />
     </fragment>
     <dialog
         android:id="@+id/signOutDialogFragment"
@@ -65,10 +68,43 @@
     <fragment
         android:id="@+id/searchedProfileFragment"
         android:name="com.project.findme.mainactivity.mainfragments.ui.searchedProfile.SearchedProfileFragment"
-        android:label="Username"
-        tools:layout="@layout/fragment_searched_profile" >
+        android:label="{username}"
+        tools:layout="@layout/fragment_searched_profile">
         <argument
             android:name="uid"
+            app:argType="string" />
+        <argument
+            android:name="username"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_searchedProfileFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_searchedProfileFragment_to_listFollowersFragment"
+            app:destination="@id/listFollowersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/listFollowersFragment"
+        android:name="com.project.findme.mainactivity.mainfragments.ui.listFollowers.ListFollowersFragment"
+        android:label="{username}"
+        tools:layout="@layout/fragment_lists_followers">
+        <argument
+            android:name="uid"
+            app:argType="string" />
+        <argument
+            android:name="type"
+            app:argType="string" />
+        <argument
+            android:name="username"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/listFollowersFragmentUser"
+        android:name="com.project.findme.mainactivity.mainfragments.ui.listFollowersUser.ListFollowersFragmentUser"
+        android:label="{username}"
+        tools:layout="@layout/fragment_lists_followers_user">
+        <argument
+            android:name="type"
             app:argType="string" />
         <argument
             android:name="username"

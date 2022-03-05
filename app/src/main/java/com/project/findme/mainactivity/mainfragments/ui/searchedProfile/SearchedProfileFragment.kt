@@ -4,11 +4,16 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.RequestManager
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.project.findme.adapter.PostAdapterProfile
 import com.project.findme.data.entity.User
 import com.project.findme.utils.EventObserver
@@ -33,7 +38,7 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(requireActivity()).get(SearchedProfileViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity())[SearchedProfileViewModel::class.java]
         subscribeToObserve()
 
         binding = FragmentSearchedProfileBinding.bind(view)
@@ -51,16 +56,37 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
             }
 
             btnFollowUser.setOnClickListener {
-
+                viewModel.followUser(args.uid)
             }
 
             btnMessageUser.setOnClickListener {
+                findNavController().navigate(SearchedProfileFragmentDirections.actionSearchedProfileFragmentToChatFragment())
+            }
 
+            tvFollowersSearchedProfile.setOnClickListener {
+                findNavController().navigate(
+                    SearchedProfileFragmentDirections.actionSearchedProfileFragmentToListFollowersFragment(
+                        uid = args.uid,
+                        type = "Followers",
+                        username = args.username
+                    )
+                )
+            }
+
+            tvFollowingsSearchedProfile.setOnClickListener {
+                findNavController().navigate(
+                    SearchedProfileFragmentDirections.actionSearchedProfileFragmentToListFollowersFragment(
+                        uid = args.uid,
+                        type = "Followings",
+                        username = args.username
+                    )
+                )
             }
         }
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun subscribeToObserve() {
 
         viewModel.searchedProfileStatus.observe(viewLifecycleOwner, EventObserver(
@@ -74,6 +100,7 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
             }
         ) { user ->
             updateUI(user)
+            showProgress(false)
         })
 
         viewModel.post.observe(viewLifecycleOwner, EventObserver(
@@ -119,9 +146,13 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
         binding.apply {
             tvNameSearchedProfile.text = user.userName
             tvDescriptionSearchedProfile.text = user.description
-            tvFollowersSearchedProfile.text = user.follows.size.toString() + " Followers"
-            tvFollowingsSearchedProfile.text = user.followings.size.toString() + " Followings"
+            tvFollowersSearchedProfile.text = user.follows.size.toString() + "\nFollowers"
+            tvFollowingsSearchedProfile.text = user.followings.size.toString() + "\nFollowings"
             glide.load(user.profilePicture).into(ivProfilePictureSearchedProfile)
+            if (Firebase.auth.currentUser?.uid!! in user.follows) {
+                btnFollowUser.visibility = View.INVISIBLE
+                btnUnfollowUser.visibility = View.VISIBLE
+            }
         }
     }
 }
