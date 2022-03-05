@@ -8,6 +8,9 @@
             <item
                 android:id="@+id/userProfileFragment"
                 android:title="Profile" />
+            <item
+                android:id="@+id/editProfileFragment"
+                android:title="Edit Profile" />
         </menu>
     </item>
 

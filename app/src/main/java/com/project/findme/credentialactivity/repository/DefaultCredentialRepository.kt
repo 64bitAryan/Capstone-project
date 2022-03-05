@@ -22,7 +22,7 @@ class DefaultCredentialRepository: CredentialRepository {
             safeCall {
                 val uid = auth.currentUser?.uid!!
                 val result = cred.document(uid).set(credential).await()
-                users.document(uid).update("credential", credential)
+                users.document(uid).update("credential", credential).await()
                 Resource.Success(result)
             }
         }

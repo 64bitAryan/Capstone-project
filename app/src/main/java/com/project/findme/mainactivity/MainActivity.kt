@@ -99,10 +99,11 @@ class MainActivity : AppCompatActivity() {
             return if (navController.currentDestination?.id == R.id.editProfileFragment
                 || navController.currentDestination?.id == R.id.createPostFragment
                 || navController.currentDestination?.id == R.id.changePasswordFragment
+                || navController.currentDestination?.id == R.id.searchedProfileFragment
             ) {
                 drawerLayout.closeDrawer(GravityCompat.START)
                 super.onOptionsItemSelected(item)
-            } else{
+            } else {
                 true
             }
         }
