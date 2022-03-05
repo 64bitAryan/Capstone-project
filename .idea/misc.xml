@@ -61,6 +61,8 @@
         <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/search_list_layout.xml" value="0.1824074074074074" />
         <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/menu/bottom_nav_menu.xml" value="0.15925925925925927" />
         <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/menu/side_nav_menu.xml" value="0.20416666666666666" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/button_bg.xml" value="0.1405" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/button_translucent.xml" value="0.1405" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/delete_outline.xml" value="0.136" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_auth.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_credential.xml" value="0.1796875" />
@@ -72,11 +74,14 @@
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_edit_profile.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_forgot_password.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_home_screen.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_lists_followers.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_lists_followers_user.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_login_user.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_register_user.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_search_person.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_searched_profile.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_user_profile.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/item_followers.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/item_post.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/item_post_profile.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/search_list_layout.xml" value="0.1796875" />
