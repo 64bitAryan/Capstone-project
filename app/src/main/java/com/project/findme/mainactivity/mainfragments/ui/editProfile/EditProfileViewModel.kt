@@ -47,7 +47,6 @@ class EditProfileViewModel @Inject constructor(
             val error = "Interest can't Be Empty"
             _updateProfileStatus.postValue((Events(Resource.Error(error))))
         } else {
-            _updateProfileStatus.postValue(Events(Resource.Loading()))
             viewModelScope.launch(dispatcher) {
                 val result = repository.updateProfile(updateUser)
                 _updateProfileStatus.postValue(Events(result))
