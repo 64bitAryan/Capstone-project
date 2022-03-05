@@ -1,18 +1,11 @@
 package com.project.findme.mainactivity.mainfragments.ui.editProfile
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
-import android.widget.ArrayAdapter
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
 import com.google.android.material.chip.Chip
@@ -20,18 +13,11 @@ import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.data.entity.UpdateCredentials
 import com.project.findme.data.entity.UpdateUser
 import com.project.findme.data.entity.User
-import com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileFragmentDirections
-import com.project.findme.mainactivity.repository.MainRepository
-import com.project.findme.utils.Constants.hobbies
-import com.project.findme.utils.Constants.professions
 import com.project.findme.utils.EventObserver
-import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentEditProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
