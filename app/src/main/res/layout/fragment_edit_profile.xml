@@ -25,6 +25,8 @@
             android:padding="10dp">
 
             <ProgressBar
+                android:translationZ="14dp"
+                android:visibility="invisible"
                 android:id="@+id/progress_bar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -53,13 +55,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/iv_profile_picture_edit_user"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginTop="20dp"
             android:clickable="true"
             android:focusable="true"
+            android:src="@drawable/img_1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -126,7 +129,7 @@
             <AutoCompleteTextView
                 android:id="@+id/et_profession_edit_profile"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:paddingStart="15dp"
@@ -216,6 +219,7 @@
             android:layout_marginBottom="20dp"
             android:text="Save"
             android:textAllCaps="false"
+            android:background="@drawable/custom_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

@@ -1,6 +1,8 @@
 package com.project.findme.mainactivity.repository
 
 import android.net.Uri
+import com.project.findme.data.entity.Post
+import com.project.findme.data.entity.UpdateUser
 import com.project.findme.data.entity.User
 import com.project.findme.utils.Resource
 
@@ -12,13 +14,10 @@ interface MainRepository{
 
     suspend fun updatePassword(oldPassword: String, newPassword: String): Resource<Boolean>
 
-    suspend fun updateProfile(
-        username: String,
-        description: String,
-        profession: String,
-        interests: List<String>
-    ): Resource<Boolean>
+    suspend fun getPostForProfile(uid: String): Resource<List<Post>>
 
-    suspend fun updateProfileUI(): Resource<User>
+    suspend fun getUser(uid: String): Resource<User>
+
+    suspend fun updateProfile(user: UpdateUser): Resource<Any>
 
 }

@@ -22,65 +22,12 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java)
-        subscribeToObserve()
-
-        viewModel.updateUI()
-
         binding = FragmentUserProfileBinding.bind(view)
-        binding.apply {
 
+        binding.apply {
             ivEditProfile.setOnClickListener {
-                findNavController().navigate(
-                    UserProfileFragmentDirections.actionUserProfileFragmentToEditProfileFragment()
-                )
+                findNavController().navigate(R.id.action_userProfileFragment_to_editProfileFragment)
             }
         }
     }
-
-    private fun subscribeToObserve() {
-
-        viewModel.userProfileStatus.observe(viewLifecycleOwner, EventObserver(
-
-            onError = {
-                showProgress(false)
-                snackbar(it)
-            },
-            onLoading = {
-                showProgress(true)
-            }
-        ) { user ->
-            updateUI(user)
-            showProgress(false)
-        })
-    }
-
-    @SuppressLint("SetTextI18n")
-    private fun updateUI(user: User){
-        binding.apply {
-            tvNameUserProfile.text = user.userName
-            tvDescriptionUserProfile.text = user.description
-            tvFollowersUserProfile.text = user.follows.size.toString() + " Followers"
-            tvFollowingsUserProfile.text = user.followings.size.toString() + " Followings"
-            btnFollowUser.visibility = View.INVISIBLE
-            btnMessageUser.visibility = View.INVISIBLE
-        }
-    }
-
-    private fun showProgress(bool: Boolean) {
-        binding.apply {
-            cvProgressProfile.isVisible = bool
-            if (bool) {
-                parentLayoutProfile.alpha = 0.5f
-                activity?.window!!.setFlags(
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-                )
-            } else {
-                parentLayoutProfile.alpha = 1f
-                activity?.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-            }
-        }
-    }
-
 }

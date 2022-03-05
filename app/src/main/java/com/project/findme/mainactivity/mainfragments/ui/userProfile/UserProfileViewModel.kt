@@ -16,18 +16,9 @@ import javax.inject.Inject
 class UserProfileViewModel @Inject constructor(
     private val state: SavedStateHandle,
     private val repository: MainRepository,
-    private val applicationContext: Context,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
     private val _userProfileStatus = MutableLiveData<Events<Resource<User>>>()
     val userProfileStatus: LiveData<Events<Resource<User>>> = _userProfileStatus
 
-    fun updateUI(){
-        _userProfileStatus.postValue(Events(Resource.Loading()))
-
-        viewModelScope.launch(dispatcher) {
-            val user = repository.updateProfileUI()
-            _userProfileStatus.postValue(Events(user))
-        }
-    }
 }

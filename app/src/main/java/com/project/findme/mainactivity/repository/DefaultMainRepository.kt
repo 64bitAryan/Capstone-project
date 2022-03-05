@@ -7,10 +7,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.project.findme.data.entity.Credential
 import com.project.findme.data.entity.Post
+import com.project.findme.data.entity.UpdateUser
 import com.project.findme.data.entity.User
 import com.project.findme.utils.Resource
 import com.project.findme.utils.safeCall
@@ -83,43 +85,49 @@ class DefaultMainRepository() : MainRepository {
         }
     }
 
-    override suspend fun updateProfile(
-        username: String,
-        description: String,
-        profession: String,
-        interests: List<String>
-    ): Resource<Boolean> {
-        return withContext(Dispatchers.IO) {
-            safeCall {
-
-                val user = Firebase.auth.currentUser
-                val profileUpdate =
-                    UserProfileChangeRequest.Builder().setDisplayName(username).build()
-
-                val result = user!!.updateProfile(profileUpdate).await()
-                val result1 = users.document(user.uid)
-                    .update("userName", username, "description", description).await()
-                val result2 = cred.document(user.uid)
-                    .update("interest", interests, "profession", profession).await()
-
-                val credential = cred.document(user.uid).get().await().toObject(Credential::class.java)
-                val result3 = users.document(user.uid).update("credential", credential).await()
-
-                Resource.Success(result)
-                Resource.Success(result1)
-                Resource.Success(result2)
-                Resource.Success(result3)
-                Resource.Success(true)
-            }
-        }
-    }
-
-    override suspend fun updateProfileUI(): Resource<User> = withContext(Dispatchers.IO) {
+    override suspend fun getPostForProfile(uid: String) = withContext(Dispatchers.IO) {
         safeCall {
-            val uid = auth.currentUser!!.uid
-            val user = users.document(uid).get().await().toObject(User::class.java)
-            Resource.Success(user!!)
+            val profilePosts = posts.whereEqualTo("authorUid", uid)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(Post::class.java)
+                .onEach { post ->
+                    val user = getUser(post.authorUid).data!!
+                    post.authorProfilePictureUrl = user.profilePicture
+                    post.authorUsername = user.userName
+                    post.isLiked = uid in post.likedBy
+                }
+            Resource.Success(profilePosts)
         }
     }
 
+    override suspend fun getUser(uid: String) = withContext(Dispatchers.IO) {
+        safeCall{
+            val user = users.document(uid).get().await().toObject(User::class.java)
+                ?: throw IllegalStateException()
+            val currentUid = FirebaseAuth.getInstance().uid!!
+            val currentUser = users.document(currentUid).get().await().toObject(User::class.java)
+                ?: throw IllegalStateException()
+            user.isFollowing = uid in currentUser.follows
+            Resource.Success(user)
+        }
+    }
+
+    override suspend fun updateProfile(user: UpdateUser) = withContext(Dispatchers.IO) {
+        safeCall {
+            val imageUrl = user.profilePicture?.let { uri ->
+//                updateProfilePicture(profileUpdate.uidToUpdate, uri).toString()
+            }
+            val map = mutableMapOf(
+                "userName" to user.userName,
+                "description" to user.description,
+                "credential.profession" to user.updateCredential.profession,
+                "credential.interest" to user.updateCredential.interest
+            )
+
+            users.document(user.uidToUpdate).update(map.toMap()).await()
+            Resource.Success(Any())
+        }
+    }
 }
