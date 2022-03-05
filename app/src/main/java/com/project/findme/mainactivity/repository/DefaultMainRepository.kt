@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.project.findme.data.entity.Credential
 import com.project.findme.data.entity.Post
+import com.project.findme.data.entity.UpdateUser
 import com.project.findme.data.entity.User
 import com.project.findme.utils.Resource
 import com.project.findme.utils.safeCall
@@ -91,41 +92,27 @@ class DefaultMainRepository() : MainRepository {
         }
     }
 
-    override suspend fun updateProfile(
-        username: String,
-        description: String,
-        profession: String,
-        interests: List<String>
-    ): Resource<Any> {
-        return withContext(Dispatchers.IO) {
-            safeCall {
-
-                val user = Firebase.auth.currentUser
-                val profileUpdate =
-                    UserProfileChangeRequest.Builder().setDisplayName(username).build()
-
-                val result = user!!.updateProfile(profileUpdate).addOnSuccessListener {
-                    cred.document(user.uid)
-                        .update("interest", interests, "profession", profession)
-                        .addOnSuccessListener {
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val credential = cred.document(user.uid).get().await()
-                                    .toObject(Credential::class.java)
-                                users.document(user.uid)
-                                    .update(
-                                        "userName",
-                                        username,
-                                        "description",
-                                        description,
-                                        "credential",
-                                        credential
-                                    ).await()
-                            }
-                        }
-                }
-
-                Resource.Success(result)
+    override suspend fun updateProfile(user: UpdateUser) = withContext(Dispatchers.IO) {
+        safeCall {
+            val imageUrl = user.profilePicture?.let { uri ->
+//                updateProfilePicture(profileUpdate.uidToUpdate, uri).toString()
             }
+
+            val curUser = auth.currentUser
+            val profileUpdate =
+                UserProfileChangeRequest.Builder().setDisplayName(user.userName).build()
+
+            curUser!!.updateProfile(profileUpdate).await()
+
+            val map = mutableMapOf(
+                "userName" to user.userName,
+                "description" to user.description,
+                "credential.profession" to user.updateCredential.profession,
+                "credential.interest" to user.updateCredential.interest
+            )
+
+            users.document(user.uidToUpdate).update(map.toMap()).await()
+            Resource.Success(Any())
         }
     }
 

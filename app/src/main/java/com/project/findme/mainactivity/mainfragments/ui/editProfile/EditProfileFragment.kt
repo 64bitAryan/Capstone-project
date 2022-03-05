@@ -1,56 +1,53 @@
 package com.project.findme.mainactivity.mainfragments.ui.editProfile
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.RequestManager
 import com.google.android.material.chip.Chip
-import com.project.findme.mainactivity.MainActivity
-import com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileFragmentDirections
-import com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.project.findme.data.entity.UpdateCredentials
+import com.project.findme.data.entity.UpdateUser
+import com.project.findme.data.entity.User
 import com.project.findme.utils.Constants
-import com.project.findme.utils.Constants.hobbies
-import com.project.findme.utils.Constants.professions
 import com.project.findme.utils.EventObserver
-import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentEditProfileBinding
-import com.ryan.findme.databinding.FragmentUserProfileBinding
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
-    private lateinit var viewModel: EditProfileViewModel
+    @Inject
+    lateinit var glide: RequestManager
+    private val viewModel: EditProfileViewModel by viewModels()
     private lateinit var binding: FragmentEditProfileBinding
     private var interests = mutableSetOf<String>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel = ViewModelProvider(requireActivity()).get(EditProfileViewModel::class.java)
-        subscribeToObserve()
-
         binding = FragmentEditProfileBinding.bind(view)
+        subscribeToObserver()
+        FirebaseAuth.getInstance().currentUser?.let { viewModel.getUserProfile(it.uid) }
 
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            professions
+            Constants.professions
         )
 
         val adapterHobbies: ArrayAdapter<String> = ArrayAdapter<String>(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            hobbies
+            Constants.hobbies
         )
 
         binding.apply {
@@ -61,51 +58,46 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             etInterestsEditProfile.threshold = 1
             etInterestsEditProfile.setAdapter(adapterHobbies)
 
-            etUsernameEditProfile.setText(viewModel.username)
-            etDescriptionEditProfile.setText(viewModel.description)
-            etProfessionEditProfile.setText(viewModel.profession)
-            etEditUserPassword.setText(viewModel.oldPassword)
-            etEditUserNewPassword.setText(viewModel.newPassword)
-
-            etUsernameEditProfile.addTextChangedListener {
-                viewModel.username = it.toString()
-            }
-
-            etDescriptionEditProfile.addTextChangedListener {
-                viewModel.description = it.toString()
-            }
-
-            etProfessionEditProfile.addTextChangedListener {
-                viewModel.profession = it.toString()
-            }
-
-            etEditUserPassword.addTextChangedListener {
-                viewModel.oldPassword = it.toString()
-            }
-
-            etEditUserNewPassword.addTextChangedListener {
-                viewModel.newPassword = it.toString()
-            }
-
             addBt.setOnClickListener {
-                val interest: String = etInterestsEditProfile.text.toString()
-                addChipToGroup(requireContext(), interest)
-            }
-
-            btnChangePassword.setOnClickListener {
-                hideKeyboard(activity as Activity)
-                viewModel.changePassword()
+                if (etInterestsEditProfile.text.isNotEmpty()) {
+                    addChipToGroup(etInterestsEditProfile.text.toString())
+                }
             }
 
             btnUpdateProfile.setOnClickListener {
-                hideKeyboard((activity as Activity))
+                viewModel.updateProfile(viewToObject())
             }
-
         }
-
     }
 
-    private fun addChipToGroup(context: Context, interest: String) {
+    private fun viewToObject(): UpdateUser {
+        var user: UpdateUser
+        binding.apply {
+            val inte = interests.toList()
+            val name = etUsernameEditProfile.text.toString()
+            val description = etDescriptionEditProfile.text.toString()
+            val profession = etProfessionEditProfile.text.toString()
+            val uid = FirebaseAuth.getInstance().uid!!
+            val cred = UpdateCredentials(profession, inte)
+            user = UpdateUser(uid, name, description, cred)
+        }
+        return user
+    }
+
+    private fun loadToViews(user: User) {
+        binding.apply {
+            val cred = user.credential
+            etUsernameEditProfile.setText(user.userName)
+            etDescriptionEditProfile.setText(user.description)
+            etProfessionEditProfile.setText(cred.profession)
+            glide.load(user.profilePicture).into(ivProfilePictureEditUser)
+            interests = cred.interest.toMutableSet()
+            for (interest in interests)
+                addChipToGroup(interest)
+        }
+    }
+
+    private fun addChipToGroup(interest: String) {
         val chip = Chip(context).apply {
             id = View.generateViewId()
             text = interest
@@ -125,25 +117,34 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         binding.etInterestsEditProfile.text?.clear()
     }
 
-    private fun subscribeToObserve() {
+    private fun subscribeToObserver() {
+        viewModel.userProfileStatus.observe(viewLifecycleOwner, EventObserver(
+            onError = { error ->
+                showProgress(false)
+                snackbar(error)
+            },
+            onLoading = {
+                showProgress(true)
+            }
+        ) { user ->
+            showProgress(false)
+            loadToViews(user)
+        })
 
         viewModel.updateProfileStatus.observe(viewLifecycleOwner, EventObserver(
-
-            onError = {
-                showProgress(false)
-                snackbar(it)
+            onError = { error ->
+                binding.apply {
+                    showProgress(false)
+                    snackbar(error)
+                }
             },
             onLoading = {
                 showProgress(true)
             }
         ) {
             showProgress(false)
-            when(it){
-                true ->{
-                    snackbar("Password changed successfully!")
-                }
-                false -> snackbar("Error occurred!")
-            }
+            findNavController().navigate(R.id.action_editProfileFragment_to_userProfileFragment)
+            snackbar("Updated Successfully")
         })
     }
 
