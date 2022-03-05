@@ -14,25 +14,29 @@
 
         <TextView
             android:id="@+id/tv_name_user_profile"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="10dp"
             android:text="Name"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/iv_profile_picture_user_profile"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:background="@drawable/button_translucent"
+            android:padding="6dp"
             android:id="@+id/iv_edit_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="20dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="12dp"
             android:clickable="true"
             android:focusable="true"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/divide_line"
             app:srcCompat="@drawable/ic_edit" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -41,16 +45,18 @@
             android:layout_height="80dp"
             android:layout_margin="20dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_edit_profile"
-            app:srcCompat="@drawable/ic_person" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_person"
+            app:civ_border_color="@color/color_primary"
+            app:civ_border_width="2dp"/>
 
         <TextView
             android:id="@+id/tv_description_user_profile"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="15dp"
-            android:text="Description\nExample\nAbc"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="8dp"
+            android:text="This Is Description in Single Line"
             android:textSize="16sp"
             app:layout_constraintEnd_toStartOf="@id/iv_profile_picture_user_profile"
             app:layout_constraintStart_toStartOf="parent"
@@ -87,6 +93,7 @@
             app:layout_constraintTop_toBottomOf="@id/tv_description_user_profile" />
 
         <View
+            android:id="@+id/divide_line"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_marginTop="30dp"
@@ -97,12 +104,12 @@
             android:id="@+id/cv_info"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="-10dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/iv_profile_picture_user_profile">
+            app:layout_constraintTop_toBottomOf="@id/divide_line">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
