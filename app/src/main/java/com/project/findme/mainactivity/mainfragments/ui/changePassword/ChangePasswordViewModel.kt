@@ -20,8 +20,8 @@ class ChangePasswordViewModel @Inject constructor(
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
 
-    private val _changePasswordStatus = MutableLiveData<Events<Resource<Any>>>()
-    val changePasswordStatus: LiveData<Events<Resource<Any>>> = _changePasswordStatus
+    private val _changePasswordStatus = MutableLiveData<Events<Resource<Boolean>>>()
+    val changePasswordStatus: LiveData<Events<Resource<Boolean>>> = _changePasswordStatus
 
     var oldPassword = state.get<String>("oldPassword") ?: ""
         set(value) {
