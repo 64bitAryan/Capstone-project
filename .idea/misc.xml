@@ -3,20 +3,34 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/FindME/app/src/main/res/drawable/button_translucent.xml" value="0.162109375" />
         <entry key="..\:/FindME/app/src/main/res/drawable/custom_button.xml" value="0.18201754385964913" />
         <entry key="..\:/FindME/app/src/main/res/drawable/custom_icon.xml" value="0.17735042735042736" />
         <entry key="..\:/FindME/app/src/main/res/drawable/custom_search_layout.xml" value="0.18201754385964913" />
+        <entry key="..\:/FindME/app/src/main/res/drawable/edit_text_box_border.xml" value="0.18201754385964913" />
+        <entry key="..\:/FindME/app/src/main/res/drawable/effect_fade.xml" value="0.162109375" />
+        <entry key="..\:/FindME/app/src/main/res/drawable/ic_add.xml" value="0.171" />
+        <entry key="..\:/FindME/app/src/main/res/drawable/ic_heart.xml" value="0.162109375" />
+        <entry key="..\:/FindME/app/src/main/res/drawable/ic_heat.xml" value="0.162109375" />
+        <entry key="..\:/FindME/app/src/main/res/drawable/ic_outline_comment.xml" value="0.162109375" />
         <entry key="..\:/FindME/app/src/main/res/drawable/ic_person.xml" value="0.18201754385964913" />
-        <entry key="..\:/FindME/app/src/main/res/layout/activity_credential.xml" value="0.16842105263157894" />
+        <entry key="..\:/FindME/app/src/main/res/font/montserrat_bold.xml" value="0.193859649122807" />
+        <entry key="..\:/FindME/app/src/main/res/layout/activity_auth.xml" value="0.16842105263157894" />
+        <entry key="..\:/FindME/app/src/main/res/layout/activity_credential.xml" value="0.1" />
         <entry key="..\:/FindME/app/src/main/res/layout/activity_main.xml" value="0.15715579710144928" />
-        <entry key="..\:/FindME/app/src/main/res/layout/fragment_auth_screen.xml" value="0.15081521739130435" />
+        <entry key="..\:/FindME/app/src/main/res/layout/activity_splash_screen.xml" value="0.1403985507246377" />
+        <entry key="..\:/FindME/app/src/main/res/layout/fragment_auth_screen.xml" value="0.1" />
+        <entry key="..\:/FindME/app/src/main/res/layout/fragment_chat_screen.xml" value="0.16842105263157894" />
+        <entry key="..\:/FindME/app/src/main/res/layout/fragment_createpost_screen.xml" value="0.15" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_credential.xml" value="0.25" />
+        <entry key="..\:/FindME/app/src/main/res/layout/fragment_home_screen.xml" value="0.10109289617486339" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_login_user.xml" value="0.1641025641025641" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_register_user.xml" value="0.1641025641025641" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_search_person.xml" value="0.16842105263157894" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_settings_screen.xml" value="0.16842105263157894" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_signout_dialog.xml" value="0.1322463768115942" />
         <entry key="..\:/FindME/app/src/main/res/layout/fragment_user_profile.xml" value="0.1" />
+        <entry key="..\:/FindME/app/src/main/res/layout/item_post.xml" value="0.15" />
         <entry key="..\:/FindME/app/src/main/res/layout/layout_chip_choice.xml" value="0.11684782608695653" />
         <entry key="..\:/FindME/app/src/main/res/layout/nav_header.xml" value="0.1322463768115942" />
         <entry key="..\:/FindME/app/src/main/res/layout/search_list_layout.xml" value="0.22" />
@@ -47,23 +61,27 @@
         <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/search_list_layout.xml" value="0.1824074074074074" />
         <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/menu/bottom_nav_menu.xml" value="0.15925925925925927" />
         <entry key="..\:/Users/Bhargav Joshi/AndroidStudioProjects/Capstone-project/app/src/main/res/menu/side_nav_menu.xml" value="0.20416666666666666" />
-        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/ic_chat.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/ic_drawer.xml" value="0.19583333333333333" />
-        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/ic_out.xml" value="0.19583333333333333" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/delete_outline.xml" value="0.136" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_auth.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_credential.xml" value="0.1796875" />
-        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_main.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_splash_screen.xml" value="0.17407407407407408" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/custom_action_bar.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_auth_screen.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_change_password.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_createpost_screen.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_edit_profile.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_forgot_password.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_home_screen.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_login_user.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_register_user.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_search_person.xml" value="0.1796875" />
-        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_user_profile.xml" value="0.22" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_searched_profile.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_user_profile.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/item_post.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/item_post_profile.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/search_list_layout.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/menu/credential_menu.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/menu/side_nav_menu.xml" value="0.1796875" />
       </map>
     </option>
   </component>
