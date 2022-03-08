@@ -1,22 +1,31 @@
 package com.project.findme.mainactivity.mainfragments.ui.listFollowersUser
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.view.Window
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.OnItemTouchListener
 import com.bumptech.glide.RequestManager
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.ListAdapter
+import com.project.findme.data.entity.Post
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
-import com.ryan.findme.databinding.FragmentListsFollowersBinding
 import com.ryan.findme.databinding.FragmentListsFollowersUserBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_user) {
@@ -68,7 +77,7 @@ class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_use
                 FirebaseAuth.getInstance().currentUser?.let { user ->
                     viewModel.getUsers(
                         user.uid,
-                        "Following"
+                        "Followings"
                     )
                 }
                 it.setBackgroundResource(R.drawable.button_bg)

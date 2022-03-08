@@ -59,6 +59,10 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
                 viewModel.followUser(args.uid)
             }
 
+            btnUnfollowUser.setOnClickListener {
+                viewModel.unFollowUser(args.uid)
+            }
+
             btnMessageUser.setOnClickListener {
                 findNavController().navigate(SearchedProfileFragmentDirections.actionSearchedProfileFragmentToChatFragment())
             }
@@ -152,6 +156,9 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
             if (Firebase.auth.currentUser?.uid!! in user.follows) {
                 btnFollowUser.visibility = View.INVISIBLE
                 btnUnfollowUser.visibility = View.VISIBLE
+            } else{
+                btnFollowUser.visibility = View.VISIBLE
+                btnUnfollowUser.visibility = View.INVISIBLE
             }
         }
     }

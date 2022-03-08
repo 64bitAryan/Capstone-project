@@ -95,13 +95,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val list = listOf(
+            R.id.editProfileFragment,
+            R.id.createPostFragment,
+            R.id.changePasswordFragment,
+            R.id.searchedProfileFragment,
+            R.id.listFollowersFragment,
+            R.id.listFollowersFragmentUser
+        )
         if (toggle.onOptionsItemSelected(item)) {
-            return if (navController.currentDestination?.id == R.id.editProfileFragment
-                || navController.currentDestination?.id == R.id.createPostFragment
-                || navController.currentDestination?.id == R.id.changePasswordFragment
-                || navController.currentDestination?.id == R.id.searchedProfileFragment
-                || navController.currentDestination?.id == R.id.listFollowersFragment
-            ) {
+            return if (navController.currentDestination?.id in list) {
                 drawerLayout.closeDrawer(GravityCompat.START)
                 super.onOptionsItemSelected(item)
             } else {

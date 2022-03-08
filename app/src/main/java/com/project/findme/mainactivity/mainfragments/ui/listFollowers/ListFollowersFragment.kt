@@ -54,6 +54,14 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
 
         setUpRecyclerView()
 
+        listAdapter.setOnFollowClickListener {
+            viewModel.followUser(it)
+        }
+
+        listAdapter.setOnUnFollowClickListener {
+            viewModel.unFollowUser(it)
+        }
+
         binding.apply {
             btnFollowersList.setOnClickListener {
                 viewModel.getUsers(args.uid, "Followers")
@@ -95,6 +103,19 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
             }
         ) { users ->
             listAdapter.users = users
+            binding.progressBarLists.isVisible = false
+        })
+
+        viewModel.follow.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                binding.progressBarLists.isVisible = false
+                snackbar(it)
+            },
+            onLoading = {
+                binding.progressBarLists.isVisible = true
+            }
+        ) { user ->
+            viewModel.getUsers(user.uid, "Followers")
             binding.progressBarLists.isVisible = false
         })
     }
