@@ -70,6 +70,10 @@ class ListAdapter @Inject constructor(
                 btnUnfollow.visibility = View.INVISIBLE
                 btnFollow.visibility = View.VISIBLE
             }
+            if (uid == user.uid){
+                btnFollow.visibility = View.INVISIBLE
+                btnUnfollow.visibility = View.INVISIBLE
+            }
 
             btnFollow.setOnClickListener {
                 onFollowClickListener?.let {
