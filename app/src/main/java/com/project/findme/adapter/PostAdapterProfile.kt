@@ -50,10 +50,11 @@ class PostAdapterProfile @Inject constructor(
         holder.apply {
             glide.load(post.imageUrl).into(postImageView)
 
-            itemView.setOnClickListener {
+            itemView.setOnLongClickListener {
                 onItemClickListener?.let {
                     it(post)
                 }
+                return@setOnLongClickListener true
             }
         }
     }

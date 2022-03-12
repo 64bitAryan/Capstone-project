@@ -5,11 +5,13 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.ListAdapter
+import com.project.findme.mainactivity.mainfragments.ui.listFollowersUser.ListFollowersFragmentUserDirections
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -60,6 +62,21 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
 
         listAdapter.setOnUnFollowClickListener {
             viewModel.unFollowUser(it)
+        }
+
+        listAdapter.setOnUserClickListener { user ->
+            if (FirebaseAuth.getInstance().currentUser?.uid == user.uid) {
+                findNavController().navigate(
+                    ListFollowersFragmentDirections.actionListFollowersFragmentToUserProfileFragment()
+                )
+            } else {
+                findNavController().navigate(
+                    ListFollowersFragmentDirections.actionListFollowersFragmentToSearchedProfileFragment(
+                        uid = user.uid,
+                        username = user.userName
+                    )
+                )
+            }
         }
 
         binding.apply {
@@ -114,8 +131,11 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
             onLoading = {
                 binding.progressBarLists.isVisible = true
             }
-        ) { user ->
-            viewModel.getUsers(user.uid, "Followers")
+        ) {
+            viewModel.getUsers(args.uid, "Followers")
+            binding.btnFollowersList.setBackgroundResource(R.drawable.button_bg)
+            binding.btnFollowingsList.setBackgroundResource(0)
+            binding.btnMutualList.setBackgroundResource(0)
             binding.progressBarLists.isVisible = false
         })
     }

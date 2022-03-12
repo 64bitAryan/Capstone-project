@@ -201,14 +201,14 @@ class DefaultMainRepository() : MainRepository {
                     "mutual" -> {
                         val user = users.document(uid).get().await().toObject(User::class.java)!!
                         val userList = mutableListOf<User>()
-                        for (u in user.follows) {
+                        for (u in user.followings) {
                             val cur = users.document(u).get().await().toObject(User::class.java)!!
                             userList.add(cur)
                         }
                         val curUser = users.document(auth.currentUser!!.uid).get().await()
                             .toObject(User::class.java)!!
                         val userList1 = mutableListOf<User>()
-                        for (u in curUser.follows) {
+                        for (u in curUser.followings) {
                             val cur = users.document(u).get().await().toObject(User::class.java)!!
                             userList1.add(cur)
                         }

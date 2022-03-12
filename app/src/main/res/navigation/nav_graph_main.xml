@@ -97,6 +97,12 @@
         <argument
             android:name="username"
             app:argType="string" />
+        <action
+            android:id="@+id/action_listFollowersFragment_to_searchedProfileFragment"
+            app:destination="@id/searchedProfileFragment" />
+        <action
+            android:id="@+id/action_listFollowersFragment_to_userProfileFragment"
+            app:destination="@id/userProfileFragment" />
     </fragment>
     <fragment
         android:id="@+id/listFollowersFragmentUser"
@@ -109,5 +115,11 @@
         <argument
             android:name="username"
             app:argType="string" />
+        <action
+            android:id="@+id/action_listFollowersFragmentUser_to_searchedProfileFragment"
+            app:destination="@id/searchedProfileFragment" />
+        <action
+            android:id="@+id/action_listFollowersFragmentUser_to_userProfileFragment2"
+            app:destination="@id/userProfileFragment" />
     </fragment>
 </navigation>

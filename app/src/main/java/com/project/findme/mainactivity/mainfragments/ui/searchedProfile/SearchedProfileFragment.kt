@@ -1,20 +1,28 @@
 package com.project.findme.mainactivity.mainfragments.ui.searchedProfile
 
 import android.annotation.SuppressLint
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
+import android.view.Window
 import android.view.WindowManager
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.project.findme.adapter.PostAdapterProfile
+import com.project.findme.data.entity.Post
 import com.project.findme.data.entity.User
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
@@ -34,9 +42,17 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
     private lateinit var viewModel: SearchedProfileViewModel
     private lateinit var binding: FragmentSearchedProfileBinding
     private val args: SearchedProfileFragmentArgs by navArgs()
+    private lateinit var builder: Dialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        builder = Dialog(requireContext())
+
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        builder.window?.setBackgroundDrawable(
+            ColorDrawable(Color.TRANSPARENT)
+        )
 
         viewModel = ViewModelProvider(requireActivity())[SearchedProfileViewModel::class.java]
         subscribeToObserve()
@@ -47,6 +63,10 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
         viewModel.getPost(args.uid)
 
         setUpRecyclerView()
+
+        postAdapter.setOnItemClickListener {
+            publicationQuickView(it)
+        }
 
         binding.apply {
 
@@ -86,6 +106,18 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
                     )
                 )
             }
+
+            postRvSearchedProfile.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
+                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                    if (e.action == MotionEvent.ACTION_UP) {
+                        hideQuickView()
+                    }
+                    return false
+                }
+
+                override fun onTouchEvent(rv: RecyclerView, event: MotionEvent) {}
+                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
+            })
         }
 
     }
@@ -161,5 +193,20 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
                 btnUnfollowUser.visibility = View.INVISIBLE
             }
         }
+    }
+
+    private fun publicationQuickView(post: Post) {
+        val view: View = layoutInflater.inflate(R.layout.item_post_profile, null)
+        val postImage: ImageView = view.findViewById<View>(R.id.post_iv) as ImageView
+        glide.load(post.imageUrl).into(postImage)
+        builder.setContentView(view)
+        val width = (resources.displayMetrics.widthPixels * 0.90).toInt()
+        val height = (resources.displayMetrics.heightPixels * 0.60).toInt()
+        builder.window?.setLayout(width, height)
+        builder.show()
+    }
+
+    fun hideQuickView() {
+        builder.dismiss()
     }
 }

@@ -42,6 +42,13 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        builder = Dialog(requireContext())
+
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
+        builder.window?.setBackgroundDrawable(
+            ColorDrawable(Color.TRANSPARENT)
+        )
+
         viewModel = ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java)
         subscribeToObserve()
 
@@ -170,10 +177,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         val view: View = layoutInflater.inflate(R.layout.item_post_profile, null)
         val postImage: ImageView = view.findViewById<View>(R.id.post_iv) as ImageView
         glide.load(post.imageUrl).into(postImage)
-        builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        builder.window?.setBackgroundDrawable(
-            ColorDrawable(Color.TRANSPARENT)
-        )
         builder.setContentView(view)
         val width = (resources.displayMetrics.widthPixels * 0.90).toInt()
         val height = (resources.displayMetrics.heightPixels * 0.60).toInt()
@@ -182,7 +185,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     }
 
     fun hideQuickView() {
-        builder = Dialog(requireContext())
         builder.dismiss()
     }
 }

@@ -86,11 +86,23 @@ class ListAdapter @Inject constructor(
                     it(user.uid)
                 }
             }
+
+            itemView.setOnClickListener {
+                onUserClickListener?.let {  click ->
+                    click(user)
+                }
+            }
         }
     }
 
     override fun getItemCount(): Int {
         return users.size
+    }
+
+    private var onUserClickListener: ((User) -> Unit)? = null
+
+    fun setOnUserClickListener(listener: (User) -> Unit) {
+        onUserClickListener = listener
     }
 
     private var onFollowClickListener: ((String) -> Unit)? = null
