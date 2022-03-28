@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -61,6 +62,9 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             addBt.setOnClickListener {
                 if (etInterestsEditProfile.text.isNotEmpty()) {
                     addChipToGroup(etInterestsEditProfile.text.toString())
+                } else {
+                    Toast.makeText(requireContext(), "Interest cannot be empty", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
 

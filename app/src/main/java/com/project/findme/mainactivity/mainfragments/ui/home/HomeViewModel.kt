@@ -1,5 +1,7 @@
 package com.project.findme.mainactivity.mainfragments.ui.home
 
+import android.content.Context
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

@@ -91,10 +91,4 @@ class PersonSearchFragment : Fragment(R.layout.fragment_search_person) {
             adapter = userAdapter
             itemAnimator = null
         }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        binding.etSearch.setText("")
-    }
-
 }

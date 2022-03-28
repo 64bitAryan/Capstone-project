@@ -29,4 +29,23 @@ class ListFollowersViewModel @Inject constructor(
             _list.postValue(Events(result))
         }
     }
+
+    private val _follow = MutableLiveData<Events<Resource<User>>>()
+    val follow: LiveData<Events<Resource<User>>> = _follow
+
+    fun followUser(uid: String) {
+        _follow.postValue(Events(Resource.Loading()))
+        viewModelScope.launch(dispatcher) {
+            val user = repository.followUser(uid)
+            _follow.postValue(Events(user))
+        }
+    }
+
+    fun unFollowUser(uid: String) {
+        _follow.postValue(Events(Resource.Loading()))
+        viewModelScope.launch(dispatcher) {
+            val user = repository.unFollowUser(uid)
+            _follow.postValue(Events(user))
+        }
+    }
 }

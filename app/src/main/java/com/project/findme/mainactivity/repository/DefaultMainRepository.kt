@@ -163,6 +163,17 @@ class DefaultMainRepository() : MainRepository {
         }
     }
 
+    override suspend fun unFollowUser(uid: String): Resource<User> = withContext(Dispatchers.IO) {
+        safeCall {
+            val currentUser = auth.currentUser?.uid!!
+            users.document(currentUser).update("followings", FieldValue.arrayRemove(uid)).await()
+            users.document(uid).update("follows", FieldValue.arrayRemove(currentUser)).await()
+
+            val user = users.document(uid).get().await().toObject(User::class.java)!!
+            Resource.Success(user)
+        }
+    }
+
     override suspend fun getUsers(uid: String, type: String): Resource<List<User>> =
         withContext(Dispatchers.IO) {
             safeCall {
@@ -188,14 +199,14 @@ class DefaultMainRepository() : MainRepository {
                     "mutual" -> {
                         val user = users.document(uid).get().await().toObject(User::class.java)!!
                         val userList = mutableListOf<User>()
-                        for (u in user.follows) {
+                        for (u in user.followings) {
                             val cur = users.document(u).get().await().toObject(User::class.java)!!
                             userList.add(cur)
                         }
                         val curUser = users.document(auth.currentUser!!.uid).get().await()
                             .toObject(User::class.java)!!
                         val userList1 = mutableListOf<User>()
-                        for (u in curUser.follows) {
+                        for (u in curUser.followings) {
                             val cur = users.document(u).get().await().toObject(User::class.java)!!
                             userList1.add(cur)
                         }

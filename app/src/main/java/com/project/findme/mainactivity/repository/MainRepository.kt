@@ -25,6 +25,8 @@ interface MainRepository {
 
     suspend fun followUser(uid: String): Resource<User>
 
+    suspend fun unFollowUser(uid: String): Resource<User>
+
     suspend fun getUsers(uid: String, type: String): Resource<List<User>>
 
     suspend fun createComment(commentText: String, postId:String): Resource<Comment>
