@@ -1,5 +1,6 @@
 package com.project.findme.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
@@ -7,17 +8,19 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.data.entity.Post
+import com.ryan.findme.R
 import com.ryan.findme.databinding.ItemPostBinding
 import javax.inject.Inject
 
 class PostAdapter @Inject constructor(
-    private val glide: RequestManager
+    private val glide: RequestManager,
 ):RecyclerView.Adapter<PostAdapter.PostViewHolder>() {
 
     private val diffCallback = object : DiffUtil.ItemCallback<Post>() {
@@ -62,10 +65,21 @@ class PostAdapter @Inject constructor(
             descriptionTextView.text = post.text
             val uid = FirebaseAuth.getInstance().uid!!
             deletePostButton.isVisible = uid == post.authorUid
+            postCommentButton.setOnClickListener {
+                commentButtonClickedListener?.let { click ->
+                    click(post)
+                }
+            }
         }
     }
 
     override fun getItemCount(): Int {
         return posts.size
+    }
+
+    private var commentButtonClickedListener: ((Post) -> Unit)? = null
+
+    fun setOnCommentClickListener(listener:(Post)->Unit) {
+        commentButtonClickedListener = listener
     }
 }

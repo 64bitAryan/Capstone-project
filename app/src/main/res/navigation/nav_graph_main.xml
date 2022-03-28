@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_homeFragment_to_createPostFragment"
             app:destination="@id/createPostFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_commentFragment"
+            app:destination="@id/commentFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -108,6 +111,14 @@
             app:argType="string" />
         <argument
             android:name="username"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/commentFragment"
+        android:name="com.project.findme.mainactivity.mainfragments.ui.comment.CommentFragment"
+        android:label="Comment" >
+        <argument
+            android:name="postId"
             app:argType="string" />
     </fragment>
 </navigation>

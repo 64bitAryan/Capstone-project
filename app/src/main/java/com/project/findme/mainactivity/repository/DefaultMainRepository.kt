@@ -12,10 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.project.findme.data.entity.Credential
-import com.project.findme.data.entity.Post
-import com.project.findme.data.entity.UpdateUser
-import com.project.findme.data.entity.User
+import com.project.findme.data.entity.*
 import com.project.findme.utils.Resource
 import com.project.findme.utils.safeCall
 import kotlinx.coroutines.CoroutineScope
@@ -31,6 +28,7 @@ class DefaultMainRepository() : MainRepository {
     val storage = Firebase.storage
     val users = FirebaseFirestore.getInstance().collection("users")
     val cred = FirebaseFirestore.getInstance().collection("credentials")
+    private val comments = FirebaseFirestore.getInstance().collection("comments")
     val posts = FirebaseFirestore.getInstance().collection("posts")
 
     override suspend fun searchUsers(query: String) = withContext(Dispatchers.IO) {
@@ -211,4 +209,39 @@ class DefaultMainRepository() : MainRepository {
             }
         }
 
+    override suspend fun createComment(commentText: String, postId: String) = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = auth.uid!!
+            val commentId = UUID.randomUUID().toString()
+            val user = getUser(uid).data!!
+            val comment = Comment(
+                commentId,
+                postId,
+                uid,
+                user.userName,
+                user.profilePicture,
+                commentText
+            )
+            comments.document(commentId).set(comment).await()
+            Resource.Success(comment)
+        }
+    }
+
+    override suspend fun getCommentFromPost(postId: String) = withContext(Dispatchers.IO) {
+        safeCall{
+            val commentForPost = comments
+                .whereEqualTo("postId", postId)
+                .orderBy("data", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(
+                    Comment::class.java
+                ).onEach { comment ->
+                    val user = getUser(auth.uid!!).data!!
+                    comment.uesrname = user.userName
+                    comment.profilePicture = user.profilePicture
+                }
+            Resource.Success(commentForPost)
+        }
+    }
 }

@@ -1,6 +1,7 @@
 package com.project.findme.mainactivity.repository
 
 import android.net.Uri
+import com.project.findme.data.entity.Comment
 import com.project.findme.data.entity.Post
 import com.project.findme.data.entity.UpdateUser
 import com.project.findme.data.entity.User
@@ -25,5 +26,9 @@ interface MainRepository {
     suspend fun followUser(uid: String): Resource<User>
 
     suspend fun getUsers(uid: String, type: String): Resource<List<User>>
+
+    suspend fun createComment(commentText: String, postId:String): Resource<Comment>
+
+    suspend fun getCommentFromPost(postId: String): Resource<List<Comment>>
 
 }
