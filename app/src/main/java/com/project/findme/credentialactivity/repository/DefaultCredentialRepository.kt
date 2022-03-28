@@ -9,18 +9,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
-class DefaultCredentialRepository: CredentialRepository {
+class DefaultCredentialRepository : CredentialRepository {
 
     val auth = FirebaseAuth.getInstance()
     val cred = FirebaseFirestore.getInstance().collection("credentials")
+    val users = FirebaseFirestore.getInstance().collection("users")
 
     override suspend fun postCredentials(
         credential: Credential
     ) {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             safeCall {
                 val uid = auth.currentUser?.uid!!
                 val result = cred.document(uid).set(credential).await()
+                val credentials = cred.document(uid).get().await().toObject(Credential::class.java)
+                users.document(uid).update("credential", credentials).await()
                 Resource.Success(result)
             }
         }

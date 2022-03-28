@@ -18,6 +18,4 @@ interface AuthRepository {
 
     suspend fun googleRegister(credentials: AuthCredential): Resource<AuthResult>
 
-    suspend fun searchUser(query: String): Resource<List<com.project.findme.data.entity.User>>
-
 }

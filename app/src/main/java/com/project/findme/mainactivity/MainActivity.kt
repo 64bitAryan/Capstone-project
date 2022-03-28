@@ -98,10 +98,13 @@ class MainActivity : AppCompatActivity() {
         if (toggle.onOptionsItemSelected(item)) {
             return if (navController.currentDestination?.id == R.id.editProfileFragment
                 || navController.currentDestination?.id == R.id.createPostFragment
+                || navController.currentDestination?.id == R.id.changePasswordFragment
+                || navController.currentDestination?.id == R.id.searchedProfileFragment
+                || navController.currentDestination?.id == R.id.listFollowersFragment
             ) {
                 drawerLayout.closeDrawer(GravityCompat.START)
                 super.onOptionsItemSelected(item)
-            } else{
+            } else {
                 true
             }
         }
