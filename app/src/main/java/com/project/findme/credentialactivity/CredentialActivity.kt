@@ -15,13 +15,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.mainactivity.MainActivity
-import com.project.findme.utils.Constants.HOBBIES
-import com.project.findme.utils.Constants.PROFFESSIONS
+import com.project.findme.utils.Constants.hobbies
+import com.project.findme.utils.Constants.professions
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.hideKeyboard
 import com.ryan.findme.R
 import com.ryan.findme.databinding.ActivityCredentialBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -46,13 +47,13 @@ class CredentialActivity : AppCompatActivity() {
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
             this,
             android.R.layout.simple_dropdown_item_1line,
-            PROFFESSIONS
+            professions
         )
 
         val adapterHobbies: ArrayAdapter<String> = ArrayAdapter<String>(
             this,
             android.R.layout.simple_dropdown_item_1line,
-            HOBBIES
+            hobbies
         )
 
         binding.apply {
@@ -114,16 +115,8 @@ class CredentialActivity : AppCompatActivity() {
             }
 
             addBt.setOnClickListener {
-                if (credentialInterestEt.text.isNotEmpty()) {
-                    addChipToGroup(this@CredentialActivity, credentialInterestEt.text.toString())
-                } else {
-                    Toast.makeText(
-                        this@CredentialActivity,
-                        "Interest cannot be empty",
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                }
+                val interest: String = credentialInterestEt.text.toString()
+                addChipToGroup(this@CredentialActivity, interest)
             }
 
             letsGoBt.setOnClickListener {

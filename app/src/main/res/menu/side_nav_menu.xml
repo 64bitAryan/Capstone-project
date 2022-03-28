@@ -11,9 +11,6 @@
             <item
                 android:id="@+id/editProfileFragment"
                 android:title="Edit Profile" />
-            <item
-                android:id="@+id/draftPostFragment"
-                android:title="Drafts" />
         </menu>
     </item>
 

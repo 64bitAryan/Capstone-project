@@ -1,23 +1,25 @@
 package com.project.findme.mainactivity.repository
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
-import com.project.findme.data.entity.Post
-import com.project.findme.data.entity.User
+import com.project.findme.data.entity.*
 import com.project.findme.utils.Resource
 import com.project.findme.utils.safeCall
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.lang.IllegalStateException
 import java.util.*
 
 class DefaultMainRepository() : MainRepository {
@@ -26,6 +28,7 @@ class DefaultMainRepository() : MainRepository {
     val storage = Firebase.storage
     val users = FirebaseFirestore.getInstance().collection("users")
     val cred = FirebaseFirestore.getInstance().collection("credentials")
+    private val comments = FirebaseFirestore.getInstance().collection("comments")
     val posts = FirebaseFirestore.getInstance().collection("posts")
 
     override suspend fun searchUsers(query: String) = withContext(Dispatchers.IO) {
@@ -35,7 +38,9 @@ class DefaultMainRepository() : MainRepository {
                 .startAt(query)
                 .endAt(query + "\uf8ff")
                 .get().await().toObjects(User::class.java)
-            Resource.Success(userResult)
+            val cur =
+                users.document(auth.currentUser!!.uid).get().await().toObject(User::class.java)!!
+            Resource.Success(userResult - cur)
         }
     }
 
@@ -43,7 +48,7 @@ class DefaultMainRepository() : MainRepository {
         imageUri: Uri,
         title: String,
         description: String
-    ): Resource<Any> = withContext(Dispatchers.IO){
+    ): Resource<Any> = withContext(Dispatchers.IO) {
         safeCall {
             val uid = auth.uid!!
             val postId = UUID.randomUUID().toString()
@@ -66,7 +71,7 @@ class DefaultMainRepository() : MainRepository {
     override suspend fun updatePassword(
         oldPassword: String,
         newPassword: String
-    ): Resource<Boolean> {
+    ): Resource<Any> {
         return withContext(Dispatchers.IO) {
             safeCall {
                 val user = Firebase.auth.currentUser
@@ -74,62 +79,69 @@ class DefaultMainRepository() : MainRepository {
                 val credential = EmailAuthProvider
                     .getCredential(user?.email!!, oldPassword)
 
-                val result = user.reauthenticate(credential).await()
-                val result1 = user.updatePassword(newPassword).await()
-
-                Resource.Success(result)
-                Resource.Success(result1)
-                Resource.Success(true)
-            }
-        }
-    }
-
-    override suspend fun updateProfile(
-        username: String,
-        description: String,
-        profession: String,
-        interests: List<String>
-    ): Resource<Boolean> {
-        return withContext(Dispatchers.IO) {
-            safeCall {
-
-                val user = Firebase.auth.currentUser
-                val profileUpdate =
-                    UserProfileChangeRequest.Builder().setDisplayName(username).build()
-
-                val result = user!!.updateProfile(profileUpdate).await()
-                val result1 = users.document(user.uid)
-                    .update("userName", username, "description", description)
-                val result2 = cred.document(user.uid)
-                    .update("interest", interests, "profession", profession)
-
-                Resource.Success(result)
-                Resource.Success(result1)
-                Resource.Success(result2)
-                Resource.Success(true)
-            }
-        }
-    }
-
-    override suspend fun getPostForProfile(uid: String) = withContext(Dispatchers.IO) {
-        safeCall {
-            val profilePosts = posts.whereEqualTo("authorUid", uid)
-                .orderBy("date", Query.Direction.DESCENDING)
-                .get()
-                .await()
-                .toObjects(Post::class.java)
-                .onEach { post ->
-                    val user = getUser(post.authorUid).data!!
-                    post.authorProfilePictureUrl = user.profilePicture
-                    post.authorUsername = user.userName
-                    post.isLiked = uid in post.likedBy
+                val result = user.reauthenticate(credential).addOnSuccessListener {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        user.updatePassword(newPassword).await()
+                    }
                 }
-            Resource.Success(profilePosts)
+
+                Resource.Success(result)
+            }
         }
     }
 
-    override suspend fun getUser(uid: String) = withContext(Dispatchers.IO) {
-        safeCall{
+    override suspend fun updateProfile(user: UpdateUser) = withContext(Dispatchers.IO) {
+        safeCall {
+            val imageUrl = user.profilePicture?.let { uri ->
+//                updateProfilePicture(profileUpdate.uidToUpdate, uri).toString()
+            }
+
+            val curUser = auth.currentUser
+            val profileUpdate =
+                UserProfileChangeRequest.Builder().setDisplayName(user.userName).build()
+
+            curUser!!.updateProfile(profileUpdate).await()
+
+            val map = mutableMapOf(
+                "userName" to user.userName,
+                "description" to user.description,
+                "credential.profession" to user.updateCredential.profession,
+                "credential.interest" to user.updateCredential.interest
+            )
+
+            users.document(user.uidToUpdate).update(map.toMap()).await()
+            Resource.Success(Any())
+        }
+    }
+
+    override suspend fun updateProfileUI(uid: String): Resource<User> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                Resource.Success(user)
+            }
+        }
+
+    override suspend fun getPostForProfile(uid: String): Resource<List<Post>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val profilePosts = posts.whereEqualTo("authorUid", uid)
+                    .orderBy("date", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
+                    .toObjects(Post::class.java)
+                    .onEach { post ->
+                        val user = getUser(post.authorUid).data!!
+                        post.authorProfilePictureUrl = user.profilePicture
+                        post.authorUsername = user.userName
+                        post.isLiked = uid in post.likedBy
+                    }
+                Resource.Success(profilePosts)
+            }
+        }
+
+    override suspend fun getUser(uid: String): Resource<User> = withContext(Dispatchers.IO) {
+        safeCall {
             val user = users.document(uid).get().await().toObject(User::class.java)
                 ?: throw IllegalStateException()
             val currentUid = FirebaseAuth.getInstance().uid!!
@@ -140,4 +152,96 @@ class DefaultMainRepository() : MainRepository {
         }
     }
 
+    override suspend fun followUser(uid: String): Resource<User> = withContext(Dispatchers.IO) {
+        safeCall {
+            val currentUser = auth.currentUser?.uid!!
+            users.document(currentUser).update("followings", FieldValue.arrayUnion(uid)).await()
+            users.document(uid).update("follows", FieldValue.arrayUnion(currentUser)).await()
+
+            val user = users.document(uid).get().await().toObject(User::class.java)!!
+            Resource.Success(user)
+        }
+    }
+
+    override suspend fun getUsers(uid: String, type: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                when (type) {
+                    "Followers" -> {
+                        val user = users.document(uid).get().await().toObject(User::class.java)!!
+                        val userList = mutableListOf<User>()
+                        for (u in user.follows) {
+                            val cur = users.document(u).get().await().toObject(User::class.java)!!
+                            userList.add(cur)
+                        }
+                        return@safeCall Resource.Success(userList)
+                    }
+                    "Followings" -> {
+                        val user = users.document(uid).get().await().toObject(User::class.java)!!
+                        val userList = mutableListOf<User>()
+                        for (u in user.followings) {
+                            val cur = users.document(u).get().await().toObject(User::class.java)!!
+                            userList.add(cur)
+                        }
+                        return@safeCall Resource.Success(userList)
+                    }
+                    "mutual" -> {
+                        val user = users.document(uid).get().await().toObject(User::class.java)!!
+                        val userList = mutableListOf<User>()
+                        for (u in user.follows) {
+                            val cur = users.document(u).get().await().toObject(User::class.java)!!
+                            userList.add(cur)
+                        }
+                        val curUser = users.document(auth.currentUser!!.uid).get().await()
+                            .toObject(User::class.java)!!
+                        val userList1 = mutableListOf<User>()
+                        for (u in curUser.follows) {
+                            val cur = users.document(u).get().await().toObject(User::class.java)!!
+                            userList1.add(cur)
+                        }
+                        return@safeCall Resource.Success((userList intersect userList1).toList())
+                    }
+                    else -> {
+                        return@safeCall Resource.Success(listOf())
+                    }
+                }
+
+            }
+        }
+
+    override suspend fun createComment(commentText: String, postId: String) = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = auth.uid!!
+            val commentId = UUID.randomUUID().toString()
+            val user = getUser(uid).data!!
+            val comment = Comment(
+                commentId,
+                postId,
+                uid,
+                user.userName,
+                user.profilePicture,
+                commentText
+            )
+            comments.document(commentId).set(comment).await()
+            Resource.Success(comment)
+        }
+    }
+
+    override suspend fun getCommentFromPost(postId: String) = withContext(Dispatchers.IO) {
+        safeCall{
+            val commentForPost = comments
+                .whereEqualTo("postId", postId)
+                .orderBy("data", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(
+                    Comment::class.java
+                ).onEach { comment ->
+                    val user = getUser(auth.uid!!).data!!
+                    comment.uesrname = user.userName
+                    comment.profilePicture = user.profilePicture
+                }
+            Resource.Success(commentForPost)
+        }
+    }
 }

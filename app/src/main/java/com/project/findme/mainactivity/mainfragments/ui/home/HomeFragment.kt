@@ -7,10 +7,11 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.PostAdapter
+import com.project.findme.mainactivity.mainfragments.ui.comment.CommentFragmentArgs
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -20,10 +21,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home_screen) {
-
     @Inject
-    lateinit var postAdapter:PostAdapter
-    val viewModel:HomeViewModel by viewModels()
+    lateinit var postAdapter: PostAdapter
+    val viewModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeScreenBinding
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,27 +38,40 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             createPostFb.setOnClickListener {
                 findNavController().navigate(R.id.action_homeFragment_to_createPostFragment)
             }
+
+            swipeRefreshLayout.setOnRefreshListener {
+                FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
+            }
         }
     }
 
     private fun subscribeToObserver() {
         viewModel.post.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                binding.homePb.isVisible = false
-                Log.d("HomeFragment ", it)
+                binding.swipeRefreshLayout.isRefreshing = false
                 snackbar(it)
             },
             onLoading = {
-                binding.homePb.isVisible = true
+                binding.swipeRefreshLayout.isRefreshing = true
                 postAdapter.posts = listOf()
             }
-        ){ postList ->
+        ) { postList ->
             postAdapter.posts = postList
-            binding.homePb.isVisible = false
+            binding.swipeRefreshLayout.isRefreshing = false
         })
     }
 
     private fun setUpRecyclerView() {
+
+        postAdapter.setOnCommentClickListener { post ->
+            findNavController().navigate(
+                R.id.action_homeFragment_to_commentFragment,
+                Bundle().apply {
+                    putString("postId", post.id)
+                }
+            )
+        }
+
         binding.postRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter

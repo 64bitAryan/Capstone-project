@@ -39,7 +39,7 @@ class UserProfileViewModel @Inject constructor(
     fun getPost(uid: String) {
         _post.postValue(Events(Resource.Loading()))
         viewModelScope.launch(dispatcher) {
-            val result = repository.getPostForUser(uid)
+            val result = repository.getPostForProfile(uid)
             _post.postValue(Events(result))
         }
     }

@@ -18,21 +18,18 @@ import javax.inject.Inject
 class CommentViewModel @Inject constructor(
     private val repository: MainRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-) : ViewModel() {
+) :ViewModel() {
     private val _createCommentStatus = MutableLiveData<Events<Resource<Comment>>>()
-    val createCommentStatus: LiveData<Events<Resource<Comment>>> = _createCommentStatus
+    val createCommentStatus:LiveData<Events<Resource<Comment>>> = _createCommentStatus
 
     private val _getCommentStatus = MutableLiveData<Events<Resource<List<Comment>>>>()
     val getCommentsForPostStatus: LiveData<Events<Resource<List<Comment>>>> = _getCommentStatus
 
-    private val _deleteCommentStatus = MutableLiveData<Events<Resource<Comment>>>()
-    val deleteCommentStatus: LiveData<Events<Resource<Comment>>> = _deleteCommentStatus
-
-    fun createComment(commentText: String, postId: String, parent: String?) {
-        if (commentText.isNotEmpty()) {
+    fun createComment(commentText:String, postId: String) {
+        if(commentText.isNotEmpty()) {
             _createCommentStatus.postValue(Events(Resource.Loading()))
             viewModelScope.launch(dispatcher) {
-                val result = repository.createComment(commentText, postId, parent)
+                val result = repository.createComment(commentText, postId)
                 _createCommentStatus.postValue(Events(result))
             }
         }
@@ -43,14 +40,6 @@ class CommentViewModel @Inject constructor(
         viewModelScope.launch(dispatcher) {
             val result = repository.getCommentFromPost(postId)
             _getCommentStatus.postValue(Events(result))
-        }
-    }
-
-    fun deleteComment(comment: Comment) {
-        _deleteCommentStatus.postValue(Events(Resource.Loading()))
-        viewModelScope.launch(dispatcher) {
-            val result = repository.deleteComment(comment)
-            _deleteCommentStatus.postValue(Events(result))
         }
     }
 }

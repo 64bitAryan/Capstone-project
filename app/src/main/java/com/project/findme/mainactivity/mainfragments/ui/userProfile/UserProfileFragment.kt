@@ -1,24 +1,21 @@
 package com.project.findme.mainactivity.mainfragments.ui.userProfile
 
 import android.annotation.SuppressLint
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.view.MotionEvent
+import android.util.Log
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
-import android.widget.ImageView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.google.firebase.auth.FirebaseAuth
+import com.project.findme.adapter.PostAdapter
 import com.project.findme.adapter.PostAdapterProfile
-import com.project.findme.data.entity.Post
 import com.project.findme.data.entity.User
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
@@ -37,17 +34,9 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
     lateinit var glide: RequestManager
     private lateinit var viewModel: UserProfileViewModel
     private lateinit var binding: FragmentUserProfileBinding
-    private lateinit var builder: Dialog
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        builder = Dialog(requireContext())
-
-        builder.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        builder.window?.setBackgroundDrawable(
-            ColorDrawable(Color.TRANSPARENT)
-        )
 
         viewModel = ViewModelProvider(requireActivity()).get(UserProfileViewModel::class.java)
         subscribeToObserve()
@@ -58,10 +47,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
         FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.getPost(it) }
 
         setUpRecyclerView()
-
-        postAdapter.setOnItemClickListener {
-            publicationQuickView(it)
-        }
 
         binding.apply {
 
@@ -93,18 +78,6 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
                 FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.updateUI(it) }
                 FirebaseAuth.getInstance().currentUser?.uid?.let { viewModel.getPost(it) }
             }
-
-            postRvProfile.addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
-                override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                    if (e.action == MotionEvent.ACTION_UP) {
-                        hideQuickView()
-                    }
-                    return false
-                }
-
-                override fun onTouchEvent(rv: RecyclerView, event: MotionEvent) {}
-                override fun onRequestDisallowInterceptTouchEvent(disallowIntercept: Boolean) {}
-            })
         }
 
     }
@@ -171,20 +144,5 @@ class UserProfileFragment : Fragment(R.layout.fragment_user_profile) {
             tvFollowingsUserProfile.text = user.followings.size.toString() + "\nFollowings"
             glide.load(user.profilePicture).into(ivProfilePictureUserProfile)
         }
-    }
-
-    private fun publicationQuickView(post: Post) {
-        val view: View = layoutInflater.inflate(R.layout.item_post_profile, null)
-        val postImage: ImageView = view.findViewById<View>(R.id.post_iv) as ImageView
-        glide.load(post.imageUrl).into(postImage)
-        builder.setContentView(view)
-        val width = (resources.displayMetrics.widthPixels * 0.90).toInt()
-        val height = (resources.displayMetrics.heightPixels * 0.60).toInt()
-        builder.window?.setLayout(width, height)
-        builder.show()
-    }
-
-    fun hideQuickView() {
-        builder.dismiss()
     }
 }

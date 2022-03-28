@@ -1,10 +1,10 @@
-package com.project.findme.mainactivity.mainfragments.ui.home
+package com.project.findme.mainactivity.mainfragments.ui.listFollowers
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.project.findme.data.entity.Post
+import com.project.findme.data.entity.User
 import com.project.findme.mainactivity.repository.MainRepository
 import com.project.findme.utils.Events
 import com.project.findme.utils.Resource
@@ -15,18 +15,18 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class ListFollowersViewModel @Inject constructor(
     private val repository: MainRepository,
-    private val dispatcher:CoroutineDispatcher = Dispatchers.Main
-):ViewModel() {
-    private val _post = MutableLiveData<Events<Resource<List<Post>>>>()
-    val post: LiveData<Events<Resource<List<Post>>>> = _post
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Main
+) : ViewModel() {
+    private val _list = MutableLiveData<Events<Resource<List<User>>>>()
+    val list: LiveData<Events<Resource<List<User>>>> = _list
 
-    fun getPost(uid: String) {
-        _post.postValue(Events(Resource.Loading()))
+    fun getUsers(uid: String, type: String){
+        _list.postValue(Events(Resource.Loading()))
         viewModelScope.launch(dispatcher) {
-            val result = repository.getPostForProfile(uid)
-            _post.postValue(Events(result))
+            val result = repository.getUsers(uid, type)
+            _list.postValue(Events(result))
         }
     }
 }

@@ -9,11 +9,9 @@ data class Comment(
     val postId: String = "",
     val uid: String = "",
     @get:Exclude
-    var username: String = "",
+    var uesrname: String = "",
     @get:Exclude
     var profilePicture: String = "",
     val comment: String = "",
-    val date: Long = System.currentTimeMillis(),
-    val repliedComments: List<String> = listOf(),
-    val parentId: String? = null
+    val data: Long = System.currentTimeMillis()
 )
