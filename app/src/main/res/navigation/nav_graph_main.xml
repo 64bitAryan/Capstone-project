@@ -133,4 +133,12 @@
             android:name="postId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/commentFragment"
+        android:name="com.project.findme.mainactivity.mainfragments.ui.comment.CommentFragment"
+        android:label="Comment" >
+        <argument
+            android:name="postId"
+            app:argType="string" />
+    </fragment>
 </navigation>
