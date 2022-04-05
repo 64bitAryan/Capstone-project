@@ -40,7 +40,8 @@ class PostAdapter @Inject constructor(
         set(value) = differ.submitList(value)
 
     inner class PostViewHolder(binding: ItemPostBinding): RecyclerView.ViewHolder(binding.root) {
-        val descriptionTextView:TextView = binding.postTitle
+        val descriptionTextView:TextView = binding.descriptionTv
+        val titleTextView = binding.postTitle
         val userNameTextView:TextView = binding.postUsernameTv
         val postImageView:ImageView = binding.postIv
         val profilePictureImageView:ImageView = binding.postProfilePic
@@ -62,9 +63,17 @@ class PostAdapter @Inject constructor(
             glide.load(post.imageUrl).into(postImageView)
             glide.load(post.authorProfilePictureUrl).into(profilePictureImageView)
             userNameTextView.text = post.authorUsername
+            titleTextView.text = post.title
             descriptionTextView.text = post.text
             val uid = FirebaseAuth.getInstance().uid!!
-            deletePostButton.isVisible = uid == post.authorUid
+            deletePostButton.apply {
+                isVisible = uid == post.authorUid
+                setOnClickListener {
+                    deleteButtonCLickedListener?.let { click ->
+                        click(post)
+                    }
+                }
+            }
             postCommentButton.setOnClickListener {
                 commentButtonClickedListener?.let { click ->
                     click(post)
@@ -78,8 +87,13 @@ class PostAdapter @Inject constructor(
     }
 
     private var commentButtonClickedListener: ((Post) -> Unit)? = null
+    private var deleteButtonCLickedListener: ((Post) -> Unit)? = null
 
     fun setOnCommentClickListener(listener:(Post)->Unit) {
         commentButtonClickedListener = listener
+    }
+
+    fun setOnDeleteClickListener(listener:(Post) -> Unit) {
+        deleteButtonCLickedListener = listener
     }
 }

@@ -30,6 +30,7 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeScreenBinding.bind(view)
         FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
+        viewModel.getPostFromFollower()
 
         setUpRecyclerView()
         subscribeToObserver()
@@ -41,6 +42,7 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
 
             swipeRefreshLayout.setOnRefreshListener {
                 FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
+                viewModel.getPostFromFollower()
             }
         }
     }
@@ -59,6 +61,33 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             postAdapter.posts = postList
             binding.swipeRefreshLayout.isRefreshing = false
         })
+
+        viewModel.getFollowersPostStatus.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                binding.swipeRefreshLayout.isRefreshing = false
+                snackbar(it)
+            },
+            onLoading = {
+                binding.swipeRefreshLayout.isRefreshing = true
+                postAdapter.posts += listOf()
+            }
+        ){ postList ->
+            postAdapter.posts += postList
+            binding.swipeRefreshLayout.isRefreshing = false
+        })
+
+        viewModel.deletePostStatus.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                binding.swipeRefreshLayout.isRefreshing = false
+                snackbar(it)
+            },
+            onLoading = {
+                binding.swipeRefreshLayout.isRefreshing = true
+            }
+        ){ deletedPost ->
+            postAdapter.posts -= deletedPost
+            binding.swipeRefreshLayout.isRefreshing = false
+        })
     }
 
     private fun setUpRecyclerView() {
@@ -70,6 +99,10 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
                     putString("postId", post.id)
                 }
             )
+        }
+
+        postAdapter.setOnDeleteClickListener { post ->
+            viewModel.deletePost(post)
         }
 
         binding.postRv.apply {

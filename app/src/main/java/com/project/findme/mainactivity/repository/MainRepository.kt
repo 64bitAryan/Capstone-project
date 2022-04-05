@@ -33,4 +33,10 @@ interface MainRepository {
 
     suspend fun getCommentFromPost(postId: String): Resource<List<Comment>>
 
+    suspend fun deletePost(post: Post): Resource<Post>
+
+    suspend fun getPostForFollows(): Resource<List<Post>>
+
+    suspend fun deleteComment(comment: Comment): Resource<Comment>
+
 }

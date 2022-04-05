@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.personSearchFragment,
                 R.id.chatFragment,
                 R.id.userProfileFragment,
-                R.id.signOutDialogFragment
+                R.id.signOutDialogFragment,
             )
         ).setOpenableLayout(drawerLayout)
             .build()

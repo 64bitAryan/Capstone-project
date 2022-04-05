@@ -239,20 +239,54 @@ class DefaultMainRepository() : MainRepository {
     }
 
     override suspend fun getCommentFromPost(postId: String) = withContext(Dispatchers.IO) {
-        safeCall{
-            val commentForPost = comments
+        safeCall {
+            val commentsForPost = comments
                 .whereEqualTo("postId", postId)
                 .orderBy("data", Query.Direction.DESCENDING)
                 .get()
                 .await()
-                .toObjects(
-                    Comment::class.java
-                ).onEach { comment ->
-                    val user = getUser(auth.uid!!).data!!
+                .toObjects(Comment::class.java)
+                .onEach { comment ->
+                    val user = getUser(comment.uid).data!!
                     comment.uesrname = user.userName
                     comment.profilePicture = user.profilePicture
                 }
-            Resource.Success(commentForPost)
+            Resource.Success(commentsForPost)
+        }
+    }
+
+    override suspend fun deletePost(post: Post) = withContext(Dispatchers.IO) {
+        safeCall {
+            posts.document(post.id).delete().await()
+            storage.getReferenceFromUrl(post.imageUrl).delete().await()
+            Resource.Success(post)
+        }
+    }
+
+    override suspend fun getPostForFollows() = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = FirebaseAuth.getInstance().uid!!
+            val follows = getUser(uid).data!!.follows
+            val allPosts = posts.whereIn("authorUid", follows)
+                .orderBy("date", Query.Direction.DESCENDING)
+                .get()
+                .await()
+                .toObjects(Post::class.java)
+                //Manually assigning the authorProfilePicture, authorUserName and isLiked on Each post
+                .onEach { post ->
+                    val user = getUser(post.authorUid).data!!
+                    post.authorProfilePictureUrl = user.profilePicture
+                    post.authorUsername = user.userName
+                    post.isLiked = uid in post.likedBy
+                }
+            Resource.Success(allPosts)
+        }
+    }
+
+    override suspend fun deleteComment(comment: Comment) = withContext(Dispatchers.IO) {
+        safeCall {
+            comments.document(comment.commentId).delete().await()
+            Resource.Success(comment)
         }
     }
 }
