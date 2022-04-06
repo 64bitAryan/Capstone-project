@@ -28,8 +28,8 @@ class HomeViewModel @Inject constructor(
     private val _deletePostStatus = MutableLiveData<Events<Resource<Post>>>()
     val deletePostStatus: LiveData<Events<Resource<Post>>> = _deletePostStatus
 
-    private val _getFollowerPostStatus = MutableLiveData<Events<Resource<List<Post>>>>()
-    val getFollowersPostStatus:LiveData<Events<Resource<List<Post>>>> = _getFollowerPostStatus
+    private val _like = MutableLiveData<Events<Resource<Any>>>()
+    val like:LiveData<Events<Resource<Any>>> = _like
 
     fun getPost(uid: String) {
         _post.postValue(Events(Resource.Loading()))
@@ -47,11 +47,11 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun getPostFromFollower() {
-        _getFollowerPostStatus.postValue(Events(Resource.Loading()))
-        viewModelScope.launch (dispatcher){
-            val result = repository.getPostForFollows()
-            _getFollowerPostStatus.postValue(Events(result))
+    fun likePost(post: Post){
+        _like.postValue(Events(Resource.Loading()))
+        viewModelScope.launch(dispatcher) {
+            val result = repository.likePost(post)
+            _like.postValue(Events(result))
         }
     }
 }
