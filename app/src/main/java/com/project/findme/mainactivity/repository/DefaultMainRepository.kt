@@ -151,7 +151,12 @@ class DefaultMainRepository() : MainRepository {
                         post.isLiked = uid in post.likedBy
                     }
 
-                Resource.Success(profilePosts + followingsPost)
+                var p = profilePosts + followingsPost
+                p = p.sortedByDescending {
+                    it.date
+                }
+
+                Resource.Success(p)
             }
         }
 
@@ -290,9 +295,11 @@ class DefaultMainRepository() : MainRepository {
     override suspend fun likePost(post: Post): Resource<Any> = withContext(Dispatchers.IO) {
         safeCall {
             val uid = auth.uid
-            val result = posts.document(post.id).update(
+            val result = if (uid in post.likedBy) posts.document(post.id).update(
                 "likedBy",
-                if (uid in post.likedBy) FieldValue.arrayRemove(uid) else FieldValue.arrayUnion(uid)
+                FieldValue.arrayRemove(uid)
+            ) else posts.document(post.id).update(
+                "likedBy", FieldValue.arrayUnion(uid)
             )
             post.isLiking = false
             Resource.Success(result)
