@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.PostAdapter
 import com.project.findme.mainactivity.mainfragments.ui.comment.CommentFragmentArgs
@@ -43,6 +44,20 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             swipeRefreshLayout.setOnRefreshListener {
                 FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
             }
+            postRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    super.onScrolled(recyclerView, dx, dy)
+                    if (dy > 10 && createPostFb.isShown) {
+                        createPostFb.hide()
+                    }
+                    if (dy < -10 && !createPostFb.isShown) {
+                        createPostFb.show()
+                    }
+                    if (!recyclerView.canScrollVertically(-1)) {
+                        createPostFb.show()
+                    }
+                }
+            })
         }
     }
 
