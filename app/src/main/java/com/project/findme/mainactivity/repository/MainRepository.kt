@@ -21,6 +21,8 @@ interface MainRepository {
 
     suspend fun getPostForProfile(uid: String): Resource<List<Post>>
 
+    suspend fun getPostForUser(uid: String): Resource<List<Post>>
+
     suspend fun getUser(uid: String): Resource<User>
 
     suspend fun followUser(uid: String): Resource<User>

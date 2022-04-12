@@ -1,57 +1,72 @@
 package com.project.findme.mainactivity.mainfragments.ui.editProfile
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageView
+import com.canhub.cropper.options
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.data.entity.UpdateCredentials
 import com.project.findme.data.entity.UpdateUser
 import com.project.findme.data.entity.User
-import com.project.findme.mainactivity.mainfragments.ui.userProfile.UserProfileFragmentDirections
-import com.project.findme.mainactivity.repository.MainRepository
-import com.project.findme.utils.Constants.hobbies
-import com.project.findme.utils.Constants.professions
+import com.project.findme.utils.Constants
 import com.project.findme.utils.EventObserver
-import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentEditProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
     @Inject
-    lateinit var glide:RequestManager
+    lateinit var glide: RequestManager
     private val viewModel: EditProfileViewModel by viewModels()
     private lateinit var binding: FragmentEditProfileBinding
+    private var curImageUri: Uri =
+        "https://firebasestorage.googleapis.com/v0/b/social-network-662a2.appspot.com/o/avatar.png?alt=media&token=69f56ce2-8fe2-4051-9e61-9e52182384c9".toUri()
     private var interests = mutableSetOf<String>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentEditProfileBinding.bind(view)
-        val user = FirebaseAuth.getInstance().currentUser
-        Log.d("Edit Profile Fragment", "Observing in Edit Profile")
         subscribeToObserver()
         FirebaseAuth.getInstance().currentUser?.let { viewModel.getUserProfile(it.uid) }
+
+        val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            Constants.professions
+        )
+
+        val adapterHobbies: ArrayAdapter<String> = ArrayAdapter<String>(
+            requireContext(),
+            android.R.layout.simple_dropdown_item_1line,
+            Constants.hobbies
+        )
+
         binding.apply {
+
+            etProfessionEditProfile.threshold = 1
+            etProfessionEditProfile.setAdapter(adapter)
+
+            etInterestsEditProfile.threshold = 1
+            etInterestsEditProfile.setAdapter(adapterHobbies)
+
             addBt.setOnClickListener {
                 if (etInterestsEditProfile.text.isNotEmpty()) {
                     addChipToGroup(etInterestsEditProfile.text.toString())
@@ -61,14 +76,39 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 }
             }
 
+            ivProfilePictureEditUser.setOnClickListener {
+                startCrop()
+            }
+
             btnUpdateProfile.setOnClickListener {
                 viewModel.updateProfile(viewToObject())
             }
         }
     }
 
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            curImageUri = result.uriContent!!
+            viewModel.setCurrentImageUri(curImageUri)
+        } else {
+            val exception = result.error
+            snackbar(exception.toString())
+        }
+    }
+
+    private fun startCrop() {
+        cropImage.launch(
+            options {
+                setGuidelines(CropImageView.Guidelines.ON)
+                setAspectRatio(1, 1)
+                setCropShape(CropImageView.CropShape.OVAL)
+                setOutputCompressFormat(Bitmap.CompressFormat.JPEG)
+            }
+        )
+    }
+
     private fun viewToObject(): UpdateUser {
-        var user:UpdateUser
+        var user: UpdateUser
         binding.apply {
             val inte = interests.toList()
             val name = etUsernameEditProfile.text.toString()
@@ -76,7 +116,13 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             val profession = etProfessionEditProfile.text.toString()
             val uid = FirebaseAuth.getInstance().uid!!
             val cred = UpdateCredentials(profession, inte)
-            user = UpdateUser(uid, name, description,cred)
+            user = UpdateUser(
+                uid,
+                name,
+                description,
+                cred,
+                curImageUri
+            )
         }
         return user
     }
@@ -115,46 +161,57 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     }
 
     private fun subscribeToObserver() {
+
+        viewModel.curImageUri.observe(viewLifecycleOwner) {
+            curImageUri = it
+            binding.apply {
+                glide.load(curImageUri).into(ivProfilePictureEditUser)
+            }
+        }
+
         viewModel.userProfileStatus.observe(viewLifecycleOwner, EventObserver(
             onError = { error ->
-                binding.progressBar.isVisible = false
+                showProgress(false)
                 snackbar(error)
             },
             onLoading = {
-                binding.progressBar.isVisible = true
+                showProgress(true)
             }
-        ){ user ->
-            binding.progressBar.isVisible = true
-            Log.d("Edit Profile Fragment", user.toString())
+        ) { user ->
+            showProgress(false)
             loadToViews(user)
         })
 
         viewModel.updateProfileStatus.observe(viewLifecycleOwner, EventObserver(
             onError = { error ->
                 binding.apply {
-                    setView(true)
+                    showProgress(false)
                     snackbar(error)
                 }
             },
             onLoading = {
-                setView(false)
+                showProgress(true)
             }
-        ){
-            setView(true)
+        ) {
+            showProgress(false)
             findNavController().navigate(R.id.action_editProfileFragment_to_userProfileFragment)
             snackbar("Updated Successfully")
         })
     }
 
-    private fun setView(state: Boolean) {
+    private fun showProgress(bool: Boolean) {
         binding.apply {
-            progressBar.isVisible = !state
-            etProfessionEditProfile.isClickable = state
-            etDescriptionEditProfile.isClickable = state
-            etInterestsEditProfile.isClickable = state
-            etUsernameEditProfile.isClickable = state
-            btnUpdateProfile.isClickable = state
-            addBt.isClickable = state
+            cvProgressEditProfile.isVisible = bool
+            if (bool) {
+                parentLayoutEditProfile.alpha = 0.5f
+                activity?.window!!.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+            } else {
+                parentLayoutEditProfile.alpha = 1f
+                activity?.window!!.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+            }
         }
     }
 }
