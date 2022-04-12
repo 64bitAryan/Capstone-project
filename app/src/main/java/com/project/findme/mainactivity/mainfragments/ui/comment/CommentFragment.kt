@@ -44,6 +44,9 @@ class CommentFragment: Fragment(R.layout.fragment_comment) {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = commentAdapter
         }
+        commentAdapter.setDeleteListener { comment ->
+            viewModel.deleteComment(comment)
+        }
     }
 
      private fun subscribeToObserve() {
@@ -67,6 +70,7 @@ class CommentFragment: Fragment(R.layout.fragment_comment) {
                 sendCommentBt.isClickable = true
                 commentTextInputEt.setText("")
                 commentAdapter.comment += it
+                Log.d("CommentFragment: ",it.toString())
             }
         })
 
@@ -93,6 +97,21 @@ class CommentFragment: Fragment(R.layout.fragment_comment) {
                  Log.d("CommentFragment: ", commentList.toString())
                  commentAdapter.comment = commentList
              }
+         })
+
+         viewModel.deleteCommentStatus.observe(viewLifecycleOwner, EventObserver(
+             onError = {
+                 snackbar(it)
+                 binding.apply {
+                     commentPb.isVisible = false
+                 }
+             },
+             onLoading = {
+                binding.commentPb.isVisible = true
+             }
+         ){
+             commentAdapter.comment -= it
+             binding.commentPb.isVisible = false
          })
      }
 }

@@ -5,11 +5,13 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.ListAdapter
+import com.project.findme.mainactivity.mainfragments.ui.listFollowersUser.ListFollowersFragmentUserDirections
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -54,6 +56,29 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
 
         setUpRecyclerView()
 
+        listAdapter.setOnFollowClickListener {
+            viewModel.followUser(it)
+        }
+
+        listAdapter.setOnUnFollowClickListener {
+            viewModel.unFollowUser(it)
+        }
+
+        listAdapter.setOnUserClickListener { user ->
+            if (FirebaseAuth.getInstance().currentUser?.uid == user.uid) {
+                findNavController().navigate(
+                    ListFollowersFragmentDirections.actionListFollowersFragmentToUserProfileFragment()
+                )
+            } else {
+                findNavController().navigate(
+                    ListFollowersFragmentDirections.actionListFollowersFragmentToSearchedProfileFragment(
+                        uid = user.uid,
+                        username = user.userName
+                    )
+                )
+            }
+        }
+
         binding.apply {
             btnFollowersList.setOnClickListener {
                 viewModel.getUsers(args.uid, "Followers")
@@ -95,6 +120,22 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
             }
         ) { users ->
             listAdapter.users = users
+            binding.progressBarLists.isVisible = false
+        })
+
+        viewModel.follow.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                binding.progressBarLists.isVisible = false
+                snackbar(it)
+            },
+            onLoading = {
+                binding.progressBarLists.isVisible = true
+            }
+        ) {
+            viewModel.getUsers(args.uid, "Followers")
+            binding.btnFollowersList.setBackgroundResource(R.drawable.button_bg)
+            binding.btnFollowingsList.setBackgroundResource(0)
+            binding.btnMutualList.setBackgroundResource(0)
             binding.progressBarLists.isVisible = false
         })
     }

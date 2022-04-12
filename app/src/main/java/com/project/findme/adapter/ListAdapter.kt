@@ -1,15 +1,19 @@
 package com.project.findme.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.project.findme.data.entity.Post
 import com.project.findme.data.entity.User
 import com.ryan.findme.databinding.ItemFollowersBinding
 import javax.inject.Inject
@@ -59,10 +63,57 @@ class ListAdapter @Inject constructor(
             usernameTextView.text = user.userName
             nameTextView.text = user.credential.name
             val uid = FirebaseAuth.getInstance().uid!!
+            if (uid in user.follows) {
+                btnFollow.visibility = View.INVISIBLE
+                btnUnfollow.visibility = View.VISIBLE
+            } else {
+                btnUnfollow.visibility = View.INVISIBLE
+                btnFollow.visibility = View.VISIBLE
+            }
+            if (uid == user.uid){
+                btnFollow.visibility = View.INVISIBLE
+                btnUnfollow.visibility = View.INVISIBLE
+            }
+
+            btnFollow.setOnClickListener {
+                onFollowClickListener?.let {
+                    it(user.uid)
+                }
+            }
+
+            btnUnfollow.setOnClickListener {
+                onUnFollowClickListener?.let {
+                    it(user.uid)
+                }
+            }
+
+            itemView.setOnClickListener {
+                onUserClickListener?.let {  click ->
+                    click(user)
+                }
+            }
         }
     }
 
     override fun getItemCount(): Int {
         return users.size
+    }
+
+    private var onUserClickListener: ((User) -> Unit)? = null
+
+    fun setOnUserClickListener(listener: (User) -> Unit) {
+        onUserClickListener = listener
+    }
+
+    private var onFollowClickListener: ((String) -> Unit)? = null
+
+    fun setOnFollowClickListener(listener: (String) -> Unit) {
+        onFollowClickListener = listener
+    }
+
+    private var onUnFollowClickListener: ((String) -> Unit)? = null
+
+    fun setOnUnFollowClickListener(listener: (String) -> Unit) {
+        onUnFollowClickListener = listener
     }
 }

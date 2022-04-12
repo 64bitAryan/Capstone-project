@@ -115,8 +115,16 @@ class CredentialActivity : AppCompatActivity() {
             }
 
             addBt.setOnClickListener {
-                val interest: String = credentialInterestEt.text.toString()
-                addChipToGroup(this@CredentialActivity, interest)
+                if (credentialInterestEt.text.isNotEmpty()) {
+                    addChipToGroup(this@CredentialActivity, credentialInterestEt.text.toString())
+                } else {
+                    Toast.makeText(
+                        this@CredentialActivity,
+                        "Interest cannot be empty",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                }
             }
 
             letsGoBt.setOnClickListener {
