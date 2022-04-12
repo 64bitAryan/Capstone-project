@@ -3,6 +3,7 @@ package com.project.findme.mainactivity.mainfragments.ui.home
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -59,6 +60,32 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             postAdapter.posts = postList
             binding.swipeRefreshLayout.isRefreshing = false
         })
+
+        viewModel.deletePostStatus.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                binding.swipeRefreshLayout.isRefreshing = false
+                snackbar(it)
+            },
+            onLoading = {
+                binding.swipeRefreshLayout.isRefreshing = true
+            }
+        ) { deletedPost ->
+            postAdapter.posts -= deletedPost
+            binding.swipeRefreshLayout.isRefreshing = false
+        })
+
+        viewModel.like.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                binding.swipeRefreshLayout.isRefreshing = false
+                snackbar(it)
+            },
+            onLoading = {
+                binding.swipeRefreshLayout.isRefreshing = true
+            }
+        ) {
+            FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
+            binding.swipeRefreshLayout.isRefreshing = false
+        })
     }
 
     private fun setUpRecyclerView() {
@@ -70,6 +97,15 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
                     putString("postId", post.id)
                 }
             )
+        }
+
+        postAdapter.setOnDeleteClickListener { post ->
+            viewModel.deletePost(post)
+        }
+
+        postAdapter.setOnLikeClickListener { post ->
+            post.isLiking = true
+            viewModel.likePost(post)
         }
 
         binding.postRv.apply {

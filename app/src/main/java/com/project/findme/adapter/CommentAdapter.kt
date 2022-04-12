@@ -2,10 +2,12 @@ package com.project.findme.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.data.entity.Comment
 import com.ryan.findme.databinding.ItemCommentBinding
 import javax.inject.Inject
@@ -35,6 +37,7 @@ class CommentAdapter @Inject constructor(
         val nameTextView = binding.nameTv
         val profileImageView = binding.profileIv
         val commentTextTextView = binding.commentTextTv
+        val deleteCommentImageButton = binding.commentDeleteIb
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -52,10 +55,24 @@ class CommentAdapter @Inject constructor(
             nameTextView.text = comment.uesrname
             glide.load(comment.profilePicture).into(profileImageView)
             commentTextTextView.text = comment.comment
+            deleteCommentImageButton.apply{
+                isVisible = comment.uid == FirebaseAuth.getInstance().uid!!
+                setOnClickListener {
+                    deleteCommentListener?.let { click->
+                        click(comment)
+                    }
+                }
+            }
         }
     }
 
     override fun getItemCount(): Int {
         return comment.size
+    }
+
+    private var deleteCommentListener:((Comment)->Unit)?=null
+
+    fun setDeleteListener(listener: (Comment)->Unit) {
+        deleteCommentListener = listener
     }
 }

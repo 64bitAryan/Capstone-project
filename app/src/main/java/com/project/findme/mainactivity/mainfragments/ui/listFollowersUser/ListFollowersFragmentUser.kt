@@ -5,18 +5,21 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.ListAdapter
+import com.project.findme.mainactivity.mainfragments.ui.listFollowers.ListFollowersFragmentDirections
+import com.project.findme.mainactivity.mainfragments.ui.personsearch.PersonSearchFragmentDirections
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
-import com.ryan.findme.databinding.FragmentListsFollowersBinding
 import com.ryan.findme.databinding.FragmentListsFollowersUserBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_user) {
@@ -53,6 +56,29 @@ class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_use
 
         setUpRecyclerView()
 
+        listAdapter.setOnFollowClickListener {
+            viewModel.followUser(it)
+        }
+
+        listAdapter.setOnUnFollowClickListener {
+            viewModel.unFollowUser(it)
+        }
+
+        listAdapter.setOnUserClickListener { user ->
+            if (FirebaseAuth.getInstance().currentUser?.uid == user.uid) {
+                findNavController().navigate(
+                    ListFollowersFragmentUserDirections.actionListFollowersFragmentUserToUserProfileFragment2()
+                )
+            } else {
+                findNavController().navigate(
+                    ListFollowersFragmentUserDirections.actionListFollowersFragmentUserToSearchedProfileFragment(
+                        uid = user.uid,
+                        username = user.userName
+                    )
+                )
+            }
+        }
+
         binding.apply {
             btnFollowersList.setOnClickListener {
                 FirebaseAuth.getInstance().currentUser?.let { user ->
@@ -68,7 +94,7 @@ class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_use
                 FirebaseAuth.getInstance().currentUser?.let { user ->
                     viewModel.getUsers(
                         user.uid,
-                        "Following"
+                        "Followings"
                     )
                 }
                 it.setBackgroundResource(R.drawable.button_bg)
@@ -96,6 +122,25 @@ class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_use
             }
         ) { users ->
             listAdapter.users = users
+            binding.progressBarLists.isVisible = false
+        })
+        viewModel.follow.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                binding.progressBarLists.isVisible = false
+                snackbar(it)
+            },
+            onLoading = {
+                binding.progressBarLists.isVisible = true
+            }
+        ) {
+            FirebaseAuth.getInstance().currentUser?.let {
+                viewModel.getUsers(
+                    it.uid,
+                    "Followers"
+                )
+            }
+            binding.btnFollowersList.setBackgroundResource(R.drawable.button_bg)
+            binding.btnFollowingsList.setBackgroundResource(0)
             binding.progressBarLists.isVisible = false
         })
     }

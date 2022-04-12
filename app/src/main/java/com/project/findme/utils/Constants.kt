@@ -1,55 +1,13 @@
 package com.project.findme.utils
 
-import android.graphics.Color
-import com.ryan.findme.R
-
 object Constants {
-    const val DEFAULT_PROFILE_PICTURE_URL =
-        "https://firebasestorage.googleapis.com/v0/b/social-network-662a2.appspot.com/o/avatar.png?alt=media&token=69f56ce2-8fe2-4051-9e61-9e52182384c9"
+    const val DEFAULT_PROFILE_PICTURE_URL = "https://firebasestorage.googleapis.com/v0/b/social-network-662a2.appspot.com/o/avatar.png?alt=media&token=69f56ce2-8fe2-4051-9e61-9e52182384c9"
     const val MAX_USERNAME_LENGTH = 8
     const val MIN_USERNAME_LENGTH = 3
     const val MIN_PASSWORD_LENGTH = 8
     const val SEARCH_TIME_DELAY = 500L
-    const val FRAGMENT_ARG_KEY = "FRAGMENT_ARG_KEY"
     const val PAGE_SIZE = 5
-    val FRAGMENTS_LIST = listOf(
-        R.id.editProfileFragment,
-        R.id.draftPostFragment,
-        R.id.changePasswordFragment,
-        R.id.searchedProfileFragment,
-        R.id.listFollowersFragment,
-        R.id.listFollowersFragmentUser,
-        R.id.commentFragment,
-        R.id.likedByFragment
-    )
-    val FRAGMENTS_LIST_BOTTOM_NAV = listOf(
-        R.id.editProfileFragment,
-        R.id.draftPostFragment,
-        R.id.changePasswordFragment,
-        R.id.searchedProfileFragment,
-        R.id.listFollowersFragment,
-        R.id.listFollowersFragmentUser,
-        R.id.commentFragment,
-        R.id.likedByFragment,
-        R.id.createPostFragment,
-        R.id.createTextPostFragment
-    )
-    val COLORS = mapOf(
-        0 to R.drawable.blue_background,
-        1 to R.drawable.red_background,
-        2 to R.drawable.peach_background,
-        3 to R.drawable.yellow_background,
-        4 to R.drawable.brown_background
-    )
-    val PEN_COLORS = mapOf(
-        0 to Color.RED,
-        1 to Color.CYAN,
-        2 to Color.BLUE,
-        3 to Color.MAGENTA,
-        4 to Color.YELLOW,
-        5 to Color.WHITE
-    )
-    val HOBBIES = arrayOf(
+    val hobbies = arrayOf(
         "3d printing",
         "amateur meteorology",
         "art collecting",
@@ -165,7 +123,7 @@ object Constants {
         "yoga"
     )
 
-    val PROFFESSIONS = arrayOf(
+    val professions = arrayOf(
         "accountant",
         "actor",
         "actress",

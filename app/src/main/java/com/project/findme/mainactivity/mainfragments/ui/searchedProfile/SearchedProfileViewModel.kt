@@ -51,4 +51,12 @@ class SearchedProfileViewModel @Inject constructor(
             _searchedProfileStatus.postValue(Events(user))
         }
     }
+
+    fun unFollowUser(uid: String){
+        _searchedProfileStatus.postValue(Events(Resource.Loading()))
+        viewModelScope.launch(dispatcher) {
+            val user = repository.unFollowUser(uid)
+            _searchedProfileStatus.postValue(Events(user))
+        }
+    }
 }

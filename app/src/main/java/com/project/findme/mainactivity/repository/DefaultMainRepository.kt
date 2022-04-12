@@ -136,7 +136,22 @@ class DefaultMainRepository() : MainRepository {
                         post.authorUsername = user.userName
                         post.isLiked = uid in post.likedBy
                     }
-                Resource.Success(profilePosts)
+
+                val followings =
+                    users.document(uid).get().await().toObject(User::class.java)!!.followings
+                val followingsPost = posts.whereIn("authorUid", followings)
+                    .orderBy("date", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
+                    .toObjects(Post::class.java)
+                    .onEach { post ->
+                        val user = getUser(post.authorUid).data!!
+                        post.authorProfilePictureUrl = user.profilePicture
+                        post.authorUsername = user.userName
+                        post.isLiked = uid in post.likedBy
+                    }
+
+                Resource.Success(profilePosts + followingsPost)
             }
         }
 
@@ -157,6 +172,17 @@ class DefaultMainRepository() : MainRepository {
             val currentUser = auth.currentUser?.uid!!
             users.document(currentUser).update("followings", FieldValue.arrayUnion(uid)).await()
             users.document(uid).update("follows", FieldValue.arrayUnion(currentUser)).await()
+
+            val user = users.document(uid).get().await().toObject(User::class.java)!!
+            Resource.Success(user)
+        }
+    }
+
+    override suspend fun unFollowUser(uid: String): Resource<User> = withContext(Dispatchers.IO) {
+        safeCall {
+            val currentUser = auth.currentUser?.uid!!
+            users.document(currentUser).update("followings", FieldValue.arrayRemove(uid)).await()
+            users.document(uid).update("follows", FieldValue.arrayRemove(currentUser)).await()
 
             val user = users.document(uid).get().await().toObject(User::class.java)!!
             Resource.Success(user)
@@ -188,14 +214,14 @@ class DefaultMainRepository() : MainRepository {
                     "mutual" -> {
                         val user = users.document(uid).get().await().toObject(User::class.java)!!
                         val userList = mutableListOf<User>()
-                        for (u in user.follows) {
+                        for (u in user.followings) {
                             val cur = users.document(u).get().await().toObject(User::class.java)!!
                             userList.add(cur)
                         }
                         val curUser = users.document(auth.currentUser!!.uid).get().await()
                             .toObject(User::class.java)!!
                         val userList1 = mutableListOf<User>()
-                        for (u in curUser.follows) {
+                        for (u in curUser.followings) {
                             val cur = users.document(u).get().await().toObject(User::class.java)!!
                             userList1.add(cur)
                         }
@@ -209,39 +235,67 @@ class DefaultMainRepository() : MainRepository {
             }
         }
 
-    override suspend fun createComment(commentText: String, postId: String) = withContext(Dispatchers.IO) {
-        safeCall {
-            val uid = auth.uid!!
-            val commentId = UUID.randomUUID().toString()
-            val user = getUser(uid).data!!
-            val comment = Comment(
-                commentId,
-                postId,
-                uid,
-                user.userName,
-                user.profilePicture,
-                commentText
-            )
-            comments.document(commentId).set(comment).await()
-            Resource.Success(comment)
+    override suspend fun createComment(commentText: String, postId: String) =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val uid = auth.uid!!
+                val commentId = UUID.randomUUID().toString()
+                val user = getUser(uid).data!!
+                val comment = Comment(
+                    commentId,
+                    postId,
+                    uid,
+                    user.userName,
+                    user.profilePicture,
+                    commentText
+                )
+                comments.document(commentId).set(comment).await()
+                Resource.Success(comment)
+            }
         }
-    }
 
     override suspend fun getCommentFromPost(postId: String) = withContext(Dispatchers.IO) {
-        safeCall{
-            val commentForPost = comments
+        safeCall {
+            val commentsForPost = comments
                 .whereEqualTo("postId", postId)
                 .orderBy("data", Query.Direction.DESCENDING)
                 .get()
                 .await()
-                .toObjects(
-                    Comment::class.java
-                ).onEach { comment ->
-                    val user = getUser(auth.uid!!).data!!
+                .toObjects(Comment::class.java)
+                .onEach { comment ->
+                    val user = getUser(comment.uid).data!!
                     comment.uesrname = user.userName
                     comment.profilePicture = user.profilePicture
                 }
-            Resource.Success(commentForPost)
+            Resource.Success(commentsForPost)
+        }
+    }
+
+    override suspend fun deletePost(post: Post) = withContext(Dispatchers.IO) {
+        safeCall {
+            posts.document(post.id).delete().await()
+            storage.getReferenceFromUrl(post.imageUrl).delete().await()
+            Resource.Success(post)
+        }
+    }
+
+
+    override suspend fun deleteComment(comment: Comment) = withContext(Dispatchers.IO) {
+        safeCall {
+            comments.document(comment.commentId).delete().await()
+            Resource.Success(comment)
+        }
+    }
+
+    override suspend fun likePost(post: Post): Resource<Any> = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = auth.uid
+            val result = posts.document(post.id).update(
+                "likedBy",
+                if (uid in post.likedBy) FieldValue.arrayRemove(uid) else FieldValue.arrayUnion(uid)
+            )
+            post.isLiking = false
+            Resource.Success(result)
         }
     }
 }
