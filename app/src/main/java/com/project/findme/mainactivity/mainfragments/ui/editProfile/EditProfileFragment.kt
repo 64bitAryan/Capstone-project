@@ -1,16 +1,22 @@
 package com.project.findme.mainactivity.mainfragments.ui.editProfile
 
+import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageView
+import com.canhub.cropper.options
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.data.entity.UpdateCredentials
@@ -31,6 +37,8 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     lateinit var glide: RequestManager
     private val viewModel: EditProfileViewModel by viewModels()
     private lateinit var binding: FragmentEditProfileBinding
+    private var curImageUri: Uri =
+        "https://firebasestorage.googleapis.com/v0/b/social-network-662a2.appspot.com/o/avatar.png?alt=media&token=69f56ce2-8fe2-4051-9e61-9e52182384c9".toUri()
     private var interests = mutableSetOf<String>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,10 +76,35 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 }
             }
 
+            ivProfilePictureEditUser.setOnClickListener {
+                startCrop()
+            }
+
             btnUpdateProfile.setOnClickListener {
                 viewModel.updateProfile(viewToObject())
             }
         }
+    }
+
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            curImageUri = result.uriContent!!
+            viewModel.setCurrentImageUri(curImageUri)
+        } else {
+            val exception = result.error
+            snackbar(exception.toString())
+        }
+    }
+
+    private fun startCrop() {
+        cropImage.launch(
+            options {
+                setGuidelines(CropImageView.Guidelines.ON)
+                setAspectRatio(1, 1)
+                setCropShape(CropImageView.CropShape.OVAL)
+                setOutputCompressFormat(Bitmap.CompressFormat.JPEG)
+            }
+        )
     }
 
     private fun viewToObject(): UpdateUser {
@@ -83,7 +116,13 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             val profession = etProfessionEditProfile.text.toString()
             val uid = FirebaseAuth.getInstance().uid!!
             val cred = UpdateCredentials(profession, inte)
-            user = UpdateUser(uid, name, description, cred)
+            user = UpdateUser(
+                uid,
+                name,
+                description,
+                cred,
+                curImageUri
+            )
         }
         return user
     }
@@ -122,6 +161,14 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     }
 
     private fun subscribeToObserver() {
+
+        viewModel.curImageUri.observe(viewLifecycleOwner) {
+            curImageUri = it
+            binding.apply {
+                glide.load(curImageUri).into(ivProfilePictureEditUser)
+            }
+        }
+
         viewModel.userProfileStatus.observe(viewLifecycleOwner, EventObserver(
             onError = { error ->
                 showProgress(false)

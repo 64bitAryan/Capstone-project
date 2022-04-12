@@ -92,9 +92,11 @@ class DefaultMainRepository() : MainRepository {
 
     override suspend fun updateProfile(user: UpdateUser) = withContext(Dispatchers.IO) {
         safeCall {
-            val imageUrl = user.profilePicture?.let { uri ->
-//                updateProfilePicture(profileUpdate.uidToUpdate, uri).toString()
-            }
+            val imgID = UUID.randomUUID().toString()
+            val imageUploadResult =
+                storage.getReference(imgID).putFile(user.profilePicture!!).await()
+            val imageUrl =
+                imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
 
             val curUser = auth.currentUser
             val profileUpdate =
@@ -106,7 +108,8 @@ class DefaultMainRepository() : MainRepository {
                 "userName" to user.userName,
                 "description" to user.description,
                 "credential.profession" to user.updateCredential.profession,
-                "credential.interest" to user.updateCredential.interest
+                "credential.interest" to user.updateCredential.interest,
+                "profilePicture" to imageUrl
             )
 
             users.document(user.uidToUpdate).update(map.toMap()).await()
@@ -157,6 +160,24 @@ class DefaultMainRepository() : MainRepository {
                 }
 
                 Resource.Success(p)
+            }
+        }
+
+    override suspend fun getPostForUser(uid: String): Resource<List<Post>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val profilePosts = posts.whereEqualTo("authorUid", uid)
+                    .orderBy("date", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
+                    .toObjects(Post::class.java)
+                    .onEach { post ->
+                        val user = getUser(post.authorUid).data!!
+                        post.authorProfilePictureUrl = user.profilePicture
+                        post.authorUsername = user.userName
+                        post.isLiked = uid in post.likedBy
+                    }
+                Resource.Success(profilePosts)
             }
         }
 
