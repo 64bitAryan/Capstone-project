@@ -3,6 +3,7 @@ package com.project.findme.mainactivity.mainfragments.ui.home
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -30,7 +31,6 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeScreenBinding.bind(view)
         FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
-        viewModel.getPostFromFollower()
 
         setUpRecyclerView()
         subscribeToObserver()
@@ -42,7 +42,6 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
 
             swipeRefreshLayout.setOnRefreshListener {
                 FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
-                viewModel.getPostFromFollower()
             }
         }
     }
@@ -62,20 +61,6 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             binding.swipeRefreshLayout.isRefreshing = false
         })
 
-        viewModel.getFollowersPostStatus.observe(viewLifecycleOwner, EventObserver(
-            onError = {
-                binding.swipeRefreshLayout.isRefreshing = false
-                snackbar(it)
-            },
-            onLoading = {
-                binding.swipeRefreshLayout.isRefreshing = true
-                postAdapter.posts += listOf()
-            }
-        ){ postList ->
-            postAdapter.posts += postList
-            binding.swipeRefreshLayout.isRefreshing = false
-        })
-
         viewModel.deletePostStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
                 binding.swipeRefreshLayout.isRefreshing = false
@@ -84,8 +69,21 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             onLoading = {
                 binding.swipeRefreshLayout.isRefreshing = true
             }
-        ){ deletedPost ->
+        ) { deletedPost ->
             postAdapter.posts -= deletedPost
+            binding.swipeRefreshLayout.isRefreshing = false
+        })
+
+        viewModel.like.observe(viewLifecycleOwner, EventObserver(
+            onError = {
+                binding.swipeRefreshLayout.isRefreshing = false
+                snackbar(it)
+            },
+            onLoading = {
+                binding.swipeRefreshLayout.isRefreshing = true
+            }
+        ) {
+            FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
             binding.swipeRefreshLayout.isRefreshing = false
         })
     }
@@ -103,6 +101,11 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
 
         postAdapter.setOnDeleteClickListener { post ->
             viewModel.deletePost(post)
+        }
+
+        postAdapter.setOnLikeClickListener { post ->
+            post.isLiking = true
+            viewModel.likePost(post)
         }
 
         binding.postRv.apply {

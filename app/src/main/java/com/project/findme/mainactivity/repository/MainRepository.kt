@@ -35,8 +35,8 @@ interface MainRepository {
 
     suspend fun deletePost(post: Post): Resource<Post>
 
-    suspend fun getPostForFollows(): Resource<List<Post>>
-
     suspend fun deleteComment(comment: Comment): Resource<Comment>
+
+    suspend fun likePost(post: Post): Resource<Any>
 
 }

@@ -136,7 +136,22 @@ class DefaultMainRepository() : MainRepository {
                         post.authorUsername = user.userName
                         post.isLiked = uid in post.likedBy
                     }
-                Resource.Success(profilePosts)
+
+                val followings =
+                    users.document(uid).get().await().toObject(User::class.java)!!.followings
+                val followingsPost = posts.whereIn("authorUid", followings)
+                    .orderBy("date", Query.Direction.DESCENDING)
+                    .get()
+                    .await()
+                    .toObjects(Post::class.java)
+                    .onEach { post ->
+                        val user = getUser(post.authorUid).data!!
+                        post.authorProfilePictureUrl = user.profilePicture
+                        post.authorUsername = user.userName
+                        post.isLiked = uid in post.likedBy
+                    }
+
+                Resource.Success(profilePosts + followingsPost)
             }
         }
 
@@ -220,23 +235,24 @@ class DefaultMainRepository() : MainRepository {
             }
         }
 
-    override suspend fun createComment(commentText: String, postId: String) = withContext(Dispatchers.IO) {
-        safeCall {
-            val uid = auth.uid!!
-            val commentId = UUID.randomUUID().toString()
-            val user = getUser(uid).data!!
-            val comment = Comment(
-                commentId,
-                postId,
-                uid,
-                user.userName,
-                user.profilePicture,
-                commentText
-            )
-            comments.document(commentId).set(comment).await()
-            Resource.Success(comment)
+    override suspend fun createComment(commentText: String, postId: String) =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val uid = auth.uid!!
+                val commentId = UUID.randomUUID().toString()
+                val user = getUser(uid).data!!
+                val comment = Comment(
+                    commentId,
+                    postId,
+                    uid,
+                    user.userName,
+                    user.profilePicture,
+                    commentText
+                )
+                comments.document(commentId).set(comment).await()
+                Resource.Success(comment)
+            }
         }
-    }
 
     override suspend fun getCommentFromPost(postId: String) = withContext(Dispatchers.IO) {
         safeCall {
@@ -263,30 +279,23 @@ class DefaultMainRepository() : MainRepository {
         }
     }
 
-    override suspend fun getPostForFollows() = withContext(Dispatchers.IO) {
-        safeCall {
-            val uid = FirebaseAuth.getInstance().uid!!
-            val follows = getUser(uid).data!!.follows
-            val allPosts = posts.whereIn("authorUid", follows)
-                .orderBy("date", Query.Direction.DESCENDING)
-                .get()
-                .await()
-                .toObjects(Post::class.java)
-                //Manually assigning the authorProfilePicture, authorUserName and isLiked on Each post
-                .onEach { post ->
-                    val user = getUser(post.authorUid).data!!
-                    post.authorProfilePictureUrl = user.profilePicture
-                    post.authorUsername = user.userName
-                    post.isLiked = uid in post.likedBy
-                }
-            Resource.Success(allPosts)
-        }
-    }
 
     override suspend fun deleteComment(comment: Comment) = withContext(Dispatchers.IO) {
         safeCall {
             comments.document(comment.commentId).delete().await()
             Resource.Success(comment)
+        }
+    }
+
+    override suspend fun likePost(post: Post): Resource<Any> = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = auth.uid
+            val result = posts.document(post.id).update(
+                "likedBy",
+                if (uid in post.likedBy) FieldValue.arrayRemove(uid) else FieldValue.arrayUnion(uid)
+            )
+            post.isLiking = false
+            Resource.Success(result)
         }
     }
 }
