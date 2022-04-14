@@ -94,7 +94,7 @@ class PostAdapter @Inject constructor(
             )!!
 
             postLikeButton.setCompoundDrawablesWithIntrinsicBounds(
-                if (uid in post.likedBy) imgLiked
+                if (post.isLiked) imgLiked
                 else imgNotLiked,
                 null,
                 null,
@@ -109,7 +109,7 @@ class PostAdapter @Inject constructor(
 
             postLikeButton.setOnClickListener {
                 likeButtonClickListener?.let { click ->
-                    click(post)
+                    click(post, position)
                 }
             }
 
@@ -118,7 +118,7 @@ class PostAdapter @Inject constructor(
                 if (System.currentTimeMillis() - doubleClickLastTime < 300) {
                     doubleClickLastTime = 0
                     likeButtonClickListener?.let { click ->
-                        click(post)
+                        click(post, position)
                     }
                 } else {
                     doubleClickLastTime = System.currentTimeMillis()
@@ -133,7 +133,7 @@ class PostAdapter @Inject constructor(
 
     private var commentButtonClickedListener: ((Post) -> Unit)? = null
     private var deleteButtonCLickedListener: ((Post) -> Unit)? = null
-    private var likeButtonClickListener: ((Post) -> Unit)? = null
+    private var likeButtonClickListener: ((Post, Int) -> Unit)? = null
 
     fun setOnCommentClickListener(listener: (Post) -> Unit) {
         commentButtonClickedListener = listener
@@ -143,7 +143,7 @@ class PostAdapter @Inject constructor(
         deleteButtonCLickedListener = listener
     }
 
-    fun setOnLikeClickListener(listener: (Post) -> Unit) {
+    fun setOnLikeClickListener(listener: (Post, Int) -> Unit) {
         likeButtonClickListener = listener
     }
 }

@@ -13,5 +13,5 @@ data class Post(
     val date: Long = 0L,
     @Exclude var isLiked: Boolean = false,
     @Exclude var isLiking: Boolean = false,
-    val likedBy: List<String> = listOf()
+    val likedBy: MutableList<String> = mutableListOf()
 )
