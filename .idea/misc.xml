@@ -44,7 +44,9 @@
         <entry key="..\:/FindMe/app/src/main/res/drawable/ic_outline_comment.xml" value="0.1795" />
         <entry key="..\:/FindMe/app/src/main/res/layout/activity_credential.xml" value="0.12047101449275362" />
         <entry key="..\:/FindMe/app/src/main/res/layout/black_circular_custom_view.xml" value="0.2" />
+        <entry key="..\:/FindMe/app/src/main/res/layout/fragment_allusers.xml" value="0.2" />
         <entry key="..\:/FindMe/app/src/main/res/layout/fragment_change_password.xml" value="0.2" />
+        <entry key="..\:/FindMe/app/src/main/res/layout/fragment_chat_screen.xml" value="0.15307971014492755" />
         <entry key="..\:/FindMe/app/src/main/res/layout/fragment_comment.xml" value="0.2" />
         <entry key="..\:/FindMe/app/src/main/res/layout/fragment_edit_profile.xml" value="0.2" />
         <entry key="..\:/FindMe/app/src/main/res/layout/fragment_home_screen.xml" value="0.2" />
