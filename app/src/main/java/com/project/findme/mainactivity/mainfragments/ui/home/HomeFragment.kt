@@ -3,17 +3,14 @@ package com.project.findme.mainactivity.mainfragments.ui.home
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.*
 import com.project.findme.adapter.PostAdapter
-import com.project.findme.mainactivity.mainfragments.ui.comment.CommentFragmentArgs
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -27,6 +24,7 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
     lateinit var postAdapter: PostAdapter
     val viewModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeScreenBinding
+    var index = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -98,7 +96,14 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
                 binding.swipeRefreshLayout.isRefreshing = true
             }
         ) {
-            FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
+            postAdapter.posts[index].isLiking = false
+            if (postAdapter.posts[index].isLiked) postAdapter.posts[index].likedBy.remove(
+                FirebaseAuth.getInstance().currentUser?.uid
+            ) else postAdapter.posts[index].likedBy.add(
+                FirebaseAuth.getInstance().currentUser!!.uid
+            )
+            postAdapter.posts[index].isLiked = !postAdapter.posts[index].isLiked
+            postAdapter.notifyItemChanged(index)
             binding.swipeRefreshLayout.isRefreshing = false
         })
     }
@@ -118,8 +123,9 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             viewModel.deletePost(post)
         }
 
-        postAdapter.setOnLikeClickListener { post ->
+        postAdapter.setOnLikeClickListener { post, i ->
             post.isLiking = true
+            index = i
             viewModel.likePost(post)
         }
 
