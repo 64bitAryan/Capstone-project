@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -13,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.project.findme.adapter.PostAdapter
+import com.project.findme.data.entity.Comment
+import com.project.findme.data.entity.Post
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -114,6 +117,20 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
         })
     }
 
+    private fun showConfirmationDialog(post: Post) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Delete Post")
+            .setMessage("Are you sure you want to delete this post?")
+            .setPositiveButton(
+                "Yes"
+            ) { _, _ ->
+                viewModel.deletePost(post)
+            }
+            .setNegativeButton("No", null)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show()
+    }
+
     private fun setUpRecyclerView() {
 
         postAdapter.setOnCommentClickListener { post ->
@@ -126,7 +143,7 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
         }
 
         postAdapter.setOnDeleteClickListener { post ->
-            viewModel.deletePost(post)
+            showConfirmationDialog(post)
         }
 
         postAdapter.setOnLikeClickListener { post, i ->
