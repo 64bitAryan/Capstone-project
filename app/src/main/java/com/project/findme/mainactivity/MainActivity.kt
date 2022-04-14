@@ -62,7 +62,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.chatFragment,
                 R.id.userProfileFragment,
                 R.id.signOutDialogFragment,
-                R.id.commentFragment
             )
         ).setOpenableLayout(drawerLayout)
             .build()
@@ -102,7 +101,8 @@ class MainActivity : AppCompatActivity() {
             R.id.changePasswordFragment,
             R.id.searchedProfileFragment,
             R.id.listFollowersFragment,
-            R.id.listFollowersFragmentUser
+            R.id.listFollowersFragmentUser,
+            R.id.commentFragment
         )
         if (toggle.onOptionsItemSelected(item)) {
             return if (navController.currentDestination?.id in list) {

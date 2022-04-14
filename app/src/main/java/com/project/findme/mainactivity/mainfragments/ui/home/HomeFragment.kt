@@ -3,9 +3,11 @@ package com.project.findme.mainactivity.mainfragments.ui.home
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
@@ -26,13 +28,17 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
     private lateinit var binding: FragmentHomeScreenBinding
     var index = 0
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeScreenBinding.bind(view)
-        FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
 
-        setUpRecyclerView()
         subscribeToObserver()
+        setUpRecyclerView()
 
         binding.apply {
             createPostFb.setOnClickListener {
