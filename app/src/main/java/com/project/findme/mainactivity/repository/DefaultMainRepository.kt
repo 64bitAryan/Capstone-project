@@ -316,6 +316,11 @@ class DefaultMainRepository() : MainRepository {
 
     override suspend fun deletePost(post: Post) = withContext(Dispatchers.IO) {
         safeCall {
+            val co = comments.whereEqualTo("postId", post.id).get().await()
+                .toObjects(Comment::class.java)
+            for (c in co) {
+                comments.document(c.commentId).delete().await()
+            }
             posts.document(post.id).delete().await()
             storage.getReferenceFromUrl(post.imageUrl).delete().await()
             Resource.Success(post)

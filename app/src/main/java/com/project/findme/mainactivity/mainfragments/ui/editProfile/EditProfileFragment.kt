@@ -101,6 +101,20 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         }
     }
 
+    private fun showConfirmationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Remove Profile Picture")
+            .setMessage("Are you sure you want to remove profile picture?")
+            .setPositiveButton(
+                "Yes"
+            ) { _, _ ->
+                viewModel.removeProfilePicture()
+            }
+            .setNegativeButton("No", null)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show()
+    }
+
     @RequiresApi(Build.VERSION_CODES.N)
     private fun showImagePicDialog() {
         val options = arrayOf(
@@ -113,7 +127,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             if (which == 0) {
                 startCrop()
             } else if (which == 1) {
-                viewModel.removeProfilePicture()
+                showConfirmationDialog()
             }
         }
         builder.create().show()
