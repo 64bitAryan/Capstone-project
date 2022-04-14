@@ -93,11 +93,6 @@ class DefaultMainRepository() : MainRepository {
 
     override suspend fun updateProfile(user: UpdateUser) = withContext(Dispatchers.IO) {
         safeCall {
-            val imgID = UUID.randomUUID().toString()
-            val imageUploadResult =
-                storage.getReference(imgID).putFile(user.profilePicture!!).await()
-            val imageUrl =
-                imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
 
             val curUser = auth.currentUser
             val profileUpdate =
@@ -110,8 +105,19 @@ class DefaultMainRepository() : MainRepository {
                 "description" to user.description,
                 "credential.profession" to user.updateCredential.profession,
                 "credential.interest" to user.updateCredential.interest,
-                "profilePicture" to imageUrl
             )
+
+            var imageUrl = ""
+
+            if (user.profilePicture != Constants.DEFAULT_PROFILE_PICTURE_URL.toUri()) {
+                val imgID = UUID.randomUUID().toString()
+                val imageUploadResult =
+                    storage.getReference(imgID).putFile(user.profilePicture!!).await()
+                imageUrl =
+                    imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+
+                map["profilePicture"] = imageUrl
+            }
 
             users.document(user.uidToUpdate).update(map.toMap()).await()
             Resource.Success(Any())
