@@ -3,6 +3,7 @@ package com.project.findme.mainactivity.repository
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
+import androidx.core.net.toUri
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -13,6 +14,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.project.findme.data.entity.*
+import com.project.findme.utils.Constants
 import com.project.findme.utils.Resource
 import com.project.findme.utils.safeCall
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +29,6 @@ class DefaultMainRepository() : MainRepository {
     val auth = FirebaseAuth.getInstance()
     val storage = Firebase.storage
     val users = FirebaseFirestore.getInstance().collection("users")
-    val cred = FirebaseFirestore.getInstance().collection("credentials")
     private val comments = FirebaseFirestore.getInstance().collection("comments")
     val posts = FirebaseFirestore.getInstance().collection("posts")
 
@@ -113,6 +114,16 @@ class DefaultMainRepository() : MainRepository {
             )
 
             users.document(user.uidToUpdate).update(map.toMap()).await()
+            Resource.Success(Any())
+        }
+    }
+
+    override suspend fun removeProfilePicture(): Resource<Any> = withContext(Dispatchers.IO) {
+        safeCall {
+            users.document(auth.currentUser!!.uid).update(
+                "profilePicture",
+                Constants.DEFAULT_PROFILE_PICTURE_URL
+            ).await()
             Resource.Success(Any())
         }
     }
