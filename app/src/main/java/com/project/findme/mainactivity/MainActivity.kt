@@ -62,7 +62,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.chatFragment,
                 R.id.userProfileFragment,
                 R.id.signOutDialogFragment,
-                R.id.commentFragment
+                R.id.commentFragment,
+                R.id.action_chatFragment_to_allUsers
             )
         ).setOpenableLayout(drawerLayout)
             .build()
