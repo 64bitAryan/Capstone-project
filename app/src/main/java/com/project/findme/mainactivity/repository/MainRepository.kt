@@ -17,6 +17,8 @@ interface MainRepository {
 
     suspend fun updateProfile(user: UpdateUser): Resource<Any>
 
+    suspend fun removeProfilePicture(): Resource<Any>
+
     suspend fun updateProfileUI(uid: String): Resource<User>
 
     suspend fun getPostForProfile(uid: String): Resource<List<Post>>
@@ -31,7 +33,7 @@ interface MainRepository {
 
     suspend fun getUsers(uid: String, type: String): Resource<List<User>>
 
-    suspend fun createComment(commentText: String, postId:String): Resource<Comment>
+    suspend fun createComment(commentText: String, postId: String): Resource<Comment>
 
     suspend fun getCommentFromPost(postId: String): Resource<List<Comment>>
 

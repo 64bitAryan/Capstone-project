@@ -2,12 +2,15 @@ package com.project.findme.mainactivity.mainfragments.ui.editProfile
 
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.text.Html
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -30,6 +33,7 @@ import com.ryan.findme.databinding.FragmentEditProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
@@ -41,6 +45,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         "https://firebasestorage.googleapis.com/v0/b/social-network-662a2.appspot.com/o/avatar.png?alt=media&token=69f56ce2-8fe2-4051-9e61-9e52182384c9".toUri()
     private var interests = mutableSetOf<String>()
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentEditProfileBinding.bind(view)
@@ -77,7 +82,7 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             }
 
             ivProfilePictureEditUser.setOnClickListener {
-                startCrop()
+                showImagePicDialog()
             }
 
             btnUpdateProfile.setOnClickListener {
@@ -95,6 +100,25 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             snackbar(exception.toString())
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun showImagePicDialog() {
+        val options = arrayOf(
+            "New profile photo",
+            Html.fromHtml("<font color='#FF0000'> Remove profile photo </font>", 0)
+        )
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Change Profile Picture")
+        builder.setItems(options) { _, which ->
+            if (which == 0) {
+                startCrop()
+            } else if (which == 1) {
+                viewModel.removeProfilePicture()
+            }
+        }
+        builder.create().show()
+    }
+
 
     private fun startCrop() {
         cropImage.launch(
