@@ -13,8 +13,8 @@ import com.ryan.findme.databinding.ItemCommentBinding
 import javax.inject.Inject
 
 class CommentAdapter @Inject constructor(
-    private val glide : RequestManager
-): RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
+    private val glide: RequestManager
+) : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() {
 
     private val diffCallback = object : DiffUtil.ItemCallback<Comment>() {
 
@@ -33,11 +33,13 @@ class CommentAdapter @Inject constructor(
         get() = differ.currentList
         set(value) = differ.submitList(value)
 
-    inner class CommentViewHolder(binding: ItemCommentBinding): RecyclerView.ViewHolder(binding.root) {
+    inner class CommentViewHolder(binding: ItemCommentBinding) :
+        RecyclerView.ViewHolder(binding.root) {
         val nameTextView = binding.nameTv
         val profileImageView = binding.profileIv
         val commentTextTextView = binding.commentTextTv
         val deleteCommentImageButton = binding.commentDeleteIb
+        val commentProfileInfo = binding.commentProfileInfo
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
@@ -55,12 +57,17 @@ class CommentAdapter @Inject constructor(
             nameTextView.text = comment.uesrname
             glide.load(comment.profilePicture).into(profileImageView)
             commentTextTextView.text = comment.comment
-            deleteCommentImageButton.apply{
+            deleteCommentImageButton.apply {
                 isVisible = comment.uid == FirebaseAuth.getInstance().uid!!
                 setOnClickListener {
-                    deleteCommentListener?.let { click->
+                    deleteCommentListener?.let { click ->
                         click(comment)
                     }
+                }
+            }
+            commentProfileInfo.setOnClickListener {
+                navigateToProfile?.let { click ->
+                    click(comment.uid, comment.uesrname)
                 }
             }
         }
@@ -70,9 +77,14 @@ class CommentAdapter @Inject constructor(
         return comment.size
     }
 
-    private var deleteCommentListener:((Comment)->Unit)?=null
+    private var deleteCommentListener: ((Comment) -> Unit)? = null
+    private var navigateToProfile: ((String, String) -> Unit)? = null
 
-    fun setDeleteListener(listener: (Comment)->Unit) {
+    fun setDeleteListener(listener: (Comment) -> Unit) {
         deleteCommentListener = listener
+    }
+
+    fun setNavigateToProfileListener(listener: (String, String) -> Unit) {
+        navigateToProfile = listener
     }
 }

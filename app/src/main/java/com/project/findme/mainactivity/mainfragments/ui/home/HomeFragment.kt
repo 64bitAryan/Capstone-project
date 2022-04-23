@@ -16,6 +16,7 @@ import com.google.firebase.firestore.*
 import com.project.findme.adapter.PostAdapter
 import com.project.findme.data.entity.Comment
 import com.project.findme.data.entity.Post
+import com.project.findme.mainactivity.mainfragments.ui.comment.CommentFragmentDirections
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -150,6 +151,21 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             post.isLiking = true
             index = i
             viewModel.likePost(post)
+        }
+
+        postAdapter.setNavigateToProfileListener { uid, userName ->
+            if (FirebaseAuth.getInstance().currentUser?.uid == uid) {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToUserProfileFragment()
+                )
+            } else {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToSearchedProfileFragment(
+                        uid = uid,
+                        username = userName
+                    )
+                )
+            }
         }
 
         binding.postRv.apply {
