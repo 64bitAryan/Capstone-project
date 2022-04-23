@@ -107,13 +107,11 @@ class DefaultMainRepository() : MainRepository {
                 "credential.interest" to user.updateCredential.interest,
             )
 
-            var imageUrl = ""
-
             if (user.profilePicture != Constants.DEFAULT_PROFILE_PICTURE_URL.toUri()) {
                 val imgID = UUID.randomUUID().toString()
                 val imageUploadResult =
                     storage.getReference(imgID).putFile(user.profilePicture!!).await()
-                imageUrl =
+                val imageUrl =
                     imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
 
                 map["profilePicture"] = imageUrl
@@ -232,49 +230,56 @@ class DefaultMainRepository() : MainRepository {
         }
     }
 
-    override suspend fun getUsers(uid: String, type: String): Resource<List<User>> =
+    override suspend fun getFollowersList(uid: String): Resource<List<User>> =
         withContext(Dispatchers.IO) {
             safeCall {
-                when (type) {
-                    "Followers" -> {
-                        val user = users.document(uid).get().await().toObject(User::class.java)!!
-                        val userList = mutableListOf<User>()
-                        for (u in user.follows) {
-                            val cur = users.document(u).get().await().toObject(User::class.java)!!
-                            userList.add(cur)
-                        }
-                        return@safeCall Resource.Success(userList)
-                    }
-                    "Followings" -> {
-                        val user = users.document(uid).get().await().toObject(User::class.java)!!
-                        val userList = mutableListOf<User>()
-                        for (u in user.followings) {
-                            val cur = users.document(u).get().await().toObject(User::class.java)!!
-                            userList.add(cur)
-                        }
-                        return@safeCall Resource.Success(userList)
-                    }
-                    "mutual" -> {
-                        val user = users.document(uid).get().await().toObject(User::class.java)!!
-                        val userList = mutableListOf<User>()
-                        for (u in user.followings) {
-                            val cur = users.document(u).get().await().toObject(User::class.java)!!
-                            userList.add(cur)
-                        }
-                        val curUser = users.document(auth.currentUser!!.uid).get().await()
-                            .toObject(User::class.java)!!
-                        val userList1 = mutableListOf<User>()
-                        for (u in curUser.followings) {
-                            val cur = users.document(u).get().await().toObject(User::class.java)!!
-                            userList1.add(cur)
-                        }
-                        return@safeCall Resource.Success((userList intersect userList1).toList())
-                    }
-                    else -> {
-                        return@safeCall Resource.Success(listOf())
-                    }
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                val userList = mutableListOf<User>()
+
+                for (u in user.follows) {
+                    val cur = users.document(u).get().await().toObject(User::class.java)!!
+                    userList.add(cur)
                 }
 
+                return@safeCall Resource.Success(userList)
+            }
+        }
+
+    override suspend fun getFollowingList(uid: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                val userList = mutableListOf<User>()
+
+                for (u in user.followings) {
+                    val cur =
+                        users.document(u).get().await().toObject(User::class.java)!!
+                    userList.add(cur)
+                }
+                return@safeCall Resource.Success(userList)
+            }
+        }
+
+    override suspend fun getMutualList(uid: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                val userList = mutableListOf<User>()
+
+                for (u in user.followings) {
+                    val cur =
+                        users.document(u).get().await().toObject(User::class.java)!!
+                    userList.add(cur)
+                }
+                val curUser = users.document(auth.currentUser!!.uid).get().await()
+                    .toObject(User::class.java)!!
+                val userList1 = mutableListOf<User>()
+                for (u in curUser.followings) {
+                    val cur =
+                        users.document(u).get().await().toObject(User::class.java)!!
+                    userList1.add(cur)
+                }
+                return@safeCall Resource.Success((userList intersect userList1).toList())
             }
         }
 

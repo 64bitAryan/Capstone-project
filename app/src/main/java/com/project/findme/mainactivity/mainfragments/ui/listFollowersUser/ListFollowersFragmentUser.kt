@@ -2,146 +2,65 @@ package com.project.findme.mainactivity.mainfragments.ui.listFollowersUser
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.RequestManager
+import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
-import com.project.findme.adapter.ListAdapter
-import com.project.findme.mainactivity.mainfragments.ui.listFollowers.ListFollowersFragmentDirections
-import com.project.findme.mainactivity.mainfragments.ui.personsearch.PersonSearchFragmentDirections
+import com.project.findme.adapter.PagerAdapter
+import com.project.findme.mainactivity.mainfragments.ui.listFollowers.FollowersListFragment
+import com.project.findme.mainactivity.mainfragments.ui.listFollowers.FollowingListFragment
+import com.project.findme.mainactivity.mainfragments.ui.listFollowers.MutualsListFragment
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentListsFollowersUserBinding
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_user) {
 
-    @Inject
-    lateinit var listAdapter: ListAdapter
-
-    @Inject
-    lateinit var glide: RequestManager
-    private lateinit var viewModel: ListFollowersUserViewModel
     private lateinit var binding: FragmentListsFollowersUserBinding
     private val args: ListFollowersFragmentUserArgs by navArgs()
+    private lateinit var pagerAdapter: PagerAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel = ViewModelProvider(requireActivity())[ListFollowersUserViewModel::class.java]
-        subscribeToObserve()
-
         binding = FragmentListsFollowersUserBinding.bind(view)
 
-        FirebaseAuth.getInstance().currentUser?.let { viewModel.getUsers(it.uid, args.type) }
-
-        when (args.type) {
-            "Followers" -> {
-                binding.btnFollowersList.setBackgroundResource(R.drawable.button_bg)
-                binding.btnFollowingsList.setBackgroundResource(0)
-            }
-            "Followings" -> {
-                binding.btnFollowingsList.setBackgroundResource(R.drawable.button_bg)
-                binding.btnFollowersList.setBackgroundResource(0)
-            }
-        }
-
-        setUpRecyclerView()
-
-        listAdapter.setOnFollowClickListener {
-            viewModel.followUser(it)
-        }
-
-        listAdapter.setOnUnFollowClickListener {
-            viewModel.unFollowUser(it)
-        }
-
-        listAdapter.setOnUserClickListener { user ->
-            if (FirebaseAuth.getInstance().currentUser?.uid == user.uid) {
-                findNavController().navigate(
-                    ListFollowersFragmentUserDirections.actionListFollowersFragmentUserToUserProfileFragment2()
-                )
-            } else {
-                findNavController().navigate(
-                    ListFollowersFragmentUserDirections.actionListFollowersFragmentUserToSearchedProfileFragment(
-                        uid = user.uid,
-                        username = user.userName
-                    )
-                )
-            }
-        }
-
         binding.apply {
-            btnFollowersList.setOnClickListener {
-                FirebaseAuth.getInstance().currentUser?.let { user ->
-                    viewModel.getUsers(
-                        user.uid,
-                        "Followers"
-                    )
-                }
-                it.setBackgroundResource(R.drawable.button_bg)
-                btnFollowingsList.setBackgroundResource(0)
-            }
-            btnFollowingsList.setOnClickListener {
-                FirebaseAuth.getInstance().currentUser?.let { user ->
-                    viewModel.getUsers(
-                        user.uid,
-                        "Followings"
-                    )
-                }
-                it.setBackgroundResource(R.drawable.button_bg)
-                btnFollowersList.setBackgroundResource(0)
-            }
-        }
-    }
-
-    private fun setUpRecyclerView() {
-        binding.rvListFollowers.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = listAdapter
-        }
-    }
-
-    private fun subscribeToObserve() {
-        viewModel.list.observe(viewLifecycleOwner, EventObserver(
-            onError = {
-                binding.progressBarLists.isVisible = false
-                snackbar(it)
-            },
-            onLoading = {
-                listAdapter.users = listOf()
-                binding.progressBarLists.isVisible = true
-            }
-        ) { users ->
-            listAdapter.users = users
-            binding.progressBarLists.isVisible = false
-        })
-        viewModel.follow.observe(viewLifecycleOwner, EventObserver(
-            onError = {
-                binding.progressBarLists.isVisible = false
-                snackbar(it)
-            },
-            onLoading = {
-                binding.progressBarLists.isVisible = true
-            }
-        ) {
-            FirebaseAuth.getInstance().currentUser?.let {
-                viewModel.getUsers(
-                    it.uid,
-                    "Followers"
+            tabLayoutListUser.setupWithViewPager(viewPagerUser)
+            pagerAdapter = PagerAdapter(childFragmentManager)
+            val uid = FirebaseAuth.getInstance().currentUser!!.uid
+            pagerAdapter.addFragment(FollowersListFragment(), "Followers", uid)
+            pagerAdapter.addFragment(FollowingListFragment(), "Followings", uid)
+            viewPagerUser.adapter = pagerAdapter
+            viewPagerUser.addOnPageChangeListener(
+                TabLayout.TabLayoutOnPageChangeListener(
+                    tabLayoutListUser
                 )
+            )
+            tabLayoutListUser.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: TabLayout.Tab) {
+                    viewPagerUser.currentItem = tab.position
+                }
+
+                override fun onTabUnselected(tab: TabLayout.Tab) {}
+                override fun onTabReselected(tab: TabLayout.Tab) {}
+            })
+            viewPagerUser.offscreenPageLimit = 2
+            when (args.type) {
+                "Followers" -> {
+                    tabLayoutListUser.selectTab(tabLayoutListUser.getTabAt(0))
+                }
+                "Followings" -> {
+                    tabLayoutListUser.selectTab(tabLayoutListUser.getTabAt(1))
+                }
             }
-            binding.btnFollowersList.setBackgroundResource(R.drawable.button_bg)
-            binding.btnFollowingsList.setBackgroundResource(0)
-            binding.progressBarLists.isVisible = false
-        })
+        }
     }
 }

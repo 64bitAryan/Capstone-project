@@ -25,8 +25,13 @@ class ListFollowersUserViewModel @Inject constructor(
     fun getUsers(uid: String, type: String) {
         _list.postValue(Events(Resource.Loading()))
         viewModelScope.launch(dispatcher) {
-            val result = repository.getUsers(uid, type)
-            _list.postValue(Events(result))
+            if (type == "Followers") {
+                val result = repository.getFollowersList(uid)
+                _list.postValue(Events(result))
+            } else {
+                val result = repository.getFollowingList(uid)
+                _list.postValue(Events(result))
+            }
         }
     }
 
