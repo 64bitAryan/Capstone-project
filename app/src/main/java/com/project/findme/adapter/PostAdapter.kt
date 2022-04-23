@@ -50,6 +50,7 @@ class PostAdapter @Inject constructor(
         val postLikeButton: Button = binding.postLikeBtn
         val postCommentButton: ImageButton = binding.postCommentBtn
         val deletePostButton: ImageButton = binding.deleteBtn
+        val homeProfileInfo = binding.homeProfileInfo
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -124,6 +125,12 @@ class PostAdapter @Inject constructor(
                     doubleClickLastTime = System.currentTimeMillis()
                 }
             }
+
+            homeProfileInfo.setOnClickListener {
+                navigateToProfile?.let { click ->
+                    click(post.authorUid, post.authorUsername)
+                }
+            }
         }
     }
 
@@ -134,6 +141,7 @@ class PostAdapter @Inject constructor(
     private var commentButtonClickedListener: ((Post) -> Unit)? = null
     private var deleteButtonCLickedListener: ((Post) -> Unit)? = null
     private var likeButtonClickListener: ((Post, Int) -> Unit)? = null
+    private var navigateToProfile: ((String, String) -> Unit)? = null
 
     fun setOnCommentClickListener(listener: (Post) -> Unit) {
         commentButtonClickedListener = listener
@@ -145,5 +153,9 @@ class PostAdapter @Inject constructor(
 
     fun setOnLikeClickListener(listener: (Post, Int) -> Unit) {
         likeButtonClickListener = listener
+    }
+
+    fun setNavigateToProfileListener(listener: (String, String) -> Unit) {
+        navigateToProfile = listener
     }
 }

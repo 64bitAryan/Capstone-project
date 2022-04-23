@@ -7,10 +7,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.CommentAdapter
 import com.project.findme.data.entity.Comment
+import com.project.findme.mainactivity.mainfragments.ui.listFollowers.ListFollowersFragmentDirections
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -62,6 +65,20 @@ class CommentFragment : Fragment(R.layout.fragment_comment) {
         }
         commentAdapter.setDeleteListener { comment ->
             showConfirmationDialog(comment)
+        }
+        commentAdapter.setNavigateToProfileListener { uid, userName ->
+            if (FirebaseAuth.getInstance().currentUser?.uid == uid) {
+                findNavController().navigate(
+                    CommentFragmentDirections.actionCommentFragmentToUserProfileFragment()
+                )
+            } else {
+                findNavController().navigate(
+                    CommentFragmentDirections.actionCommentFragmentToSearchedProfileFragment(
+                        uid = uid,
+                        username = userName
+                    )
+                )
+            }
         }
     }
 
