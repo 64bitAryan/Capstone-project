@@ -22,10 +22,26 @@ class ListFollowersViewModel @Inject constructor(
     private val _list = MutableLiveData<Events<Resource<List<User>>>>()
     val list: LiveData<Events<Resource<List<User>>>> = _list
 
-    fun getUsers(uid: String, type: String){
+    fun getFollowersList(uid: String){
         _list.postValue(Events(Resource.Loading()))
         viewModelScope.launch(dispatcher) {
-            val result = repository.getUsers(uid, type)
+            val result = repository.getFollowersList(uid)
+            _list.postValue(Events(result))
+        }
+    }
+
+    fun getFollowingList(uid: String){
+        _list.postValue(Events(Resource.Loading()))
+        viewModelScope.launch(dispatcher) {
+            val result = repository.getFollowingList(uid)
+            _list.postValue(Events(result))
+        }
+    }
+
+    fun getMutualList(uid: String){
+        _list.postValue(Events(Resource.Loading()))
+        viewModelScope.launch(dispatcher) {
+            val result = repository.getMutualList(uid)
             _list.postValue(Events(result))
         }
     }

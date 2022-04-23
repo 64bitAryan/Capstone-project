@@ -31,7 +31,11 @@ interface MainRepository {
 
     suspend fun unFollowUser(uid: String): Resource<User>
 
-    suspend fun getUsers(uid: String, type: String): Resource<List<User>>
+    suspend fun getFollowersList(uid: String): Resource<List<User>>
+
+    suspend fun getFollowingList(uid: String): Resource<List<User>>
+
+    suspend fun getMutualList(uid: String): Resource<List<User>>
 
     suspend fun createComment(commentText: String, postId: String): Resource<Comment>
 
