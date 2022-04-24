@@ -21,6 +21,9 @@
         <action
             android:id="@+id/action_homeFragment_to_searchedProfileFragment"
             app:destination="@id/searchedProfileFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_likedByFragment"
+            app:destination="@id/likedByFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -146,9 +149,10 @@
             app:destination="@id/userProfileFragment" />
     </fragment>
     <fragment
-        android:id="@+id/commentFragment"
-        android:name="com.project.findme.mainactivity.mainfragments.ui.comment.CommentFragment"
-        android:label="Comment" >
+        android:id="@+id/likedByFragment"
+        android:name="com.project.findme.mainactivity.mainfragments.ui.likedby.LikedByFragment"
+        android:label="Likes"
+        tools:layout="@layout/fragment_liked_by" >
         <argument
             android:name="postId"
             app:argType="string" />

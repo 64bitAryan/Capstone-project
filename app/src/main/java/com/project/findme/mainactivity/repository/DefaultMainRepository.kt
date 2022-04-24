@@ -230,6 +230,20 @@ class DefaultMainRepository() : MainRepository {
         }
     }
 
+    override suspend fun getUsersLiked(uid: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val post = posts.document(uid).get().await().toObject(Post::class.java)!!
+                val uidList = post.likedBy
+                val userList = mutableListOf<User>()
+                for (u in uidList) {
+                    val user = users.document(u).get().await().toObject(User::class.java)!!
+                    userList.add(user)
+                }
+                return@safeCall Resource.Success(userList)
+            }
+        }
+
     override suspend fun getFollowersList(uid: String): Resource<List<User>> =
         withContext(Dispatchers.IO) {
             safeCall {
