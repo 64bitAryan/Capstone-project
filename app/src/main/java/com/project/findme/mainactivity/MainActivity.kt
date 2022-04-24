@@ -102,7 +102,8 @@ class MainActivity : AppCompatActivity() {
             R.id.searchedProfileFragment,
             R.id.listFollowersFragment,
             R.id.listFollowersFragmentUser,
-            R.id.commentFragment
+            R.id.commentFragment,
+            R.id.likedByFragment
         )
         if (toggle.onOptionsItemSelected(item)) {
             return if (navController.currentDestination?.id in list) {

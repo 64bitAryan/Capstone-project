@@ -168,6 +168,12 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             }
         }
 
+        postAdapter.setOnLikedByClickListener { uid ->
+            findNavController().navigate(
+                HomeFragmentDirections.actionHomeFragmentToLikedByFragment(uid)
+            )
+        }
+
         binding.postRv.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = postAdapter

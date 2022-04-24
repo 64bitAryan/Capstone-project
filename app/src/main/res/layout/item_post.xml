@@ -71,7 +71,7 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
+        <ImageButton
             android:id="@+id/post_like_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -80,25 +80,42 @@
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/button_translucent"
-            android:drawableStart="@drawable/ic_heart"
-            android:paddingLeft="10dp"
-            android:text="24k"
-            android:textColor="@color/mediumDarkBackground"
+            android:padding="10dp"
+            android:src="@drawable/ic_heart"
             app:layout_constraintBottom_toBottomOf="@id/constraint_layout"
             app:layout_constraintStart_toStartOf="@+id/constraint_layout"
             app:layout_constraintTop_toBottomOf="@+id/post_iv"
             app:layout_goneMarginStart="10dp" />
 
+        <TextView
+            android:id="@+id/tv_likes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:text="24k"
+            android:gravity="center"
+            android:textColor="@color/mediumDarkBackground"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_layout"
+            app:layout_constraintStart_toEndOf="@id/post_like_btn"
+            app:layout_constraintTop_toBottomOf="@id/post_iv" />
+
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/post_comment_btn"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/button_translucent"
             android:src="@drawable/ic_outline_comment"
-            app:layout_constraintStart_toEndOf="@+id/post_like_btn"
+            app:layout_constraintStart_toEndOf="@+id/tv_likes"
             app:layout_constraintTop_toBottomOf="@+id/post_iv" />
 
         <androidx.appcompat.widget.AppCompatImageButton

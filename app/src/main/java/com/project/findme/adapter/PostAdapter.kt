@@ -1,14 +1,11 @@
 package com.project.findme.adapter
 
-import android.R.attr.button
-import android.graphics.drawable.Drawable
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
@@ -47,10 +44,11 @@ class PostAdapter @Inject constructor(
         val userNameTextView: TextView = binding.postUsernameTv
         val postImageView: ImageView = binding.postIv
         val profilePictureImageView: ImageView = binding.postProfilePic
-        val postLikeButton: Button = binding.postLikeBtn
+        val postLikeButton: ImageButton = binding.postLikeBtn
         val postCommentButton: ImageButton = binding.postCommentBtn
         val deletePostButton: ImageButton = binding.deleteBtn
         val homeProfileInfo = binding.homeProfileInfo
+        val tvLikes = binding.tvLikes
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PostViewHolder {
@@ -62,6 +60,7 @@ class PostAdapter @Inject constructor(
         return PostViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = posts[position]
         holder.apply {
@@ -70,7 +69,7 @@ class PostAdapter @Inject constructor(
             userNameTextView.text = post.authorUsername
             titleTextView.text = post.title
             descriptionTextView.text = post.text
-            postLikeButton.text = post.likedBy.count().toString()
+            tvLikes.text = "${post.likedBy.count()} likes"
             val uid = FirebaseAuth.getInstance().uid!!
             deletePostButton.apply {
                 isVisible = uid == post.authorUid
@@ -81,25 +80,9 @@ class PostAdapter @Inject constructor(
                 }
             }
 
-
-            val imgLiked: Drawable = ResourcesCompat.getDrawable(
-                postLikeButton.context.resources,
-                R.drawable.ic_liked,
-                null
-            )!!
-
-            val imgNotLiked: Drawable = ResourcesCompat.getDrawable(
-                postLikeButton.context.resources,
-                R.drawable.ic_heart,
-                null
-            )!!
-
-            postLikeButton.setCompoundDrawablesWithIntrinsicBounds(
-                if (post.isLiked) imgLiked
-                else imgNotLiked,
-                null,
-                null,
-                null
+            postLikeButton.setImageResource(
+                if (post.isLiked) R.drawable.ic_liked
+                else R.drawable.ic_heart
             )
 
             postCommentButton.setOnClickListener {
@@ -131,6 +114,11 @@ class PostAdapter @Inject constructor(
                     click(post.authorUid, post.authorUsername)
                 }
             }
+            tvLikes.setOnClickListener {
+                likedByClickListener?.let { click ->
+                    click(post.id)
+                }
+            }
         }
     }
 
@@ -140,6 +128,7 @@ class PostAdapter @Inject constructor(
 
     private var commentButtonClickedListener: ((Post) -> Unit)? = null
     private var deleteButtonCLickedListener: ((Post) -> Unit)? = null
+    private var likedByClickListener: ((String) -> Unit)? = null
     private var likeButtonClickListener: ((Post, Int) -> Unit)? = null
     private var navigateToProfile: ((String, String) -> Unit)? = null
 
@@ -157,5 +146,9 @@ class PostAdapter @Inject constructor(
 
     fun setNavigateToProfileListener(listener: (String, String) -> Unit) {
         navigateToProfile = listener
+    }
+
+    fun setOnLikedByClickListener(listener: (String) -> Unit) {
+        likedByClickListener = listener
     }
 }
