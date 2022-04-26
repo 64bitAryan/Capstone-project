@@ -43,6 +43,7 @@ android {
 dependencies {
 
     implementation 'com.google.firebase:firebase-firestore-ktx:24.1.0'
+    implementation 'com.google.firebase:firebase-analytics-ktx:20.0.2'
     def hilt_version = '2.37'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -68,7 +69,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-storage-ktx'
 
     // Firebase Firestore
-    implementation 'com.google.firebase:firebase-firestore:24.1.0'
+    implementation 'com.google.firebase:firebase-firestore:24.1.1'
 
     //Firebase UI
     implementation 'com.firebaseui:firebase-ui-firestore:8.0.0'
@@ -100,7 +101,7 @@ dependencies {
     implementation "androidx.fragment:fragment-ktx:1.4.1"
 
     //Material Dependency
-    implementation "com.google.android.material:material:1.6.0-beta01"
+    implementation "com.google.android.material:material:1.7.0-alpha01"
 
     // Paging 3
     def paging_version = "3.1.1"

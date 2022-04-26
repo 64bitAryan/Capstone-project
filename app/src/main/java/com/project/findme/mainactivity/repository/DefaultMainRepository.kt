@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 import java.util.*
 
 class DefaultMainRepository() : MainRepository {
@@ -143,31 +144,28 @@ class DefaultMainRepository() : MainRepository {
     override suspend fun getPostForProfile(uid: String): Resource<List<Post>> =
         withContext(Dispatchers.IO) {
             safeCall {
-                val profilePosts = posts.whereEqualTo("authorUid", uid)
-                    .orderBy("date", Query.Direction.DESCENDING)
-                    .get()
-                    .await()
-                    .toObjects(Post::class.java)
-                    .onEach { post ->
-                        val user = getUser(post.authorUid).data!!
-                        post.authorProfilePictureUrl = user.profilePicture
-                        post.authorUsername = user.userName
-                        post.isLiked = uid in post.likedBy
-                    }
+
+                val profilePosts = getPostForUser(uid).data!!
 
                 val followings =
                     users.document(uid).get().await().toObject(User::class.java)!!.followings
-                val followingsPost = posts.whereIn("authorUid", followings)
-                    .orderBy("date", Query.Direction.DESCENDING)
-                    .get()
-                    .await()
-                    .toObjects(Post::class.java)
-                    .onEach { post ->
-                        val user = getUser(post.authorUid).data!!
-                        post.authorProfilePictureUrl = user.profilePicture
-                        post.authorUsername = user.userName
-                        post.isLiked = uid in post.likedBy
-                    }
+
+                var followingsPost: List<Post> = listOf()
+                try {
+                    followingsPost = posts.whereIn("authorUid", followings)
+                        .orderBy("date", Query.Direction.DESCENDING)
+                        .get()
+                        .await()
+                        .toObjects(Post::class.java)
+                        .onEach { post ->
+                            val user = getUser(post.authorUid).data!!
+                            post.authorProfilePictureUrl = user.profilePicture
+                            post.authorUsername = user.userName
+                            post.isLiked = uid in post.likedBy
+                        }
+                } catch (e: Exception) {
+
+                }
 
                 var p = profilePosts + followingsPost
                 p = p.sortedByDescending {

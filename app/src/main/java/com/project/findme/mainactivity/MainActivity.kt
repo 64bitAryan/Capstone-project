@@ -21,6 +21,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.project.findme.utils.Constants.FRAGMENTS_LIST
 import com.ryan.findme.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(navView, navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.editProfileFragment || destination.id == R.id.createPostFragment) {
+            if (destination.id in FRAGMENTS_LIST) {
                 bottomNavBar.visibility = View.GONE
             } else {
                 bottomNavBar.visibility = View.VISIBLE
@@ -95,18 +96,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val list = listOf(
-            R.id.editProfileFragment,
-            R.id.createPostFragment,
-            R.id.changePasswordFragment,
-            R.id.searchedProfileFragment,
-            R.id.listFollowersFragment,
-            R.id.listFollowersFragmentUser,
-            R.id.commentFragment,
-            R.id.likedByFragment
-        )
         if (toggle.onOptionsItemSelected(item)) {
-            return if (navController.currentDestination?.id in list) {
+            return if (navController.currentDestination?.id in FRAGMENTS_LIST) {
                 drawerLayout.closeDrawer(GravityCompat.START)
                 super.onOptionsItemSelected(item)
             } else {
@@ -123,6 +114,5 @@ class MainActivity : AppCompatActivity() {
             appBarConfiguration
         ) || super.onSupportNavigateUp()
     }
-
 
 }
