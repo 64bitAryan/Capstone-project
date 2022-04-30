@@ -39,7 +39,11 @@ interface MainRepository {
 
     suspend fun getMutualList(uid: String): Resource<List<User>>
 
-    suspend fun createComment(commentText: String, postId: String): Resource<Comment>
+    suspend fun createComment(
+        commentText: String,
+        postId: String,
+        parentId: String?
+    ): Resource<Comment>
 
     suspend fun getCommentFromPost(postId: String): Resource<List<Comment>>
 

@@ -2,7 +2,6 @@ package com.project.findme.mainactivity.repository
 
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.core.net.toUri
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -295,21 +294,26 @@ class DefaultMainRepository() : MainRepository {
             }
         }
 
-    override suspend fun createComment(commentText: String, postId: String) =
+    override suspend fun createComment(commentText: String, postId: String, parentId: String?) =
         withContext(Dispatchers.IO) {
             safeCall {
                 val uid = auth.uid!!
                 val commentId = UUID.randomUUID().toString()
                 val user = getUser(uid).data!!
                 val comment = Comment(
-                    commentId,
-                    postId,
-                    uid,
-                    user.userName,
-                    user.profilePicture,
-                    commentText
+                    commentId = commentId,
+                    postId = postId,
+                    uid = uid,
+                    username = user.userName,
+                    profilePicture = user.profilePicture,
+                    comment = commentText,
+                    parentId = parentId,
                 )
                 comments.document(commentId).set(comment).await()
+                if (parentId != null) {
+                    comments.document(parentId)
+                        .update("repliedComments", FieldValue.arrayUnion(comment.commentId))
+                }
                 Resource.Success(comment)
             }
         }
@@ -318,16 +322,24 @@ class DefaultMainRepository() : MainRepository {
         safeCall {
             val commentsForPost = comments
                 .whereEqualTo("postId", postId)
-                .orderBy("data", Query.Direction.DESCENDING)
+                .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .await()
                 .toObjects(Comment::class.java)
                 .onEach { comment ->
                     val user = getUser(comment.uid).data!!
-                    comment.uesrname = user.userName
+                    comment.username = user.userName
                     comment.profilePicture = user.profilePicture
                 }
-            Resource.Success(commentsForPost)
+
+            val newList = mutableListOf<Comment>()
+
+            for (c in commentsForPost) {
+                if (c.parentId == null) {
+                    newList.add(c)
+                }
+            }
+            Resource.Success(newList.toList())
         }
     }
 
@@ -347,7 +359,29 @@ class DefaultMainRepository() : MainRepository {
 
     override suspend fun deleteComment(comment: Comment) = withContext(Dispatchers.IO) {
         safeCall {
-            comments.document(comment.commentId).delete().await()
+            val open = mutableListOf<String>()
+            val close = mutableListOf<String>()
+
+            open.add(comment.commentId)
+
+            while (open.isNotEmpty()) {
+                val cur = open.removeAt(0)
+                val curComment =
+                    comments.document(cur).get().await().toObject(Comment::class.java)!!
+                open.addAll(curComment.repliedComments)
+                close.add(cur)
+            }
+
+            for (c in close) {
+                val curComment =
+                    comments.document(c).get().await().toObject(Comment::class.java)!!
+                if (curComment.parentId != null) {
+                    comments.document(curComment.parentId)
+                        .update("repliedComments", FieldValue.arrayRemove(c))
+                }
+                comments.document(c).delete().await()
+            }
+
             Resource.Success(comment)
         }
     }
