@@ -1,9 +1,12 @@
 package com.project.findme.mainactivity.mainfragments.ui.comment
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,13 +16,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.CommentAdapter
 import com.project.findme.data.entity.Comment
-import com.project.findme.mainactivity.mainfragments.ui.listFollowers.ListFollowersFragmentDirections
 import com.project.findme.utils.EventObserver
+import com.project.findme.utils.hideKeyboard
+import com.project.findme.utils.showKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentCommentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class CommentFragment : Fragment(R.layout.fragment_comment) {
@@ -29,14 +34,17 @@ class CommentFragment : Fragment(R.layout.fragment_comment) {
     private lateinit var binding: FragmentCommentBinding
     private val viewModel: CommentViewModel by viewModels()
     private val args: CommentFragmentArgs by navArgs()
+    private var parent: String? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCommentBinding.bind(view)
         binding.apply {
             sendCommentBt.setOnClickListener {
+                hideKeyboard(requireActivity())
                 val text = commentTextInputEt.text.toString()
-                viewModel.createComment(text, args.postId)
+                viewModel.createComment(text, args.postId, parent)
+                commentTextInputEt.setText("")
             }
         }
         viewModel.getCommentForPost(args.postId)
@@ -64,6 +72,7 @@ class CommentFragment : Fragment(R.layout.fragment_comment) {
             adapter = commentAdapter
         }
         commentAdapter.setDeleteListener { comment ->
+            hideKeyboard(requireActivity())
             showConfirmationDialog(comment)
         }
         commentAdapter.setNavigateToProfileListener { uid, userName ->
@@ -79,6 +88,11 @@ class CommentFragment : Fragment(R.layout.fragment_comment) {
                     )
                 )
             }
+        }
+        commentAdapter.setReplyToCommentListener { uid ->
+            showKeyboard(requireActivity())
+            binding.commentTextInputEt.requestFocus()
+            parent = uid
         }
     }
 
@@ -98,19 +112,15 @@ class CommentFragment : Fragment(R.layout.fragment_comment) {
                 }
             }
         ) {
-            binding.apply {
-                commentPb.isVisible = false
-                sendCommentBt.isClickable = true
-                commentTextInputEt.setText("")
-                commentAdapter.comment += it
-                Log.d("CommentFragment: ", it.toString())
-            }
+            setupRecyclerView()
+            binding.commentPb.isVisible = false
+            viewModel.getCommentForPost(it.postId)
         })
 
         viewModel.getCommentsForPostStatus.observe(viewLifecycleOwner, EventObserver(
             onError = { error ->
                 snackbar(error)
-                Log.d("CommentFragment: ", error)
+                Log.d("CommentsFragment", error)
                 binding.apply {
                     commentPb.isVisible = false
                     sendCommentBt.isClickable = true
@@ -120,15 +130,14 @@ class CommentFragment : Fragment(R.layout.fragment_comment) {
                 binding.apply {
                     commentPb.isVisible = true
                     sendCommentBt.isClickable = false
-                    commentAdapter.comment = listOf()
+                    commentAdapter.comments = listOf()
                 }
             }
         ) { commentList ->
             binding.apply {
                 commentPb.isVisible = false
                 sendCommentBt.isClickable = true
-                Log.d("CommentFragment: ", commentList.toString())
-                commentAdapter.comment = commentList
+                commentAdapter.comments = commentList
             }
         })
 
@@ -143,7 +152,8 @@ class CommentFragment : Fragment(R.layout.fragment_comment) {
                 binding.commentPb.isVisible = true
             }
         ) {
-            commentAdapter.comment -= it
+            setupRecyclerView()
+            viewModel.getCommentForPost(it.postId)
             binding.commentPb.isVisible = false
         })
     }

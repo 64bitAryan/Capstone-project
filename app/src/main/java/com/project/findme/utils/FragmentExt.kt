@@ -13,11 +13,18 @@ fun hideKeyboard(activity: Activity) {
     val currentFocusedView = activity.currentFocus
     currentFocusedView?.let {
         inputMethodManager.hideSoftInputFromWindow(
-            currentFocusedView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS)
+            currentFocusedView.windowToken, InputMethodManager.HIDE_NOT_ALWAYS
+        )
     }
 }
 
-fun Fragment.snackbar(text: String){
+fun showKeyboard(activity: Activity) {
+    val imm: InputMethodManager =
+        activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.SHOW_IMPLICIT)
+}
+
+fun Fragment.snackbar(text: String) {
     Snackbar.make(
         requireView(),
         text,
