@@ -97,11 +97,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (toggle.onOptionsItemSelected(item)) {
-            return if (navController.currentDestination?.id in FRAGMENTS_LIST) {
-                drawerLayout.closeDrawer(GravityCompat.START)
-                super.onOptionsItemSelected(item)
-            } else {
-                true
+            return when (navController.currentDestination?.id) {
+                in FRAGMENTS_LIST -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    super.onOptionsItemSelected(item)
+                }
+                R.id.createPostFragment -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    onBackPressed()
+                    true
+                }
+                else -> {
+                    true
+                }
             }
         }
 

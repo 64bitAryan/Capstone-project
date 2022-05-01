@@ -31,6 +31,7 @@ class DefaultMainRepository() : MainRepository {
     val users = FirebaseFirestore.getInstance().collection("users")
     private val comments = FirebaseFirestore.getInstance().collection("comments")
     val posts = FirebaseFirestore.getInstance().collection("posts")
+    val draftPosts = FirebaseFirestore.getInstance().collection("drafts")
 
     override suspend fun searchUsers(query: String) = withContext(Dispatchers.IO) {
         safeCall {
@@ -48,14 +49,48 @@ class DefaultMainRepository() : MainRepository {
     override suspend fun createPost(
         imageUri: Uri,
         title: String,
+        description: String,
+        postId: String
+    ): Resource<Any> = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = auth.uid!!
+            var newPostId = postId
+            if (postId.trim() == "") {
+                newPostId = UUID.randomUUID().toString()
+            }
+            val imageUploadResult = storage.getReference(newPostId).putFile(imageUri).await()
+            val imageUrl =
+                imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+            val post = Post(
+                id = newPostId,
+                authorUid = uid,
+                imageUrl = imageUrl,
+                title = title,
+                text = description,
+                date = System.currentTimeMillis()
+            )
+            posts.document(newPostId).set(post).await()
+            if (postId.trim() != "") {
+                draftPosts.document(postId).delete().await()
+            }
+            Resource.Success(Any())
+        }
+    }
+
+    override suspend fun createDraftPost(
+        imageUri: Uri,
+        title: String,
         description: String
     ): Resource<Any> = withContext(Dispatchers.IO) {
         safeCall {
             val uid = auth.uid!!
             val postId = UUID.randomUUID().toString()
-            val imageUploadResult = storage.getReference(postId).putFile(imageUri).await()
-            val imageUrl =
-                imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+            var imageUrl = ""
+            if (imageUri != Uri.EMPTY) {
+                val imageUploadResult = storage.getReference(postId).putFile(imageUri).await()
+                imageUrl =
+                    imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+            }
             val post = Post(
                 id = postId,
                 authorUid = uid,
@@ -64,7 +99,7 @@ class DefaultMainRepository() : MainRepository {
                 text = description,
                 date = System.currentTimeMillis()
             )
-            posts.document(postId).set(post).await()
+            draftPosts.document(postId).set(post).await()
             Resource.Success(Any())
         }
     }
@@ -172,6 +207,22 @@ class DefaultMainRepository() : MainRepository {
                 }
 
                 Resource.Success(p)
+            }
+        }
+
+    override suspend fun getDraftPosts(uid: String): Resource<List<Post>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val draftPosts = draftPosts.whereEqualTo("authorUid", uid)
+                    .orderBy("date", Query.Direction.DESCENDING).get().await()
+                    .toObjects(Post::class.java)
+                    .onEach { post ->
+                        val user = getUser(post.authorUid).data!!
+                        post.authorProfilePictureUrl = user.profilePicture
+                        post.authorUsername = user.userName
+                        post.isLiked = uid in post.likedBy
+                    }
+                Resource.Success(draftPosts)
             }
         }
 

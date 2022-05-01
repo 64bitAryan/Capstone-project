@@ -21,7 +21,7 @@ class CreatePostViewModel @Inject constructor(
     private val repository: MainRepository,
     private val applicationContext: Context,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-): ViewModel() {
+) : ViewModel() {
 
     private val _createPostStatus = MutableLiveData<Events<Resource<Any>>>()
     val createPostStatus: LiveData<Events<Resource<Any>>> = _createPostStatus
@@ -33,19 +33,27 @@ class CreatePostViewModel @Inject constructor(
         _curImageUri.postValue(uri)
     }
 
-    fun createPost(imageUri: Uri, title: String, description: String) {
-        if(title.isEmpty() || description.isEmpty()){
+    fun createPost(imageUri: Uri, title: String, description: String, postId: String) {
+        if (title.isEmpty() || description.isEmpty()) {
             val error = applicationContext.getString(R.string.error_input_empty)
             _createPostStatus.postValue(Events(Resource.Error(error)))
-        } else if(imageUri.toString().isEmpty()) {
+        } else if (imageUri == Uri.EMPTY) {
             val error = "Pleas Select an Image"
             _createPostStatus.postValue(Events(Resource.Error(error)))
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 _createPostStatus.postValue(Events(Resource.Loading()))
-                val result = repository.createPost(imageUri, title, description)
+                val result = repository.createPost(imageUri, title, description, postId)
                 _createPostStatus.postValue(Events(result))
             }
+        }
+    }
+
+    fun createDraftPost(imageUri: Uri, title: String, description: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _createPostStatus.postValue(Events(Resource.Loading()))
+            val result = repository.createDraftPost(imageUri, title, description)
+            _createPostStatus.postValue(Events(result))
         }
     }
 }
