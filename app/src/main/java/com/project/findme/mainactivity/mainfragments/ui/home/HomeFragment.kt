@@ -46,7 +46,14 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
 
         binding.apply {
             createPostFb.setOnClickListener {
-                findNavController().navigate(R.id.action_homeFragment_to_createPostFragment)
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToCreatePostFragment(
+                        "",
+                        "",
+                        "",
+                        ""
+                    )
+                )
             }
 
             swipeRefreshLayout.setOnRefreshListener {

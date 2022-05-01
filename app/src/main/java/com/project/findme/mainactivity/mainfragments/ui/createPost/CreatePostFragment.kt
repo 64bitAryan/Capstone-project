@@ -4,14 +4,18 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.RequestManager
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageView
 import com.canhub.cropper.options
+import com.project.findme.data.entity.Post
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -19,14 +23,27 @@ import com.ryan.findme.databinding.FragmentCreatepostScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
 
     @Inject
     lateinit var glide: RequestManager
     private val viewModel: CreatePostViewModel by viewModels()
-    private lateinit var curImageUri: Uri
+    private var curImageUri: Uri = Uri.EMPTY
     private lateinit var binding: FragmentCreatepostScreenBinding
+    private val args: CreatePostFragmentArgs by navArgs()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    showConfirmationDialog()
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -40,12 +57,21 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
             imageIv.setOnClickListener {
                 startCrop()
             }
+            titleEt.setText(args.title)
+            descriptionEt.setText(args.description)
+            if (args.imageUrl != "") {
+                addImageBt.isVisible = false
+                glide.load(args.imageUrl).into(imageIv)
+                imageIv.isVisible = true
+            }
+
             createPostBt.setOnClickListener {
                 curImageUri.let { uri ->
                     viewModel.createPost(
                         uri,
                         titleEt.text.toString(),
-                        descriptionEt.text.toString()
+                        descriptionEt.text.toString(),
+                        args.postId
                     )
                 }
             }
@@ -71,6 +97,32 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
         )
     }
 
+    private fun showConfirmationDialog() {
+        if (binding.titleEt.text.trim()
+                .isEmpty() && binding.descriptionEt.text.trim()
+                .isEmpty() && curImageUri == Uri.EMPTY
+        ) {
+            findNavController().navigateUp()
+        } else {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Go Back?")
+                .setMessage("Are you sure you want to go back? You will lose the data, instead draft the post?")
+                .setPositiveButton(
+                    "Yes"
+                ) { _, _ ->
+                    viewModel.createDraftPost(
+                        curImageUri,
+                        binding.titleEt.text.toString(),
+                        binding.descriptionEt.text.toString()
+                    )
+                }
+                .setNegativeButton("No") { _, _ ->
+                    findNavController().navigateUp()
+                }
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
+        }
+    }
 
     private fun subscribeToObserve() {
 

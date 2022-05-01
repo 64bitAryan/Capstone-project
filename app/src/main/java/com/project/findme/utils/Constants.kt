@@ -13,7 +13,7 @@ object Constants {
     const val PAGE_SIZE = 5
     val FRAGMENTS_LIST = listOf(
         R.id.editProfileFragment,
-        R.id.createPostFragment,
+        R.id.draftPostFragment,
         R.id.changePasswordFragment,
         R.id.searchedProfileFragment,
         R.id.listFollowersFragment,

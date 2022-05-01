@@ -62,6 +62,12 @@
         <action
             android:id="@+id/action_createPostFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <argument
+            android:name="imageUrl"
+            app:argType="string" />
+        <argument android:name="title" />
+        <argument android:name="description" />
+        <argument android:name="postId" />
     </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
@@ -156,5 +162,14 @@
         <argument
             android:name="postId"
             app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/draftPostFragment"
+        android:name="com.project.findme.mainactivity.mainfragments.ui.draftPost.DraftPostFragment"
+        android:label="Drafts"
+        tools:layout="@layout/fragment_draftpost_screen">
+        <action
+            android:id="@+id/action_draftPostFragment_to_createPostFragment"
+            app:destination="@id/createPostFragment" />
     </fragment>
 </navigation>
