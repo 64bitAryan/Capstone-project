@@ -6,6 +6,7 @@ import android.view.View
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -50,6 +51,7 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
         binding = FragmentCreatepostScreenBinding.bind(view)
         subscribeToObserve()
 
+        curImageUri = args.imageUrl.toUri()
         binding.apply {
             addImageBt.setOnClickListener {
                 startCrop()
@@ -72,6 +74,24 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
                         titleEt.text.toString(),
                         descriptionEt.text.toString(),
                         args.postId
+                    )
+                }
+            }
+
+            saveDraftBt.setOnClickListener {
+                if (args.postId == "") {
+                    viewModel.createDraftPost(
+                        curImageUri,
+                        enterTitleTv.text.toString().trim(),
+                        descriptionEt.text.toString().trim()
+                    )
+                } else {
+                    viewModel.updateDraftPost(
+                        curImageUri,
+                        binding.titleEt.text.toString(),
+                        binding.descriptionEt.text.toString(),
+                        args.postId,
+                        args.imageUrl
                     )
                 }
             }
@@ -103,6 +123,31 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
                 .isEmpty() && curImageUri == Uri.EMPTY
         ) {
             findNavController().navigateUp()
+        } else if (binding.titleEt.text.toString()
+                .trim() == args.title && binding.descriptionEt.text.toString()
+                .trim() == args.description && curImageUri.toString() == args.imageUrl
+        ) {
+            findNavController().navigateUp()
+        } else if (args.postId != "") {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Go Back?")
+                .setMessage("Want to save this draft?")
+                .setPositiveButton(
+                    "Yes"
+                ) { _, _ ->
+                    viewModel.updateDraftPost(
+                        curImageUri,
+                        binding.titleEt.text.toString(),
+                        binding.descriptionEt.text.toString(),
+                        args.postId,
+                        args.imageUrl
+                    )
+                }
+                .setNegativeButton("No") { _, _ ->
+                    findNavController().navigateUp()
+                }
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
         } else {
             AlertDialog.Builder(requireContext())
                 .setTitle("Go Back?")
