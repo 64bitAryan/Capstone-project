@@ -14,6 +14,9 @@
             <item
                 android:id="@+id/draftPostFragment"
                 android:title="Drafts" />
+            <item
+                android:id="@+id/createTextPostFragment"
+                android:title="Text Post" />
         </menu>
     </item>
 
