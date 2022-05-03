@@ -1,5 +1,6 @@
 package com.project.findme.adapter
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -11,6 +12,9 @@ import com.bumptech.glide.RequestManager
 import com.project.findme.data.entity.Post
 import com.project.findme.utils.Constants
 import com.ryan.findme.databinding.ItemDraftPostsBinding
+import org.w3c.dom.Text
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 class DraftPostAdapter @Inject constructor(
@@ -38,6 +42,7 @@ class DraftPostAdapter @Inject constructor(
         val postTitle: TextView = binding.tvDraftPostTitle
         val postDescription: TextView = binding.tvDraftPostDescription
         val postImage: ImageView = binding.ivDraftPostImage
+        val date: TextView = binding.tvDraftPostDate
     }
 
     override fun onCreateViewHolder(
@@ -52,6 +57,7 @@ class DraftPostAdapter @Inject constructor(
         return DraftPostViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: DraftPostAdapter.DraftPostViewHolder, position: Int) {
         val post = posts[position]
         holder.apply {
@@ -62,6 +68,11 @@ class DraftPostAdapter @Inject constructor(
             }
             postTitle.text = post.title
             postDescription.text = post.text
+            val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.ENGLISH)
+            val calendar: Calendar = Calendar.getInstance()
+            calendar.timeInMillis = post.date
+            date.text = "Created on ${formatter.format(calendar.time)}"
+
             itemView.setOnClickListener {
                 onPostClickListener?.let { click ->
                     click(post)
