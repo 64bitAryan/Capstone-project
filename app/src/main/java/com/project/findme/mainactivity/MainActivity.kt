@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
         toggle =
             ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
 
-
         bottomNavBar = findViewById(R.id.bottom_nav_view)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
@@ -63,7 +62,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.userProfileFragment,
                 R.id.signOutDialogFragment,
                 R.id.commentFragment,
-                R.id.action_chatFragment_to_allUsers
             )
         ).setOpenableLayout(drawerLayout)
             .build()
@@ -75,7 +73,11 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(navView, navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.editProfileFragment || destination.id == R.id.createPostFragment) {
+            if (destination.id == R.id.editProfileFragment ||
+                destination.id == R.id.createPostFragment ||
+                destination.id == R.id.commentFragment ||
+                destination.id == R.id.chatWindowFragment
+                    ) {
                 bottomNavBar.visibility = View.GONE
             } else {
                 bottomNavBar.visibility = View.VISIBLE
@@ -103,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             R.id.changePasswordFragment,
             R.id.searchedProfileFragment,
             R.id.listFollowersFragment,
-            R.id.listFollowersFragmentUser
+            R.id.listFollowersFragmentUser,
         )
         if (toggle.onOptionsItemSelected(item)) {
             return if (navController.currentDestination?.id in list) {
@@ -123,6 +125,4 @@ class MainActivity : AppCompatActivity() {
             appBarConfiguration
         ) || super.onSupportNavigateUp()
     }
-
-
 }

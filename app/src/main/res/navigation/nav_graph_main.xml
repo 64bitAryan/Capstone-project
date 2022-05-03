@@ -140,5 +140,17 @@
     <fragment
         android:id="@+id/allUsers"
         android:name="com.project.findme.mainactivity.chatFragment.allUsers.AllUsersFragment"
-        android:label="AllUsers" />
+        android:label="AllUsers" >
+        <action
+            android:id="@+id/action_allUsers_to_chatWindowFragment"
+            app:destination="@id/chatWindowFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatWindowFragment"
+        android:name="com.project.findme.mainactivity.chatFragment.chatWindowFragment.ChatWindowFragment"
+        android:label="ChatWindowFragment" >
+        <argument
+            android:name="currentUser"
+            app:argType="string" />
+    </fragment>
 </navigation>
