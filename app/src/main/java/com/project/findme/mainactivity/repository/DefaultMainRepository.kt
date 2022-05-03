@@ -31,6 +31,7 @@ class DefaultMainRepository() : MainRepository {
     val users = FirebaseFirestore.getInstance().collection("users")
     private val comments = FirebaseFirestore.getInstance().collection("comments")
     val posts = FirebaseFirestore.getInstance().collection("posts")
+    val cred = FirebaseFirestore.getInstance().collection("credentials")
     private val draftPosts = FirebaseFirestore.getInstance().collection("drafts")
 
     override suspend fun searchUsers(query: String) = withContext(Dispatchers.IO) {
@@ -376,6 +377,46 @@ class DefaultMainRepository() : MainRepository {
                 return@safeCall Resource.Success((userList intersect userList1).toList())
             }
         }
+
+    override suspend fun getSuggestionList(uid: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val c = FirebaseAuth.getInstance().currentUser!!
+                val curUser =
+                    users.document(c.uid).get().await().toObject(User::class.java)!!
+                val interests = curUser.credential.interest
+                val userList = mutableSetOf<User>()
+
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                val followers = user.follows
+                val followings = user.followings
+
+                for (i in followers) {
+                    val cur = users.document(i).get().await().toObject(User::class.java)!!
+                    if ((interests.intersect(cur.credential.interest)).isNotEmpty() or
+                        (user.credential.interest.intersect(cur.credential.interest).isNotEmpty())
+                    ) {
+                        if (cur != curUser) {
+                            userList.add(cur)
+                        }
+                    }
+                }
+
+                for (i in followings) {
+                    val cur = users.document(i).get().await().toObject(User::class.java)!!
+                    if ((interests.intersect(cur.credential.interest)).isNotEmpty() or
+                        (user.credential.interest.intersect(cur.credential.interest).isNotEmpty())
+                    ) {
+                        if (cur != curUser) {
+                            userList.add(cur)
+                        }
+                    }
+                }
+
+                return@safeCall Resource.Success(userList.toList())
+            }
+        }
+
 
     override suspend fun createComment(commentText: String, postId: String, parentId: String?) =
         withContext(Dispatchers.IO) {

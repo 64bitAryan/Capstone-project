@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
+import androidx.viewpager.widget.PagerTitleStrip
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
@@ -31,7 +32,9 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
             pagerAdapter.addFragment(MutualsListFragment(), "Mutuals", args.uid)
             pagerAdapter.addFragment(FollowersListFragment(), "Followers", args.uid)
             pagerAdapter.addFragment(FollowingListFragment(), "Followings", args.uid)
+            pagerAdapter.addFragment(SuggestionListFragment(), "Suggestions", args.uid)
             viewPager.adapter = pagerAdapter
+
             viewPager.addOnPageChangeListener(TabLayoutOnPageChangeListener(tabLayoutList))
             tabLayoutList.addOnTabSelectedListener(object : OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
@@ -41,7 +44,7 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
                 override fun onTabUnselected(tab: TabLayout.Tab) {}
                 override fun onTabReselected(tab: TabLayout.Tab) {}
             })
-            viewPager.offscreenPageLimit = 3
+            viewPager.offscreenPageLimit = 4
             when (args.type) {
                 "Followers" -> {
                     tabLayoutList.selectTab(tabLayoutList.getTabAt(1))

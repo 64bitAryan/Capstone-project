@@ -60,6 +60,8 @@ interface MainRepository {
 
     suspend fun getMutualList(uid: String): Resource<List<User>>
 
+    suspend fun getSuggestionList(uid: String): Resource<List<User>>
+
     suspend fun createComment(
         commentText: String,
         postId: String,
