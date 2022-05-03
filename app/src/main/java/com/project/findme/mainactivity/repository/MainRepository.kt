@@ -20,6 +20,14 @@ interface MainRepository {
 
     suspend fun createDraftPost(imageUri: Uri, title: String, description: String): Resource<Any>
 
+    suspend fun updateDraftPost(
+        imageUri: Uri,
+        title: String,
+        description: String,
+        postId: String,
+        imageUrl: String
+    ): Resource<Any>
+
     suspend fun updatePassword(oldPassword: String, newPassword: String): Resource<Any>
 
     suspend fun updateProfile(user: UpdateUser): Resource<Any>

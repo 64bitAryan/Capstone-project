@@ -41,7 +41,6 @@ class DraftPostFragment : Fragment(R.layout.fragment_draftpost_screen) {
             onError = {
                 binding.draftProgressbar.isVisible = false
                 snackbar(it)
-                Log.d("TAGDRAFTPOST", "subscribeToObserve: $it")
             },
             onLoading = {
                 binding.draftProgressbar.isVisible = true

@@ -56,4 +56,18 @@ class CreatePostViewModel @Inject constructor(
             _createPostStatus.postValue(Events(result))
         }
     }
+
+    fun updateDraftPost(
+        imageUri: Uri,
+        title: String,
+        description: String,
+        postId: String,
+        imageUrl: String
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _createPostStatus.postValue(Events(Resource.Loading()))
+            val result = repository.updateDraftPost(imageUri, title, description, postId, imageUrl)
+            _createPostStatus.postValue(Events(result))
+        }
+    }
 }
