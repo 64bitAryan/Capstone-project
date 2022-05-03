@@ -79,9 +79,11 @@
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/drawable/ic_heart_liked.xml" value="0.1415" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_auth.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_credential.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_main.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/activity_splash_screen.xml" value="0.17407407407407408" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/custom_action_bar.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_comment.xml" value="0.1796875" />
+        <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_create_text_post_screen.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_createpost_screen.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_draftpost_screen.xml" value="0.1796875" />
         <entry key="..\:/Users/om/AndroidStudioProjects/Capstone-project/app/src/main/res/layout/fragment_edit_profile.xml" value="0.1796875" />

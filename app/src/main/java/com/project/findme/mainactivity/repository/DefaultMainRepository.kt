@@ -27,11 +27,11 @@ import java.util.*
 class DefaultMainRepository() : MainRepository {
 
     val auth = FirebaseAuth.getInstance()
-    val storage = Firebase.storage
+    private val storage = Firebase.storage
     val users = FirebaseFirestore.getInstance().collection("users")
     private val comments = FirebaseFirestore.getInstance().collection("comments")
     val posts = FirebaseFirestore.getInstance().collection("posts")
-    val draftPosts = FirebaseFirestore.getInstance().collection("drafts")
+    private val draftPosts = FirebaseFirestore.getInstance().collection("drafts")
 
     override suspend fun searchUsers(query: String) = withContext(Dispatchers.IO) {
         safeCall {
@@ -50,7 +50,7 @@ class DefaultMainRepository() : MainRepository {
         imageUri: Uri,
         title: String,
         description: String,
-        postId: String
+        postId: String,
     ): Resource<Any> = withContext(Dispatchers.IO) {
         safeCall {
             val uid = auth.uid!!
@@ -67,7 +67,7 @@ class DefaultMainRepository() : MainRepository {
                 imageUrl = imageUrl,
                 title = title,
                 text = description,
-                date = System.currentTimeMillis()
+                date = System.currentTimeMillis(),
             )
             posts.document(newPostId).set(post).await()
             if (postId.trim() != "") {
@@ -80,7 +80,7 @@ class DefaultMainRepository() : MainRepository {
     override suspend fun createDraftPost(
         imageUri: Uri,
         title: String,
-        description: String
+        description: String,
     ): Resource<Any> = withContext(Dispatchers.IO) {
         safeCall {
             val uid = auth.uid!!
@@ -97,7 +97,7 @@ class DefaultMainRepository() : MainRepository {
                 imageUrl = imageUrl,
                 title = title,
                 text = description,
-                date = System.currentTimeMillis()
+                date = System.currentTimeMillis(),
             )
             draftPosts.document(postId).set(post).await()
             Resource.Success(Any())

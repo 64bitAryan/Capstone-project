@@ -43,7 +43,8 @@ class CreatePostViewModel @Inject constructor(
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 _createPostStatus.postValue(Events(Resource.Loading()))
-                val result = repository.createPost(imageUri, title, description, postId)
+                val result =
+                    repository.createPost(imageUri, title, description, postId)
                 _createPostStatus.postValue(Events(result))
             }
         }

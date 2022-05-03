@@ -57,7 +57,6 @@ class DraftPostAdapter @Inject constructor(
         return DraftPostViewHolder(binding)
     }
 
-    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: DraftPostAdapter.DraftPostViewHolder, position: Int) {
         val post = posts[position]
         holder.apply {
@@ -71,7 +70,7 @@ class DraftPostAdapter @Inject constructor(
             val formatter = SimpleDateFormat("dd/MM/yyyy hh:mm:ss", Locale.ENGLISH)
             val calendar: Calendar = Calendar.getInstance()
             calendar.timeInMillis = post.date
-            date.text = "Created on ${formatter.format(calendar.time)}"
+            date.text = formatter.format(calendar.time)
 
             itemView.setOnClickListener {
                 onPostClickListener?.let { click ->

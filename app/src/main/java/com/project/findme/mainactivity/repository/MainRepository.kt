@@ -18,7 +18,11 @@ interface MainRepository {
         postId: String
     ): Resource<Any>
 
-    suspend fun createDraftPost(imageUri: Uri, title: String, description: String): Resource<Any>
+    suspend fun createDraftPost(
+        imageUri: Uri,
+        title: String,
+        description: String
+    ): Resource<Any>
 
     suspend fun updateDraftPost(
         imageUri: Uri,

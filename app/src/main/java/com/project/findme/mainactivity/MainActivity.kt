@@ -102,7 +102,7 @@ class MainActivity : AppCompatActivity() {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     super.onOptionsItemSelected(item)
                 }
-                R.id.createPostFragment -> {
+                in listOf(R.id.createPostFragment, R.id.createTextPostFragment) -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     onBackPressed()
                     true

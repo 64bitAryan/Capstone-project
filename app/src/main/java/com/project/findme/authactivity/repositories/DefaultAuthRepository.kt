@@ -1,13 +1,9 @@
 package com.project.findme.authactivity.repositories
 
-import android.accounts.Account
 import android.net.Uri
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 import com.project.findme.data.entity.User
@@ -16,7 +12,6 @@ import com.project.findme.utils.safeCall
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.util.*
 
 class DefaultAuthRepository : AuthRepository {
 
