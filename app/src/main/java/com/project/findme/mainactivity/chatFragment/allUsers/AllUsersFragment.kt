@@ -1,11 +1,14 @@
 package com.project.findme.mainactivity.chatFragment.allUsers
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.UserAdapter
 import com.project.findme.mainactivity.mainfragments.ui.home.HomeViewModel
@@ -38,6 +41,7 @@ class AllUsersFragment: Fragment(R.layout.fragment_allusers) {
                 snackbar(it)
             },
             onLoading = {
+                userAdapter.users = listOf()
                 binding.allusersPb.isVisible = true
             }
         ){
@@ -52,8 +56,10 @@ class AllUsersFragment: Fragment(R.layout.fragment_allusers) {
             adapter = userAdapter
             itemAnimator = null
         }
-        userAdapter.setOnUserClickListener {
-
+        userAdapter.setOnUserClickListener { user ->
+            Log.d("AllUsersFragment: ",user.toString())
+            val action = AllUsersFragmentDirections.actionAllUsersToChatWindowFragment(user.uid)
+            findNavController().navigate(action)
         }
     }
 }

@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
     id 'com.google.gms.google-services'
     id 'kotlin-kapt'
     id 'dagger.hilt.android.plugin'
@@ -63,12 +64,15 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:20.1.0'
 
     // Firebase Storage
-    implementation platform('com.google.firebase:firebase-bom:28.2.0')
     implementation 'com.google.firebase:firebase-storage:20.0.1'
     implementation 'com.google.firebase:firebase-storage-ktx'
 
     // Firebase Firestore
-    implementation 'com.google.firebase:firebase-firestore:24.1.0'
+    implementation 'com.google.firebase:firebase-firestore:24.1.1'
+
+    // Firebase Realtime database
+    implementation platform('com.google.firebase:firebase-bom:29.3.1')
+    implementation 'com.google.firebase:firebase-database'
 
     //Firebase UI
     implementation 'com.firebaseui:firebase-ui-firestore:8.0.0'
