@@ -21,6 +21,18 @@ object Constants {
         R.id.commentFragment,
         R.id.likedByFragment
     )
+    val FRAGMENTS_LIST_BOTTOM_NAV = listOf(
+        R.id.editProfileFragment,
+        R.id.draftPostFragment,
+        R.id.changePasswordFragment,
+        R.id.searchedProfileFragment,
+        R.id.listFollowersFragment,
+        R.id.listFollowersFragmentUser,
+        R.id.commentFragment,
+        R.id.likedByFragment,
+        R.id.createPostFragment,
+        R.id.createTextPostFragment
+    )
     val hobbies = arrayOf(
         "3d printing",
         "amateur meteorology",
