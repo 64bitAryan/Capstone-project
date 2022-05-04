@@ -71,21 +71,25 @@ class CreateTextPostFragment : Fragment(R.layout.fragment_create_text_post_scree
     }
 
     private fun showBackPressedConfirmation() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Go Back?")
-            .setPositiveButton(
-                "Change Text"
-            ) { _, _ ->
-                binding.etTextPost.isVisible = true
-                binding.createImageBt.isVisible = true
-                binding.ivTextPost.isVisible = false
-                binding.createPostBt.isVisible = false
-            }
-            .setNegativeButton("Go back") { _, _ ->
-                findNavController().navigateUp()
-            }
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .show()
+        if (binding.etTextPost.text.toString().trim() == "") {
+            findNavController().navigateUp()
+        } else {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Go Back?")
+                .setPositiveButton(
+                    "Change Text"
+                ) { _, _ ->
+                    binding.etTextPost.isVisible = true
+                    binding.createImageBt.isVisible = true
+                    binding.ivTextPost.isVisible = false
+                    binding.createPostBt.isVisible = false
+                }
+                .setNegativeButton("Go back") { _, _ ->
+                    findNavController().navigateUp()
+                }
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
+        }
     }
 
     private fun showConfirmationDialog() {

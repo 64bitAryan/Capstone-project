@@ -24,6 +24,9 @@
         <action
             android:id="@+id/action_homeFragment_to_likedByFragment"
             app:destination="@id/likedByFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_createTextPostFragment"
+            app:destination="@id/createTextPostFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"

@@ -1,22 +1,18 @@
 package com.project.findme.mainactivity.mainfragments.ui.home
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.*
 import com.project.findme.adapter.PostAdapter
-import com.project.findme.data.entity.Comment
 import com.project.findme.data.entity.Post
-import com.project.findme.mainactivity.mainfragments.ui.comment.CommentFragmentDirections
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -24,12 +20,19 @@ import com.ryan.findme.databinding.FragmentHomeScreenBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class HomeFragment : Fragment(R.layout.fragment_home_screen) {
     @Inject
     lateinit var postAdapter: PostAdapter
     val viewModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeScreenBinding
+    private var isFabOpen = false
+    private lateinit var fabOpen: Animation
+    private lateinit var fabClose: Animation
+    private lateinit var rotateForward: Animation
+    private lateinit var rotateBackward: Animation
+
     var index = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,8 +47,18 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
         subscribeToObserver()
         setUpRecyclerView()
 
+        fabOpen = AnimationUtils.loadAnimation(requireContext(), R.anim.fab_open)
+        fabClose = AnimationUtils.loadAnimation(requireContext(), R.anim.fab_close)
+
+        rotateForward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_forward)
+        rotateBackward = AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_backward)
+
         binding.apply {
             createPostFb.setOnClickListener {
+                animateFAB()
+            }
+
+            fabCreateImagePost.setOnClickListener {
                 findNavController().navigate(
                     HomeFragmentDirections.actionHomeFragmentToCreatePostFragment(
                         "",
@@ -53,6 +66,12 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
                         "",
                         ""
                     )
+                )
+            }
+
+            fabCreateTextPost.setOnClickListener {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToCreateTextPostFragment()
                 )
             }
 
@@ -64,6 +83,9 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
                     super.onScrolled(recyclerView, dx, dy)
                     if (dy > 10 && createPostFb.isShown) {
                         createPostFb.hide()
+                        if (isFabOpen) {
+                            animateFAB()
+                        }
                     }
                     if (dy < -10 && !createPostFb.isShown) {
                         createPostFb.show()
@@ -123,6 +145,28 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
             postAdapter.notifyItemChanged(index)
             binding.swipeRefreshLayout.isRefreshing = false
         })
+    }
+
+    private fun animateFAB() {
+        if (isFabOpen) {
+            binding.apply {
+                createPostFb.startAnimation(rotateBackward)
+                fabCreateImagePost.startAnimation(fabClose)
+                fabCreateTextPost.startAnimation(fabClose)
+                fabCreateImagePost.isClickable = false
+                fabCreateTextPost.isClickable = false
+            }
+            isFabOpen = false
+        } else {
+            binding.apply {
+                createPostFb.startAnimation(rotateForward)
+                fabCreateImagePost.startAnimation(fabOpen)
+                fabCreateTextPost.startAnimation(fabOpen)
+                fabCreateImagePost.isClickable = true
+                fabCreateTextPost.isClickable = true
+            }
+            isFabOpen = true
+        }
     }
 
     private fun showConfirmationDialog(post: Post) {

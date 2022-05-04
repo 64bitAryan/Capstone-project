@@ -15,7 +15,8 @@ interface MainRepository {
         imageUri: Uri,
         title: String,
         description: String,
-        postId: String
+        postId: String,
+        imageUrl: String
     ): Resource<Any>
 
     suspend fun createDraftPost(
