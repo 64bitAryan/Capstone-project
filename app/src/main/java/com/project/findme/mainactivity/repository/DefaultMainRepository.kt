@@ -31,7 +31,6 @@ class DefaultMainRepository() : MainRepository {
     val users = FirebaseFirestore.getInstance().collection("users")
     private val comments = FirebaseFirestore.getInstance().collection("comments")
     val posts = FirebaseFirestore.getInstance().collection("posts")
-    val cred = FirebaseFirestore.getInstance().collection("credentials")
     private val draftPosts = FirebaseFirestore.getInstance().collection("drafts")
 
     override suspend fun searchUsers(query: String) = withContext(Dispatchers.IO) {
@@ -52,6 +51,7 @@ class DefaultMainRepository() : MainRepository {
         title: String,
         description: String,
         postId: String,
+        imageUrl: String
     ): Resource<Any> = withContext(Dispatchers.IO) {
         safeCall {
             val uid = auth.uid!!
@@ -59,13 +59,18 @@ class DefaultMainRepository() : MainRepository {
             if (postId.trim() == "") {
                 newPostId = UUID.randomUUID().toString()
             }
-            val imageUploadResult = storage.getReference(newPostId).putFile(imageUri).await()
-            val imageUrl =
-                imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+
+            var imgUrl = imageUrl
+            if (imageUri != Uri.EMPTY) {
+                val imgID = UUID.randomUUID().toString()
+                val imageUploadResult = storage.getReference(imgID).putFile(imageUri).await()
+                imgUrl =
+                    imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+            }
             val post = Post(
                 id = newPostId,
                 authorUid = uid,
-                imageUrl = imageUrl,
+                imageUrl = imgUrl,
                 title = title,
                 text = description,
                 date = System.currentTimeMillis(),
@@ -113,10 +118,8 @@ class DefaultMainRepository() : MainRepository {
         imageUrl: String
     ): Resource<Any> = withContext(Dispatchers.IO) {
         safeCall {
-            var imgUrl = ""
-            if (imageUri.toString() == imageUrl) {
-                imgUrl = imageUrl
-            } else if (imageUri != Uri.EMPTY) {
+            var imgUrl = imageUrl
+            if (imageUri != Uri.EMPTY) {
                 val imgID = UUID.randomUUID().toString()
                 val imageUploadResult = storage.getReference(imgID).putFile(imageUri).await()
                 imgUrl =

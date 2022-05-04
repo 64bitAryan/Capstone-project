@@ -77,7 +77,7 @@ class CreateTextPostViewModel @Inject constructor(
     fun createPost(imageUri: Uri) {
         viewModelScope.launch(Dispatchers.IO) {
             val result =
-                repository.createPost(imageUri, "", "", "")
+                repository.createPost(imageUri, "", "", "", "")
             _createPostStatus.postValue(Events(result))
         }
     }

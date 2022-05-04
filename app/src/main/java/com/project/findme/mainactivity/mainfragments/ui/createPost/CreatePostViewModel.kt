@@ -33,18 +33,24 @@ class CreatePostViewModel @Inject constructor(
         _curImageUri.postValue(uri)
     }
 
-    fun createPost(imageUri: Uri, title: String, description: String, postId: String) {
+    fun createPost(
+        imageUri: Uri,
+        title: String,
+        description: String,
+        postId: String,
+        imageUrl: String
+    ) {
         if (title.isEmpty() || description.isEmpty()) {
             val error = applicationContext.getString(R.string.error_input_empty)
             _createPostStatus.postValue(Events(Resource.Error(error)))
-        } else if (imageUri == Uri.EMPTY) {
+        } else if (imageUri == Uri.EMPTY && imageUrl.isEmpty()) {
             val error = "Pleas Select an Image"
             _createPostStatus.postValue(Events(Resource.Error(error)))
         } else {
             viewModelScope.launch(Dispatchers.IO) {
                 _createPostStatus.postValue(Events(Resource.Loading()))
                 val result =
-                    repository.createPost(imageUri, title, description, postId)
+                    repository.createPost(imageUri, title, description, postId, imageUrl)
                 _createPostStatus.postValue(Events(result))
             }
         }

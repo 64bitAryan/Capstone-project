@@ -2,6 +2,7 @@ package com.project.findme.mainactivity.mainfragments.ui.createPost
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
@@ -18,6 +19,7 @@ import com.canhub.cropper.CropImageView
 import com.canhub.cropper.options
 import com.project.findme.data.entity.Post
 import com.project.findme.utils.EventObserver
+import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentCreatepostScreenBinding
@@ -51,7 +53,6 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
         binding = FragmentCreatepostScreenBinding.bind(view)
         subscribeToObserve()
 
-        curImageUri = args.imageUrl.toUri()
         binding.apply {
             addImageBt.setOnClickListener {
                 startCrop()
@@ -68,21 +69,24 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
             }
 
             createPostBt.setOnClickListener {
+                hideKeyboard(requireActivity())
                 curImageUri.let { uri ->
                     viewModel.createPost(
                         uri,
                         titleEt.text.toString(),
                         descriptionEt.text.toString(),
-                        args.postId
+                        args.postId,
+                        args.imageUrl
                     )
                 }
             }
 
             saveDraftBt.setOnClickListener {
+                hideKeyboard(requireActivity())
                 if (args.postId == "") {
                     viewModel.createDraftPost(
                         curImageUri,
-                        enterTitleTv.text.toString().trim(),
+                        titleEt.text.toString().trim(),
                         descriptionEt.text.toString().trim()
                     )
                 } else {
