@@ -22,6 +22,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.project.findme.utils.Constants.FRAGMENTS_LIST
+import com.project.findme.utils.Constants.FRAGMENTS_LIST_BOTTOM_NAV
 import com.ryan.findme.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(navView, navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id in FRAGMENTS_LIST) {
+            if (destination.id in FRAGMENTS_LIST_BOTTOM_NAV) {
                 bottomNavBar.visibility = View.GONE
             } else {
                 bottomNavBar.visibility = View.VISIBLE
