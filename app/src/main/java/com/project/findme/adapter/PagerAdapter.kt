@@ -21,11 +21,11 @@ class PagerAdapter(fm: FragmentManager) : FragmentStatePagerAdapter(fm) {
         return titles[position]
     }
 
-    fun addFragment(fragment: Fragment, title: String, uid: String) {
+    fun addFragment(fragment: Fragment, title: String, uid: String, from: String) {
         fragmentList.add(fragment)
         titles.add(title)
         fragment.arguments = Bundle().apply {
-            putString(Constants.FRAGMENT_ARG_KEY, uid)
+            putStringArrayList(Constants.FRAGMENT_ARG_KEY, arrayListOf(uid, from))
         }
     }
 }

@@ -32,10 +32,25 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
         binding.apply {
             tabLayoutList.setupWithViewPager(viewPager)
             pagerAdapter = PagerAdapter(childFragmentManager)
-            pagerAdapter.addFragment(MutualsListFragment(), "Mutuals", args.uid)
-            pagerAdapter.addFragment(FollowersListFragment(), "Followers", args.uid)
-            pagerAdapter.addFragment(FollowingListFragment(), "Followings", args.uid)
-            pagerAdapter.addFragment(SuggestionListFragment(), "Suggestions", args.uid)
+            pagerAdapter.addFragment(MutualsListFragment(), "Mutuals", args.uid, "ListFollowers")
+            pagerAdapter.addFragment(
+                FollowersListFragment(),
+                "Followers",
+                args.uid,
+                "ListFollowers"
+            )
+            pagerAdapter.addFragment(
+                FollowingListFragment(),
+                "Followings",
+                args.uid,
+                "ListFollowers"
+            )
+            pagerAdapter.addFragment(
+                SuggestionListFragment(),
+                "Suggestions",
+                args.uid,
+                "ListFollowers"
+            )
             viewPager.adapter = pagerAdapter
 
             viewPager.addOnPageChangeListener(TabLayoutOnPageChangeListener(tabLayoutList))
