@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.navArgs
-import androidx.viewpager.widget.PagerTitleStrip
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
 import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
 import com.project.findme.adapter.PagerAdapter
+import com.project.findme.mainactivity.mainfragments.ui.followersList.FollowersListFragment
+import com.project.findme.mainactivity.mainfragments.ui.followingsList.FollowingListFragment
+import com.project.findme.mainactivity.mainfragments.ui.mutualsList.MutualsListFragment
+import com.project.findme.mainactivity.mainfragments.ui.suggestionList.SuggestionListFragment
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentListsFollowersBinding
 import dagger.hilt.android.AndroidEntryPoint

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,7 @@ class DraftPostAdapter @Inject constructor(
         val postDescription: TextView = binding.tvDraftPostDescription
         val postImage: ImageView = binding.ivDraftPostImage
         val date: TextView = binding.tvDraftPostDate
+        val deleteBtn: AppCompatImageButton = binding.deleteDraftBtn
     }
 
     override fun onCreateViewHolder(
@@ -77,6 +79,12 @@ class DraftPostAdapter @Inject constructor(
                     click(post)
                 }
             }
+
+            deleteBtn.setOnClickListener {
+                onDeleteClickListener?.let { click ->
+                    click(post)
+                }
+            }
         }
     }
 
@@ -85,8 +93,13 @@ class DraftPostAdapter @Inject constructor(
     }
 
     private var onPostClickListener: ((Post) -> Unit)? = null
+    private var onDeleteClickListener: ((Post) -> Unit)? = null
 
     fun setOnPostClickListener(listener: (Post) -> Unit) {
         onPostClickListener = listener
+    }
+
+    fun setOnDeleteClickListener(listener: (Post) -> Unit) {
+        onDeleteClickListener = listener
     }
 }

@@ -4,7 +4,7 @@
     android:id="@+id/swipe_refresh_layout_followers"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.project.findme.mainactivity.mainfragments.ui.listFollowers.FollowersListFragment">
+    tools:context="com.project.findme.mainactivity.mainfragments.ui.followersList.FollowersListFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

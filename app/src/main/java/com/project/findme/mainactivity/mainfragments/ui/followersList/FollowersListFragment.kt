@@ -1,37 +1,36 @@
-package com.project.findme.mainactivity.mainfragments.ui.listFollowers
+package com.project.findme.mainactivity.mainfragments.ui.followersList
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.ListAdapter
-import com.project.findme.utils.Constants.FRAGMENT_ARG_KEY
+import com.project.findme.utils.Constants
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
-import com.ryan.findme.databinding.FragmentMutualListBinding
+import com.ryan.findme.databinding.FragmentFollowersListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class MutualsListFragment : Fragment(R.layout.fragment_mutual_list) {
+class FollowersListFragment : Fragment(R.layout.fragment_followers_list) {
+
     @Inject
     lateinit var listAdapter: ListAdapter
 
-    val viewModel: ListFollowersViewModel by viewModels()
-    private lateinit var binding: FragmentMutualListBinding
+    val viewModel: FollowersListViewModel by viewModels()
+    private lateinit var binding: FragmentFollowersListBinding
     private lateinit var uid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.takeIf { it.containsKey(FRAGMENT_ARG_KEY) }?.apply {
-            uid = getString(FRAGMENT_ARG_KEY).toString()
-            viewModel.getMutualList(uid)
+        arguments?.takeIf { it.containsKey(Constants.FRAGMENT_ARG_KEY) }?.apply {
+            uid = getString(Constants.FRAGMENT_ARG_KEY).toString()
+            viewModel.getFollowersList(uid)
         }
     }
 
@@ -39,7 +38,7 @@ class MutualsListFragment : Fragment(R.layout.fragment_mutual_list) {
         super.onViewCreated(view, savedInstanceState)
         subscribeToObserve()
 
-        binding = FragmentMutualListBinding.bind(view)
+        binding = FragmentFollowersListBinding.bind(view)
 
         setUpRecyclerView()
 
@@ -54,11 +53,11 @@ class MutualsListFragment : Fragment(R.layout.fragment_mutual_list) {
         listAdapter.setOnUserClickListener { user ->
             if (FirebaseAuth.getInstance().currentUser?.uid == user.uid) {
                 findNavController().navigate(
-                    ListFollowersFragmentDirections.actionListFollowersFragmentToUserProfileFragment()
+                    FollowersListFragmentDirections.actionFollowersListFragmentToUserProfileFragment()
                 )
             } else {
                 findNavController().navigate(
-                    ListFollowersFragmentDirections.actionListFollowersFragmentToSearchedProfileFragment(
+                    FollowersListFragmentDirections.actionFollowersListFragmentToSearchedProfileFragment(
                         uid = user.uid,
                         username = user.userName
                     )
@@ -67,14 +66,15 @@ class MutualsListFragment : Fragment(R.layout.fragment_mutual_list) {
         }
 
         binding.apply {
-            swipeRefreshLayoutMutuals.setOnRefreshListener {
-                viewModel.getMutualList(uid)
+            swipeRefreshLayoutFollowers.setOnRefreshListener {
+                viewModel.getFollowersList(uid)
             }
         }
+
     }
 
     private fun setUpRecyclerView() {
-        binding.rvListMutuals.apply {
+        binding.rvListFollowers.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = listAdapter
         }
@@ -83,29 +83,29 @@ class MutualsListFragment : Fragment(R.layout.fragment_mutual_list) {
     private fun subscribeToObserve() {
         viewModel.list.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                binding.swipeRefreshLayoutMutuals.isRefreshing = false
+                binding.swipeRefreshLayoutFollowers.isRefreshing = false
                 snackbar(it)
             },
             onLoading = {
                 listAdapter.users = listOf()
-                binding.swipeRefreshLayoutMutuals.isRefreshing = true
+                binding.swipeRefreshLayoutFollowers.isRefreshing = true
             }
         ) { users ->
             listAdapter.users = users
-            binding.swipeRefreshLayoutMutuals.isRefreshing = false
+            binding.swipeRefreshLayoutFollowers.isRefreshing = false
         })
 
         viewModel.follow.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                binding.swipeRefreshLayoutMutuals.isRefreshing = false
+                binding.swipeRefreshLayoutFollowers.isRefreshing = false
                 snackbar(it)
             },
             onLoading = {
-                binding.swipeRefreshLayoutMutuals.isRefreshing = true
+                binding.swipeRefreshLayoutFollowers.isRefreshing = true
             }
         ) {
-            viewModel.getMutualList(uid)
-            binding.swipeRefreshLayoutMutuals.isRefreshing = false
+            viewModel.getFollowersList(uid)
+            binding.swipeRefreshLayoutFollowers.isRefreshing = false
         })
     }
 }
