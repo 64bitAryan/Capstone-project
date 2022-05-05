@@ -1,4 +1,4 @@
-package com.project.findme.mainactivity.mainfragments.ui.listFollowers
+package com.project.findme.mainactivity.mainfragments.ui.mutualsList
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,48 +8,23 @@ import com.project.findme.data.entity.User
 import com.project.findme.mainactivity.repository.MainRepository
 import com.project.findme.utils.Events
 import com.project.findme.utils.Resource
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@HiltViewModel
-class ListFollowersViewModel @Inject constructor(
+class MutualsListViewModel @Inject constructor(
     private val repository: MainRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
+
     private val _list = MutableLiveData<Events<Resource<List<User>>>>()
     val list: LiveData<Events<Resource<List<User>>>> = _list
-
-    fun getFollowersList(uid: String) {
-        _list.postValue(Events(Resource.Loading()))
-        viewModelScope.launch(dispatcher) {
-            val result = repository.getFollowersList(uid)
-            _list.postValue(Events(result))
-        }
-    }
-
-    fun getFollowingList(uid: String) {
-        _list.postValue(Events(Resource.Loading()))
-        viewModelScope.launch(dispatcher) {
-            val result = repository.getFollowingList(uid)
-            _list.postValue(Events(result))
-        }
-    }
 
     fun getMutualList(uid: String) {
         _list.postValue(Events(Resource.Loading()))
         viewModelScope.launch(dispatcher) {
             val result = repository.getMutualList(uid)
-            _list.postValue(Events(result))
-        }
-    }
-
-    fun getSuggestionList(uid: String) {
-        _list.postValue(Events(Resource.Loading()))
-        viewModelScope.launch(dispatcher) {
-            val result = repository.getSuggestionList(uid)
             _list.postValue(Events(result))
         }
     }

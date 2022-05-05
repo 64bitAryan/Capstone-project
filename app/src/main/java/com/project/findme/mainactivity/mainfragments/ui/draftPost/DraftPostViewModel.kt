@@ -23,11 +23,22 @@ class DraftPostViewModel @Inject constructor(
     private val _draftPostStatus = MutableLiveData<Events<Resource<List<Post>>>>()
     val draftPostStatus: LiveData<Events<Resource<List<Post>>>> = _draftPostStatus
 
+    private val _deletePostStatus = MutableLiveData<Events<Resource<Post>>>()
+    val deletePostStatus: LiveData<Events<Resource<Post>>> = _deletePostStatus
+
     fun getDraftPosts(uid: String) {
         _draftPostStatus.postValue(Events(Resource.Loading()))
         viewModelScope.launch(dispatcher) {
             val result = repository.getDraftPosts(uid)
             _draftPostStatus.postValue(Events(result))
+        }
+    }
+
+    fun deleteDraftPost(post: Post) {
+        _deletePostStatus.postValue(Events(Resource.Loading()))
+        viewModelScope.launch(dispatcher) {
+            val result = repository.deleteDraftPost(post)
+            _deletePostStatus.postValue(Events(result))
         }
     }
 }

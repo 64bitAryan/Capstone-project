@@ -1,11 +1,9 @@
-package com.project.findme.mainactivity.mainfragments.ui.listFollowers
+package com.project.findme.mainactivity.mainfragments.ui.followingsList
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
@@ -14,25 +12,24 @@ import com.project.findme.utils.Constants
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
-import com.ryan.findme.databinding.FragmentFollowersListBinding
+import com.ryan.findme.databinding.FragmentFollowingListBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FollowersListFragment : Fragment(R.layout.fragment_followers_list) {
-
+class FollowingListFragment : Fragment(R.layout.fragment_following_list) {
     @Inject
     lateinit var listAdapter: ListAdapter
 
-    val viewModel: ListFollowersViewModel by viewModels()
-    private lateinit var binding: FragmentFollowersListBinding
+    val viewModel: FollowingListViewModel by viewModels()
+    private lateinit var binding: FragmentFollowingListBinding
     private lateinit var uid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.takeIf { it.containsKey(Constants.FRAGMENT_ARG_KEY) }?.apply {
             uid = getString(Constants.FRAGMENT_ARG_KEY).toString()
-            viewModel.getFollowersList(uid)
+            viewModel.getFollowingList(uid)
         }
     }
 
@@ -40,7 +37,7 @@ class FollowersListFragment : Fragment(R.layout.fragment_followers_list) {
         super.onViewCreated(view, savedInstanceState)
         subscribeToObserve()
 
-        binding = FragmentFollowersListBinding.bind(view)
+        binding = FragmentFollowingListBinding.bind(view)
 
         setUpRecyclerView()
 
@@ -55,11 +52,11 @@ class FollowersListFragment : Fragment(R.layout.fragment_followers_list) {
         listAdapter.setOnUserClickListener { user ->
             if (FirebaseAuth.getInstance().currentUser?.uid == user.uid) {
                 findNavController().navigate(
-                    ListFollowersFragmentDirections.actionListFollowersFragmentToUserProfileFragment()
+                    FollowingListFragmentDirections.actionFollowingListFragmentToUserProfileFragment()
                 )
             } else {
                 findNavController().navigate(
-                    ListFollowersFragmentDirections.actionListFollowersFragmentToSearchedProfileFragment(
+                    FollowingListFragmentDirections.actionFollowingListFragmentToSearchedProfileFragment(
                         uid = user.uid,
                         username = user.userName
                     )
@@ -68,15 +65,14 @@ class FollowersListFragment : Fragment(R.layout.fragment_followers_list) {
         }
 
         binding.apply {
-            swipeRefreshLayoutFollowers.setOnRefreshListener {
-                viewModel.getFollowersList(uid)
+            swipeRefreshLayoutFollowings.setOnRefreshListener {
+                viewModel.getFollowingList(uid)
             }
         }
-
     }
 
     private fun setUpRecyclerView() {
-        binding.rvListFollowers.apply {
+        binding.rvListFollowings.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = listAdapter
         }
@@ -85,29 +81,29 @@ class FollowersListFragment : Fragment(R.layout.fragment_followers_list) {
     private fun subscribeToObserve() {
         viewModel.list.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                binding.swipeRefreshLayoutFollowers.isRefreshing = false
+                binding.swipeRefreshLayoutFollowings.isRefreshing = false
                 snackbar(it)
             },
             onLoading = {
                 listAdapter.users = listOf()
-                binding.swipeRefreshLayoutFollowers.isRefreshing = true
+                binding.swipeRefreshLayoutFollowings.isRefreshing = true
             }
         ) { users ->
             listAdapter.users = users
-            binding.swipeRefreshLayoutFollowers.isRefreshing = false
+            binding.swipeRefreshLayoutFollowings.isRefreshing = false
         })
 
         viewModel.follow.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                binding.swipeRefreshLayoutFollowers.isRefreshing = false
+                binding.swipeRefreshLayoutFollowings.isRefreshing = false
                 snackbar(it)
             },
             onLoading = {
-                binding.swipeRefreshLayoutFollowers.isRefreshing = true
+                binding.swipeRefreshLayoutFollowings.isRefreshing = true
             }
         ) {
-            viewModel.getFollowersList(uid)
-            binding.swipeRefreshLayoutFollowers.isRefreshing = false
+            viewModel.getFollowingList(uid)
+            binding.swipeRefreshLayoutFollowings.isRefreshing = false
         })
     }
 }

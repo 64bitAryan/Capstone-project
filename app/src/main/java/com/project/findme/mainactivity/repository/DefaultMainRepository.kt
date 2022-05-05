@@ -317,13 +317,15 @@ class DefaultMainRepository() : MainRepository {
     override suspend fun getUsersLiked(uid: String): Resource<List<User>> =
         withContext(Dispatchers.IO) {
             safeCall {
-                val post = posts.document(uid).get().await().toObject(Post::class.java)!!
-                val uidList = post.likedBy
                 val userList = mutableListOf<User>()
-                for (u in uidList) {
-                    val user = users.document(u).get().await().toObject(User::class.java)!!
+
+                val post = posts.document(uid).get().await().toObject(Post::class.java)!!
+
+                post.likedBy.forEach {
+                    val user = users.document(it).get().await().toObject(User::class.java)!!
                     userList.add(user)
                 }
+
                 return@safeCall Resource.Success(userList)
             }
         }
@@ -447,7 +449,10 @@ class DefaultMainRepository() : MainRepository {
 
     override suspend fun getCommentFromPost(postId: String) = withContext(Dispatchers.IO) {
         safeCall {
-            val commentsForPost = comments
+
+            val newList = mutableListOf<Comment>()
+
+            comments
                 .whereEqualTo("postId", postId)
                 .orderBy("date", Query.Direction.DESCENDING)
                 .get()
@@ -457,31 +462,37 @@ class DefaultMainRepository() : MainRepository {
                     val user = getUser(comment.uid).data!!
                     comment.username = user.userName
                     comment.profilePicture = user.profilePicture
+                }.forEach {
+                    if (it.parentId == null) {
+                        newList.add(it)
+                    }
                 }
 
-            val newList = mutableListOf<Comment>()
-
-            for (c in commentsForPost) {
-                if (c.parentId == null) {
-                    newList.add(c)
-                }
-            }
             Resource.Success(newList.toList())
         }
     }
 
     override suspend fun deletePost(post: Post) = withContext(Dispatchers.IO) {
         safeCall {
-            val co = comments.whereEqualTo("postId", post.id).get().await()
-                .toObjects(Comment::class.java)
-            for (c in co) {
-                comments.document(c.commentId).delete().await()
-            }
+            comments.whereEqualTo("postId", post.id).get().await()
+                .toObjects(Comment::class.java).forEach {
+                    comments.document(it.commentId).delete().await()
+                }
             posts.document(post.id).delete().await()
             storage.getReferenceFromUrl(post.imageUrl).delete().await()
             Resource.Success(post)
         }
     }
+
+    override suspend fun deleteDraftPost(post: Post): Resource<Post> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                draftPosts.document(post.id).delete().await()
+                if (post.imageUrl.isNotEmpty())
+                    storage.getReferenceFromUrl(post.imageUrl).delete().await()
+                Resource.Success(post)
+            }
+        }
 
 
     override suspend fun deleteComment(comment: Comment) = withContext(Dispatchers.IO) {
