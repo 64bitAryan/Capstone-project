@@ -1,5 +1,6 @@
 package com.project.findme.utils
 
+import android.graphics.Color
 import com.ryan.findme.R
 
 object Constants {
@@ -33,7 +34,22 @@ object Constants {
         R.id.createPostFragment,
         R.id.createTextPostFragment
     )
-    val hobbies = arrayOf(
+    val COLORS = mapOf(
+        0 to R.drawable.blue_background,
+        1 to R.drawable.red_background,
+        2 to R.drawable.peach_background,
+        3 to R.drawable.yellow_background,
+        4 to R.drawable.brown_background
+    )
+    val PEN_COLORS = mapOf(
+        0 to Color.RED,
+        1 to Color.CYAN,
+        2 to Color.BLUE,
+        3 to Color.MAGENTA,
+        4 to Color.YELLOW,
+        5 to Color.WHITE
+    )
+    val HOBBIES = arrayOf(
         "3d printing",
         "amateur meteorology",
         "art collecting",
@@ -149,7 +165,7 @@ object Constants {
         "yoga"
     )
 
-    val professions = arrayOf(
+    val PROFFESSIONS = arrayOf(
         "accountant",
         "actor",
         "actress",

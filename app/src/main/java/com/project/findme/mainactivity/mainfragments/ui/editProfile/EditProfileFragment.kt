@@ -55,13 +55,13 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            Constants.professions
+            Constants.PROFFESSIONS
         )
 
         val adapterHobbies: ArrayAdapter<String> = ArrayAdapter<String>(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            Constants.hobbies
+            Constants.HOBBIES
         )
 
         binding.apply {
