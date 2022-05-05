@@ -30,8 +30,18 @@ class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_use
             tabLayoutListUser.setupWithViewPager(viewPagerUser)
             pagerAdapter = PagerAdapter(childFragmentManager)
             val uid = FirebaseAuth.getInstance().currentUser!!.uid
-            pagerAdapter.addFragment(FollowersListFragment(), "Followers", uid)
-            pagerAdapter.addFragment(FollowingListFragment(), "Followings", uid)
+            pagerAdapter.addFragment(
+                FollowersListFragment(),
+                "Followers",
+                uid,
+                "ListFollowersUser"
+            )
+            pagerAdapter.addFragment(
+                FollowingListFragment(),
+                "Followings",
+                uid,
+                "ListFollowersUser"
+            )
             viewPagerUser.adapter = pagerAdapter
             viewPagerUser.addOnPageChangeListener(
                 TabLayout.TabLayoutOnPageChangeListener(

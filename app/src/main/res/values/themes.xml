@@ -72,4 +72,7 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="CustomTabText" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">9.7sp</item>
+    </style>
 </resources>
