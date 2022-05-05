@@ -1,10 +1,10 @@
 package com.project.findme.mainactivity
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -19,6 +19,7 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.project.findme.utils.Constants.FRAGMENTS_LIST
@@ -94,6 +95,13 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
         }
 
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        if (firebaseUser!!.providerData.size > 0) {
+            val authProvider =
+                firebaseUser.providerData[firebaseUser.providerData.size - 1].providerId
+            val navMenu: Menu = navView.menu
+            navMenu.findItem(R.id.changePasswordFragment).isVisible = authProvider == "password"
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
