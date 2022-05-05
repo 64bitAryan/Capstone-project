@@ -8,13 +8,11 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.common.collect.BiMap
-import com.project.findme.data.entity.Post
 import com.project.findme.utils.EventObserver
-import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentCreateTextPostScreenBinding
@@ -28,6 +26,8 @@ class CreateTextPostFragment : Fragment(R.layout.fragment_create_text_post_scree
     private val viewModel: CreateTextPostViewModel by viewModels()
     private lateinit var binding: FragmentCreateTextPostScreenBinding
     private lateinit var bitmap: Bitmap
+    private var color = 0
+    private var penColor = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,13 +46,72 @@ class CreateTextPostFragment : Fragment(R.layout.fragment_create_text_post_scree
         subscribeToObserve()
 
         binding.apply {
-            createImageBt.setOnClickListener {
-                hideKeyboard(requireActivity())
-                viewModel.createImage(etTextPost.text.toString().trim())
+
+            etTextPost.addTextChangedListener {
+                if (etTextPost.layout.lineCount > 7) {
+                    etTextPost.text.delete(etTextPost.text.length - 1, etTextPost.text.length)
+                }
+                viewModel.addTextToImage(it.toString().trim(), color, penColor)
             }
 
-            ivTextPost.setOnClickListener {
-                showConfirmationDialog()
+            btnBlue.setOnClickListener {
+                ivTextPost.setBackgroundResource(R.drawable.blue_background)
+                color = 0
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnRed.setOnClickListener {
+                ivTextPost.setBackgroundResource(R.drawable.red_background)
+                color = 1
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnPeach.setOnClickListener {
+                ivTextPost.setBackgroundResource(R.drawable.peach_background)
+                color = 2
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnYellow.setOnClickListener {
+                ivTextPost.setBackgroundResource(R.drawable.yellow_background)
+                color = 3
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnBrown.setOnClickListener {
+                ivTextPost.setBackgroundResource(R.drawable.brown_background)
+                color = 4
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnRedPen.setOnClickListener {
+                penColor = 0
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnCyanPen.setOnClickListener {
+                penColor = 1
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnBluePen.setOnClickListener {
+                penColor = 2
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnPurplePen.setOnClickListener {
+                penColor = 3
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnYellowPen.setOnClickListener {
+                penColor = 4
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
+            }
+
+            btnWhitePen.setOnClickListener {
+                penColor = 5
+                viewModel.addTextToImage(etTextPost.text.toString().trim(), color, penColor)
             }
 
             createPostBt.setOnClickListener {
@@ -76,13 +135,11 @@ class CreateTextPostFragment : Fragment(R.layout.fragment_create_text_post_scree
         } else {
             AlertDialog.Builder(requireContext())
                 .setTitle("Go Back?")
+                .setMessage("Are you sure you want to go back? You will lose the post!")
                 .setPositiveButton(
-                    "Change Text"
+                    "No"
                 ) { _, _ ->
-                    binding.etTextPost.isVisible = true
-                    binding.createImageBt.isVisible = true
-                    binding.ivTextPost.isVisible = false
-                    binding.createPostBt.isVisible = false
+
                 }
                 .setNegativeButton("Go back") { _, _ ->
                     findNavController().navigateUp()
@@ -92,40 +149,17 @@ class CreateTextPostFragment : Fragment(R.layout.fragment_create_text_post_scree
         }
     }
 
-    private fun showConfirmationDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Change Text?")
-            .setPositiveButton(
-                "Yes"
-            ) { _, _ ->
-                binding.etTextPost.isVisible = true
-                binding.createImageBt.isVisible = true
-                binding.ivTextPost.isVisible = false
-                binding.createPostBt.isVisible = false
-            }
-            .setNegativeButton("No", null)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .show()
-    }
-
     private fun subscribeToObserve() {
 
         viewModel.createImageStatus.observe(viewLifecycleOwner, EventObserver(
             onError = {
-                binding.progressBarTextPost.isVisible = false
                 snackbar(it)
             },
             onLoading = {
-                binding.progressBarTextPost.isVisible = true
             }
         ) {
             bitmap = it
-            binding.progressBarTextPost.isVisible = false
             binding.ivTextPost.setImageBitmap(it)
-            binding.etTextPost.isVisible = false
-            binding.createImageBt.isVisible = false
-            binding.ivTextPost.isVisible = true
-            binding.createPostBt.isVisible = true
         })
 
         viewModel.createPostStatus.observe(viewLifecycleOwner, EventObserver(
