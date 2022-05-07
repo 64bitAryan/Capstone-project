@@ -1,9 +1,11 @@
 package com.project.findme.authactivity.authfragments.ui.auth
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -51,22 +53,22 @@ class AuthFragment : Fragment(R.layout.fragment_auth_screen) {
                     .build()
                 val signInClient = GoogleSignIn.getClient(requireActivity(), option)
                 signInClient.signInIntent.also {
-                    startActivityForResult(it, REQUEST_CODE_SIGN_IN)
+                    resultLauncher.launch(it)
                 }
             }
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == REQUEST_CODE_SIGN_IN) {
-            val account = GoogleSignIn.getSignedInAccountFromIntent(data)
-            account.let {
-                viewModel.onSignInGoogleButtonClick(it)
+    var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val data: Intent? = result.data
+                val account = GoogleSignIn.getSignedInAccountFromIntent(data)
+                account.let {
+                    viewModel.onSignInGoogleButtonClick(it)
+                }
             }
         }
-    }
 
     private fun subscribeToObserver() {
         binding = FragmentAuthScreenBinding.inflate(layoutInflater)

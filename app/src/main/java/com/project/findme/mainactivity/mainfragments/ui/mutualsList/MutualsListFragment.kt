@@ -32,7 +32,7 @@ class MutualsListFragment : Fragment(R.layout.fragment_mutual_list) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.takeIf { it.containsKey(FRAGMENT_ARG_KEY) }?.apply {
-            args = getStringArrayList(Constants.FRAGMENT_ARG_KEY)!!.toList()
+            args = getStringArrayList(FRAGMENT_ARG_KEY)!!.toList()
             uid = args[0]
             viewModel.getMutualList(uid)
         }

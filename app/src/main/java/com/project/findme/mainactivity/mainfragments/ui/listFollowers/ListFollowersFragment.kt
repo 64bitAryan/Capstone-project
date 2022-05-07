@@ -1,12 +1,14 @@
 package com.project.findme.mainactivity.mainfragments.ui.listFollowers
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayout.OnTabSelectedListener
-import com.google.android.material.tabs.TabLayout.TabLayoutOnPageChangeListener
+import com.google.android.material.tabs.TabLayoutMediator
 import com.project.findme.adapter.PagerAdapter
 import com.project.findme.mainactivity.mainfragments.ui.followersList.FollowersListFragment
 import com.project.findme.mainactivity.mainfragments.ui.followingsList.FollowingListFragment
@@ -23,6 +25,7 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
     private lateinit var binding: FragmentListsFollowersBinding
     private val args: ListFollowersFragmentArgs by navArgs()
     private lateinit var pagerAdapter: PagerAdapter
+    private val tabTitles = listOf("Mutuals", "Followers", "Followings", "Suggestions")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -30,30 +33,43 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
         binding = FragmentListsFollowersBinding.bind(view)
 
         binding.apply {
-            tabLayoutList.setupWithViewPager(viewPager)
-            pagerAdapter = PagerAdapter(childFragmentManager)
-            pagerAdapter.addFragment(MutualsListFragment(), "Mutuals", args.uid, "ListFollowers")
+
+            pagerAdapter =
+                PagerAdapter(
+                    childFragmentManager,
+                    viewPager.findViewTreeLifecycleOwner()?.lifecycle!!
+                )
+
+            pagerAdapter.addFragment(
+                MutualsListFragment(),
+                args.uid,
+                "ListFollowers"
+            )
+
             pagerAdapter.addFragment(
                 FollowersListFragment(),
-                "Followers",
                 args.uid,
                 "ListFollowers"
             )
+
             pagerAdapter.addFragment(
                 FollowingListFragment(),
-                "Followings",
                 args.uid,
                 "ListFollowers"
             )
+
             pagerAdapter.addFragment(
                 SuggestionListFragment(),
-                "Suggestions",
                 args.uid,
                 "ListFollowers"
             )
+
             viewPager.adapter = pagerAdapter
 
-            viewPager.addOnPageChangeListener(TabLayoutOnPageChangeListener(tabLayoutList))
+            TabLayoutMediator(tabLayoutList, viewPager) { tab, position ->
+                tab.text = tabTitles[position]
+            }.attach()
+
             tabLayoutList.addOnTabSelectedListener(object : OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     viewPager.currentItem = tab.position
@@ -62,13 +78,17 @@ class ListFollowersFragment : Fragment(R.layout.fragment_lists_followers) {
                 override fun onTabUnselected(tab: TabLayout.Tab) {}
                 override fun onTabReselected(tab: TabLayout.Tab) {}
             })
+
+
             viewPager.offscreenPageLimit = 4
             when (args.type) {
                 "Followers" -> {
                     tabLayoutList.selectTab(tabLayoutList.getTabAt(1))
+                    viewPager.setCurrentItem(1, false)
                 }
                 "Followings" -> {
                     tabLayoutList.selectTab(tabLayoutList.getTabAt(2))
+                    viewPager.setCurrentItem(2, false)
                 }
             }
         }

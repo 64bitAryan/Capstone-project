@@ -8,11 +8,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.PostAdapter
 import com.project.findme.data.entity.Post
+import com.project.findme.utils.Constants
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
@@ -27,6 +29,8 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
     lateinit var postAdapter: PostAdapter
     val viewModel: HomeViewModel by viewModels()
     private lateinit var binding: FragmentHomeScreenBinding
+    private lateinit var args: String
+
     private var isFabOpen = false
     private lateinit var fabOpen: Animation
     private lateinit var fabClose: Animation
@@ -46,6 +50,14 @@ class HomeFragment : Fragment(R.layout.fragment_home_screen) {
 
         subscribeToObserver()
         setUpRecyclerView()
+
+        arguments?.takeIf { it.containsKey(Constants.FRAGMENT_ARG_KEY) }?.apply {
+            args = getString(Constants.FRAGMENT_ARG_KEY)!!
+            if (args == "CreatePost") {
+                FirebaseAuth.getInstance().currentUser?.let { viewModel.getPost(it.uid) }
+                requireArguments().clear()
+            }
+        }
 
         fabOpen = AnimationUtils.loadAnimation(requireContext(), R.anim.fab_open)
         fabClose = AnimationUtils.loadAnimation(requireContext(), R.anim.fab_close)
