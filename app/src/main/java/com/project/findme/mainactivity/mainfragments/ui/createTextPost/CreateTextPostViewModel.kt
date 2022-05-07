@@ -2,8 +2,10 @@ package com.project.findme.mainactivity.mainfragments.ui.createTextPost
 
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.*
-import android.graphics.drawable.Drawable
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.net.Uri
 import android.text.Layout
 import android.text.StaticLayout
@@ -17,9 +19,7 @@ import com.project.findme.utils.Constants.COLORS
 import com.project.findme.utils.Constants.PEN_COLORS
 import com.project.findme.utils.Events
 import com.project.findme.utils.Resource
-import com.ryan.findme.R
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,8 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateTextPostViewModel @Inject constructor(
     private val repository: MainRepository,
-    private val applicationContext: Context,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Main
+    private val applicationContext: Context
 ) : ViewModel() {
 
     private val _createImageStatus = MutableLiveData<Events<Resource<Bitmap>>>()
@@ -59,9 +58,11 @@ class CreateTextPostViewModel @Inject constructor(
             paint.textSize = (40 * scale)
             paint.setShadowLayer(1f, 0f, 1f, PEN_COLORS[penColor]!!)
             val textWidth: Int = canvas.width - (26 * scale).toInt()
-            val textLayout = StaticLayout(
-                text, paint, textWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false
-            )
+            val sb = StaticLayout.Builder.obtain(text, 0, text.length, paint, textWidth)
+                .setAlignment(Layout.Alignment.ALIGN_CENTER)
+                .setLineSpacing(0.0f, 1.0f)
+                .setIncludePad(false)
+            val textLayout = sb.build()
             val textHeight = textLayout.height
             val x = ((bitmap.width - textWidth) / 2).toFloat()
             val y = ((bitmap.height - textHeight) / 2).toFloat()
@@ -75,6 +76,7 @@ class CreateTextPostViewModel @Inject constructor(
 
 
     fun createPost(imageUri: Uri) {
+        _createPostStatus.postValue(Events(Resource.Loading()))
         viewModelScope.launch(Dispatchers.IO) {
             val result =
                 repository.createPost(imageUri, "", "", "", "")

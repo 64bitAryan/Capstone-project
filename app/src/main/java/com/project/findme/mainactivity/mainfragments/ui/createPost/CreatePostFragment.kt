@@ -2,12 +2,10 @@ package com.project.findme.mainactivity.mainfragments.ui.createPost
 
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.WindowManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,7 +15,7 @@ import com.bumptech.glide.RequestManager
 import com.canhub.cropper.CropImageContract
 import com.canhub.cropper.CropImageView
 import com.canhub.cropper.options
-import com.project.findme.data.entity.Post
+import com.project.findme.utils.Constants
 import com.project.findme.utils.EventObserver
 import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
@@ -200,7 +198,11 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
             binding.apply {
                 showProgress(false)
             }
-            findNavController().popBackStack()
+            val bundle = Bundle()
+            bundle.putString(Constants.FRAGMENT_ARG_KEY, "CreatePost")
+            findNavController().navigate(
+                R.id.homeFragment, bundle
+            )
         })
     }
 

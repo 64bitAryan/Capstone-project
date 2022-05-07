@@ -2,6 +2,7 @@ package com.project.findme.utils
 
 import android.app.Activity
 import android.content.Context
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
@@ -18,10 +19,11 @@ fun hideKeyboard(activity: Activity) {
     }
 }
 
-fun showKeyboard(activity: Activity) {
+fun showKeyboard(activity: Activity, view: View) {
     val imm: InputMethodManager =
         activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.SHOW_IMPLICIT)
+    view.requestFocus()
+    imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
 }
 
 fun Fragment.snackbar(text: String) {

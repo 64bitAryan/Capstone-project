@@ -39,6 +39,8 @@ class EventObserver<T>(
                     loading()
                 }
             }
+            null -> {
+            }
         }
     }
 }

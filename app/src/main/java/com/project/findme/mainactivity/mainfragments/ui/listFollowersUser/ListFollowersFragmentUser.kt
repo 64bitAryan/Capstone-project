@@ -3,8 +3,10 @@ package com.project.findme.mainactivity.mainfragments.ui.listFollowersUser
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.findViewTreeLifecycleOwner
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.adapter.PagerAdapter
 import com.project.findme.mainactivity.mainfragments.ui.followersList.FollowersListFragment
@@ -20,6 +22,7 @@ class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_use
     private lateinit var binding: FragmentListsFollowersUserBinding
     private val args: ListFollowersFragmentUserArgs by navArgs()
     private lateinit var pagerAdapter: PagerAdapter
+    private val tabTitles = listOf("Followers", "Followings")
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,27 +30,27 @@ class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_use
         binding = FragmentListsFollowersUserBinding.bind(view)
 
         binding.apply {
-            tabLayoutListUser.setupWithViewPager(viewPagerUser)
-            pagerAdapter = PagerAdapter(childFragmentManager)
+            pagerAdapter = PagerAdapter(
+                childFragmentManager,
+                viewPagerUser.findViewTreeLifecycleOwner()?.lifecycle!!
+            )
             val uid = FirebaseAuth.getInstance().currentUser!!.uid
             pagerAdapter.addFragment(
                 FollowersListFragment(),
-                "Followers",
                 uid,
                 "ListFollowersUser"
             )
             pagerAdapter.addFragment(
                 FollowingListFragment(),
-                "Followings",
                 uid,
                 "ListFollowersUser"
             )
             viewPagerUser.adapter = pagerAdapter
-            viewPagerUser.addOnPageChangeListener(
-                TabLayout.TabLayoutOnPageChangeListener(
-                    tabLayoutListUser
-                )
-            )
+
+            TabLayoutMediator(tabLayoutListUser, viewPagerUser) { tab, position ->
+                tab.text = tabTitles[position]
+            }.attach()
+
             tabLayoutListUser.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: TabLayout.Tab) {
                     viewPagerUser.currentItem = tab.position
@@ -60,9 +63,11 @@ class ListFollowersFragmentUser : Fragment(R.layout.fragment_lists_followers_use
             when (args.type) {
                 "Followers" -> {
                     tabLayoutListUser.selectTab(tabLayoutListUser.getTabAt(0))
+                    viewPagerUser.setCurrentItem(0, false)
                 }
                 "Followings" -> {
                     tabLayoutListUser.selectTab(tabLayoutListUser.getTabAt(1))
+                    viewPagerUser.setCurrentItem(1, false)
                 }
             }
         }

@@ -90,8 +90,7 @@ class CommentFragment : Fragment(R.layout.fragment_comment) {
             }
         }
         commentAdapter.setReplyToCommentListener { uid ->
-            showKeyboard(requireActivity())
-            binding.commentTextInputEt.requestFocus()
+            showKeyboard(requireActivity(), binding.commentTextInputEt)
             parent = uid
         }
     }
