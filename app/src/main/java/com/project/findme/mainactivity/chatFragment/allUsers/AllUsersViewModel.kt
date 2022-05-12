@@ -18,14 +18,14 @@ import javax.inject.Inject
 class AllUsersViewModel @Inject constructor(
     private val repository: MainRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-):ViewModel() {
+) : ViewModel() {
     private val _getAllUsersStatus = MutableLiveData<Events<Resource<List<User>>>>()
     val getAllUsersStatus: LiveData<Events<Resource<List<User>>>> = _getAllUsersStatus
 
-    fun getUsers(uid: String, type:String){
+    fun getUsers(uid: String) {
         _getAllUsersStatus.postValue(Events(Resource.Loading()))
-        viewModelScope.launch(dispatcher){
-            val result = repository.getUsers(uid, type)
+        viewModelScope.launch(dispatcher) {
+            val result = repository.getFollowingList(uid)
             _getAllUsersStatus.postValue(Events(result))
         }
     }

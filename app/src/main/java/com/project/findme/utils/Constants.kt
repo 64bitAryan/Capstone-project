@@ -20,7 +20,9 @@ object Constants {
         R.id.listFollowersFragment,
         R.id.listFollowersFragmentUser,
         R.id.commentFragment,
-        R.id.likedByFragment
+        R.id.likedByFragment,
+        R.id.chatWindowFragment,
+        R.id.allUsers
     )
     val FRAGMENTS_LIST_BOTTOM_NAV = listOf(
         R.id.editProfileFragment,
@@ -32,7 +34,9 @@ object Constants {
         R.id.commentFragment,
         R.id.likedByFragment,
         R.id.createPostFragment,
-        R.id.createTextPostFragment
+        R.id.createTextPostFragment,
+        R.id.chatWindowFragment,
+        R.id.allUsers
     )
     val COLORS = mapOf(
         0 to R.drawable.blue_background,
