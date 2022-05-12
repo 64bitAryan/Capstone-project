@@ -2,6 +2,7 @@ package com.project.findme.mainactivity.chatFragment.repository
 
 import android.util.Log
 import com.google.firebase.database.*
+import com.google.firebase.database.FirebaseDatabase
 import com.project.findme.data.entity.Message
 import com.project.findme.data.entity.Post
 import com.project.findme.utils.FirebaseCallback
