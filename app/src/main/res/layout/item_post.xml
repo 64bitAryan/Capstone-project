@@ -28,41 +28,50 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/post_profile_pic"
-            android:layout_width="55dp"
-            android:layout_height="55dp"
-            android:layout_margin="12dp"
-            android:src="@drawable/test2"
-            android:translationZ="14dp"
-            app:civ_border_color="@color/color_primary"
-            app:civ_border_width="2dp"
-            app:layout_constraintStart_toStartOf="@id/post_iv"
-            app:layout_constraintTop_toTopOf="@id/constraint_layout" />
-
-        <TextView
-            android:id="@+id/post_username_tv"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/home_profile_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="20dp"
-            android:text="Obi-Wan Kenobi"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toEndOf="@+id/post_profile_pic"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/post_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="6dp"
-            android:text="conquer the world"
-            app:layout_constraintStart_toEndOf="@id/post_profile_pic"
-            app:layout_constraintTop_toBottomOf="@+id/post_username_tv" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/post_profile_pic"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:layout_margin="12dp"
+                android:src="@drawable/test2"
+                android:translationZ="14dp"
+                app:civ_border_color="@color/color_primary"
+                app:civ_border_width="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <androidx.appcompat.widget.AppCompatButton
+            <TextView
+                android:id="@+id/post_username_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="20dp"
+                android:text="Obi-Wan Kenobi"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/post_profile_pic"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/post_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="6dp"
+                android:text="conquer the world"
+                app:layout_constraintStart_toEndOf="@id/post_profile_pic"
+                app:layout_constraintTop_toBottomOf="@+id/post_username_tv" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <ImageButton
             android:id="@+id/post_like_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -71,25 +80,42 @@
             android:layout_marginEnd="12dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/button_translucent"
-            android:drawableStart="@drawable/ic_heart"
-            android:paddingLeft="10dp"
-            android:text="24k"
-            android:textColor="@color/mediumDarkBackground"
+            android:padding="10dp"
+            android:src="@drawable/ic_heart"
             app:layout_constraintBottom_toBottomOf="@id/constraint_layout"
             app:layout_constraintStart_toStartOf="@+id/constraint_layout"
             app:layout_constraintTop_toBottomOf="@+id/post_iv"
             app:layout_goneMarginStart="10dp" />
 
+        <TextView
+            android:id="@+id/tv_likes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:text="24k"
+            android:gravity="center"
+            android:textColor="@color/mediumDarkBackground"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/constraint_layout"
+            app:layout_constraintStart_toEndOf="@id/post_like_btn"
+            app:layout_constraintTop_toBottomOf="@id/post_iv" />
+
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/post_comment_btn"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginStart="12dp"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="16dp"
             android:background="@drawable/button_translucent"
             android:src="@drawable/ic_outline_comment"
-            app:layout_constraintStart_toEndOf="@+id/post_like_btn"
+            app:layout_constraintStart_toEndOf="@+id/tv_likes"
             app:layout_constraintTop_toBottomOf="@+id/post_iv" />
 
         <androidx.appcompat.widget.AppCompatImageButton

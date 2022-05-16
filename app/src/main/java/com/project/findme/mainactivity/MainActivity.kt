@@ -1,10 +1,10 @@
 package com.project.findme.mainactivity
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -19,8 +19,11 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.project.findme.utils.Constants.FRAGMENTS_LIST
+import com.project.findme.utils.Constants.FRAGMENTS_LIST_BOTTOM_NAV
 import com.ryan.findme.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         toggle =
             ActionBarDrawerToggle(this, drawerLayout, R.string.drawer_open, R.string.drawer_close)
 
+
         bottomNavBar = findViewById(R.id.bottom_nav_view)
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
@@ -61,7 +65,6 @@ class MainActivity : AppCompatActivity() {
                 R.id.chatFragment,
                 R.id.userProfileFragment,
                 R.id.signOutDialogFragment,
-                R.id.commentFragment,
             )
         ).setOpenableLayout(drawerLayout)
             .build()
@@ -73,11 +76,7 @@ class MainActivity : AppCompatActivity() {
         NavigationUI.setupWithNavController(navView, navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.editProfileFragment ||
-                destination.id == R.id.createPostFragment ||
-                destination.id == R.id.commentFragment ||
-                destination.id == R.id.chatWindowFragment
-                    ) {
+            if (destination.id in FRAGMENTS_LIST_BOTTOM_NAV) {
                 bottomNavBar.visibility = View.GONE
             } else {
                 bottomNavBar.visibility = View.VISIBLE
@@ -96,23 +95,30 @@ class MainActivity : AppCompatActivity() {
             drawerLayout.closeDrawer(GravityCompat.START)
         }
 
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        if (firebaseUser!!.providerData.size > 0) {
+            val authProvider =
+                firebaseUser.providerData[firebaseUser.providerData.size - 1].providerId
+            val navMenu: Menu = navView.menu
+            navMenu.findItem(R.id.changePasswordFragment).isVisible = authProvider == "password"
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val list = listOf(
-            R.id.editProfileFragment,
-            R.id.createPostFragment,
-            R.id.changePasswordFragment,
-            R.id.searchedProfileFragment,
-            R.id.listFollowersFragment,
-            R.id.listFollowersFragmentUser,
-        )
         if (toggle.onOptionsItemSelected(item)) {
-            return if (navController.currentDestination?.id in list) {
-                drawerLayout.closeDrawer(GravityCompat.START)
-                super.onOptionsItemSelected(item)
-            } else {
-                true
+            return when (navController.currentDestination?.id) {
+                in FRAGMENTS_LIST -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    super.onOptionsItemSelected(item)
+                }
+                in listOf(R.id.createPostFragment, R.id.createTextPostFragment) -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    onBackPressed()
+                    true
+                }
+                else -> {
+                    true
+                }
             }
         }
 
@@ -125,4 +131,5 @@ class MainActivity : AppCompatActivity() {
             appBarConfiguration
         ) || super.onSupportNavigateUp()
     }
+
 }

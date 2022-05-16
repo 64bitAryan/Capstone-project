@@ -1,32 +1,29 @@
 package com.project.findme.mainactivity.mainfragments.ui.createPost
 
-import android.content.Context
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageView
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
-import androidx.annotation.RequiresApi
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.RequestManager
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageView
+import com.canhub.cropper.options
+import com.project.findme.utils.Constants
 import com.project.findme.utils.EventObserver
+import com.project.findme.utils.hideKeyboard
 import com.project.findme.utils.snackbar
 import com.ryan.findme.R
 import com.ryan.findme.databinding.FragmentCreatepostScreenBinding
-import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
@@ -34,51 +31,143 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
     @Inject
     lateinit var glide: RequestManager
     private val viewModel: CreatePostViewModel by viewModels()
-    private lateinit var cropContent: ActivityResultLauncher<Any?>
-    lateinit var curImageUri: Uri
+    private var curImageUri: Uri = Uri.EMPTY
     private lateinit var binding: FragmentCreatepostScreenBinding
-    private lateinit var mYourBitmap: Bitmap
+    private val args: CreatePostFragmentArgs by navArgs()
 
-    private val cropActivityResultContract = object : ActivityResultContract<Any?, Uri?>() {
-        override fun parseResult(resultCode: Int, intent: Intent?): Uri? {
-            return CropImage.getActivityResult(intent)?.uri
-        }
-
-        override fun createIntent(context: Context, input: Any?): Intent {
-            return CropImage.activity()
-                .setAspectRatio(1, 1)
-                .getIntent(context)
-        }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val callback: OnBackPressedCallback =
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    showConfirmationDialog()
+                }
+            }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
-    @RequiresApi(Build.VERSION_CODES.P)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentCreatepostScreenBinding.bind(view)
         subscribeToObserve()
+
         binding.apply {
-
-            cropContent = registerForActivityResult(cropActivityResultContract) {
-                it?.let { uri ->
-                    viewModel.setCurrentImageUri(uri)
-                }
-            }
-
             addImageBt.setOnClickListener {
-                cropContent.launch(null)
+                startCrop()
             }
             imageIv.setOnClickListener {
-                cropContent.launch(null)
+                startCrop()
             }
+            titleEt.setText(args.title)
+            descriptionEt.setText(args.description)
+            if (args.imageUrl != "") {
+                addImageBt.isVisible = false
+                glide.load(args.imageUrl).into(imageIv)
+                imageIv.isVisible = true
+            }
+
             createPostBt.setOnClickListener {
+                hideKeyboard(requireActivity())
                 curImageUri.let { uri ->
                     viewModel.createPost(
                         uri,
                         titleEt.text.toString(),
-                        descriptionEt.text.toString()
+                        descriptionEt.text.toString(),
+                        args.postId,
+                        args.imageUrl
                     )
                 }
             }
+
+            saveDraftBt.setOnClickListener {
+                hideKeyboard(requireActivity())
+                if (args.postId == "") {
+                    viewModel.createDraftPost(
+                        curImageUri,
+                        titleEt.text.toString().trim(),
+                        descriptionEt.text.toString().trim()
+                    )
+                } else {
+                    viewModel.updateDraftPost(
+                        curImageUri,
+                        binding.titleEt.text.toString(),
+                        binding.descriptionEt.text.toString(),
+                        args.postId,
+                        args.imageUrl
+                    )
+                }
+            }
+        }
+    }
+
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            curImageUri = result.uriContent!!
+            viewModel.setCurrentImageUri(curImageUri)
+        } else {
+            val exception = result.error
+            snackbar(exception.toString())
+        }
+    }
+
+    private fun startCrop() {
+        cropImage.launch(
+            options {
+                setGuidelines(CropImageView.Guidelines.ON)
+                setAspectRatio(1, 1)
+            }
+        )
+    }
+
+    private fun showConfirmationDialog() {
+        if (binding.titleEt.text.trim()
+                .isEmpty() && binding.descriptionEt.text.trim()
+                .isEmpty() && curImageUri == Uri.EMPTY
+        ) {
+            findNavController().navigateUp()
+        } else if (binding.titleEt.text.toString()
+                .trim() == args.title && binding.descriptionEt.text.toString()
+                .trim() == args.description && curImageUri.toString() == args.imageUrl
+        ) {
+            findNavController().navigateUp()
+        } else if (args.postId != "") {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Go Back?")
+                .setMessage("Want to save this draft?")
+                .setPositiveButton(
+                    "Yes"
+                ) { _, _ ->
+                    viewModel.updateDraftPost(
+                        curImageUri,
+                        binding.titleEt.text.toString(),
+                        binding.descriptionEt.text.toString(),
+                        args.postId,
+                        args.imageUrl
+                    )
+                }
+                .setNegativeButton("No") { _, _ ->
+                    findNavController().navigateUp()
+                }
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
+        } else {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Go Back?")
+                .setMessage("Are you sure you want to go back? You will lose the data, instead draft the post?")
+                .setPositiveButton(
+                    "Yes"
+                ) { _, _ ->
+                    viewModel.createDraftPost(
+                        curImageUri,
+                        binding.titleEt.text.toString(),
+                        binding.descriptionEt.text.toString()
+                    )
+                }
+                .setNegativeButton("No") { _, _ ->
+                    findNavController().navigateUp()
+                }
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show()
         }
     }
 
@@ -109,7 +198,11 @@ class CreatePostFragment : Fragment(R.layout.fragment_createpost_screen) {
             binding.apply {
                 showProgress(false)
             }
-            findNavController().popBackStack()
+            val bundle = Bundle()
+            bundle.putString(Constants.FRAGMENT_ARG_KEY, "CreatePost")
+            findNavController().navigate(
+                R.id.homeFragment, bundle
+            )
         })
     }
 

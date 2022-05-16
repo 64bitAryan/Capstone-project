@@ -2,7 +2,7 @@ package com.project.findme.mainactivity.repository
 
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
+import androidx.core.net.toUri
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
@@ -13,6 +13,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import com.project.findme.data.entity.*
+import com.project.findme.utils.Constants
 import com.project.findme.utils.Resource
 import com.project.findme.utils.safeCall
 import kotlinx.coroutines.CoroutineScope
@@ -20,16 +21,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 import java.util.*
 
 class DefaultMainRepository() : MainRepository {
 
     val auth = FirebaseAuth.getInstance()
-    val storage = Firebase.storage
+    private val storage = Firebase.storage
     val users = FirebaseFirestore.getInstance().collection("users")
-    val cred = FirebaseFirestore.getInstance().collection("credentials")
     private val comments = FirebaseFirestore.getInstance().collection("comments")
     val posts = FirebaseFirestore.getInstance().collection("posts")
+    private val draftPosts = FirebaseFirestore.getInstance().collection("drafts")
 
     override suspend fun searchUsers(query: String) = withContext(Dispatchers.IO) {
         safeCall {
@@ -47,23 +49,89 @@ class DefaultMainRepository() : MainRepository {
     override suspend fun createPost(
         imageUri: Uri,
         title: String,
-        description: String
+        description: String,
+        postId: String,
+        imageUrl: String
+    ): Resource<Any> = withContext(Dispatchers.IO) {
+        safeCall {
+            val uid = auth.uid!!
+            var newPostId = postId
+            if (postId.trim() == "") {
+                newPostId = UUID.randomUUID().toString()
+            }
+
+            var imgUrl = imageUrl
+            if (imageUri != Uri.EMPTY) {
+                val imgID = UUID.randomUUID().toString()
+                val imageUploadResult = storage.getReference(imgID).putFile(imageUri).await()
+                imgUrl =
+                    imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+            }
+            val post = Post(
+                id = newPostId,
+                authorUid = uid,
+                imageUrl = imgUrl,
+                title = title,
+                text = description,
+                date = System.currentTimeMillis(),
+            )
+            posts.document(newPostId).set(post).await()
+            if (postId.trim() != "") {
+                draftPosts.document(postId).delete().await()
+            }
+            Resource.Success(Any())
+        }
+    }
+
+    override suspend fun createDraftPost(
+        imageUri: Uri,
+        title: String,
+        description: String,
     ): Resource<Any> = withContext(Dispatchers.IO) {
         safeCall {
             val uid = auth.uid!!
             val postId = UUID.randomUUID().toString()
-            val imageUploadResult = storage.getReference(postId).putFile(imageUri).await()
-            val imageUrl =
-                imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+            var imageUrl = ""
+            if (imageUri != Uri.EMPTY) {
+                val imageUploadResult = storage.getReference(postId).putFile(imageUri).await()
+                imageUrl =
+                    imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+            }
             val post = Post(
                 id = postId,
                 authorUid = uid,
                 imageUrl = imageUrl,
                 title = title,
                 text = description,
-                date = System.currentTimeMillis()
+                date = System.currentTimeMillis(),
             )
-            posts.document(postId).set(post).await()
+            draftPosts.document(postId).set(post).await()
+            Resource.Success(Any())
+        }
+    }
+
+    override suspend fun updateDraftPost(
+        imageUri: Uri,
+        title: String,
+        description: String,
+        postId: String,
+        imageUrl: String
+    ): Resource<Any> = withContext(Dispatchers.IO) {
+        safeCall {
+            var imgUrl = imageUrl
+            if (imageUri != Uri.EMPTY) {
+                val imgID = UUID.randomUUID().toString()
+                val imageUploadResult = storage.getReference(imgID).putFile(imageUri).await()
+                imgUrl =
+                    imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+            }
+            val map = mapOf(
+                "imageUrl" to imgUrl,
+                "title" to title,
+                "text" to description,
+                "date" to System.currentTimeMillis()
+            )
+            draftPosts.document(postId).update(map).await()
             Resource.Success(Any())
         }
     }
@@ -92,9 +160,6 @@ class DefaultMainRepository() : MainRepository {
 
     override suspend fun updateProfile(user: UpdateUser) = withContext(Dispatchers.IO) {
         safeCall {
-            val imageUrl = user.profilePicture?.let { uri ->
-//                updateProfilePicture(profileUpdate.uidToUpdate, uri).toString()
-            }
 
             val curUser = auth.currentUser
             val profileUpdate =
@@ -109,7 +174,27 @@ class DefaultMainRepository() : MainRepository {
                 "credential.interest" to user.updateCredential.interest
             )
 
+            if (user.profilePicture != Constants.DEFAULT_PROFILE_PICTURE_URL.toUri()) {
+                val imgID = UUID.randomUUID().toString()
+                val imageUploadResult =
+                    storage.getReference(imgID).putFile(user.profilePicture!!).await()
+                val imageUrl =
+                    imageUploadResult?.metadata?.reference?.downloadUrl?.await().toString()
+
+                map["profilePicture"] = imageUrl
+            }
+
             users.document(user.uidToUpdate).update(map.toMap()).await()
+            Resource.Success(Any())
+        }
+    }
+
+    override suspend fun removeProfilePicture(): Resource<Any> = withContext(Dispatchers.IO) {
+        safeCall {
+            users.document(auth.currentUser!!.uid).update(
+                "profilePicture",
+                Constants.DEFAULT_PROFILE_PICTURE_URL
+            ).await()
             Resource.Success(Any())
         }
     }
@@ -125,6 +210,57 @@ class DefaultMainRepository() : MainRepository {
     override suspend fun getPostForProfile(uid: String): Resource<List<Post>> =
         withContext(Dispatchers.IO) {
             safeCall {
+
+                val profilePosts = getPostForUser(uid).data!!
+
+                val followings =
+                    users.document(uid).get().await().toObject(User::class.java)!!.followings
+
+                var followingsPost: List<Post> = listOf()
+                try {
+                    followingsPost = posts.whereIn("authorUid", followings)
+                        .orderBy("date", Query.Direction.DESCENDING)
+                        .get()
+                        .await()
+                        .toObjects(Post::class.java)
+                        .onEach { post ->
+                            val user = getUser(post.authorUid).data!!
+                            post.authorProfilePictureUrl = user.profilePicture
+                            post.authorUsername = user.userName
+                            post.isLiked = uid in post.likedBy
+                        }
+                } catch (e: Exception) {
+
+                }
+
+                var p = profilePosts + followingsPost
+                p = p.sortedByDescending {
+                    it.date
+                }
+
+                Resource.Success(p)
+            }
+        }
+
+    override suspend fun getDraftPosts(uid: String): Resource<List<Post>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val draftPosts = draftPosts.whereEqualTo("authorUid", uid)
+                    .orderBy("date", Query.Direction.DESCENDING).get().await()
+                    .toObjects(Post::class.java)
+                    .onEach { post ->
+                        val user = getUser(post.authorUid).data!!
+                        post.authorProfilePictureUrl = user.profilePicture
+                        post.authorUsername = user.userName
+                        post.isLiked = uid in post.likedBy
+                    }
+                Resource.Success(draftPosts)
+            }
+        }
+
+    override suspend fun getPostForUser(uid: String): Resource<List<Post>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
                 val profilePosts = posts.whereEqualTo("authorUid", uid)
                     .orderBy("date", Query.Direction.DESCENDING)
                     .get()
@@ -136,27 +272,7 @@ class DefaultMainRepository() : MainRepository {
                         post.authorUsername = user.userName
                         post.isLiked = uid in post.likedBy
                     }
-
-                val followings =
-                    users.document(uid).get().await().toObject(User::class.java)!!.followings
-                val followingsPost = posts.whereIn("authorUid", followings)
-                    .orderBy("date", Query.Direction.DESCENDING)
-                    .get()
-                    .await()
-                    .toObjects(Post::class.java)
-                    .onEach { post ->
-                        val user = getUser(post.authorUid).data!!
-                        post.authorProfilePictureUrl = user.profilePicture
-                        post.authorUsername = user.userName
-                        post.isLiked = uid in post.likedBy
-                    }
-
-                var p = profilePosts + followingsPost
-                p = p.sortedByDescending {
-                    it.date
-                }
-
-                Resource.Success(p)
+                Resource.Success(profilePosts)
             }
         }
 
@@ -165,8 +281,9 @@ class DefaultMainRepository() : MainRepository {
             val user = users.document(uid).get().await().toObject(User::class.java)
                 ?: throw IllegalStateException()
             val currentUid = FirebaseAuth.getInstance().uid!!
-            val currentUser = users.document(currentUid).get().await().toObject(User::class.java)
-                ?: throw IllegalStateException()
+            val currentUser =
+                users.document(currentUid).get().await().toObject(User::class.java)
+                    ?: throw IllegalStateException()
             user.isFollowing = uid in currentUser.follows
             Resource.Success(user)
         }
@@ -183,111 +300,226 @@ class DefaultMainRepository() : MainRepository {
         }
     }
 
-    override suspend fun unFollowUser(uid: String): Resource<User> = withContext(Dispatchers.IO) {
-        safeCall {
-            val currentUser = auth.currentUser?.uid!!
-            users.document(currentUser).update("followings", FieldValue.arrayRemove(uid)).await()
-            users.document(uid).update("follows", FieldValue.arrayRemove(currentUser)).await()
-
-            val user = users.document(uid).get().await().toObject(User::class.java)!!
-            Resource.Success(user)
-        }
-    }
-
-    override suspend fun getUsers(uid: String, type: String): Resource<List<User>> =
+    override suspend fun unFollowUser(uid: String): Resource<User> =
         withContext(Dispatchers.IO) {
             safeCall {
-                when (type) {
-                    "Followers" -> {
-                        val user = users.document(uid).get().await().toObject(User::class.java)!!
-                        val userList = mutableListOf<User>()
-                        for (u in user.follows) {
-                            val cur = users.document(u).get().await().toObject(User::class.java)!!
-                            userList.add(cur)
-                        }
-                        return@safeCall Resource.Success(userList)
-                    }
-                    "Followings" -> {
-                        val user = users.document(uid).get().await().toObject(User::class.java)!!
-                        val userList = mutableListOf<User>()
-                        for (u in user.followings) {
-                            val cur = users.document(u).get().await().toObject(User::class.java)!!
-                            userList.add(cur)
-                        }
-                        return@safeCall Resource.Success(userList)
-                    }
-                    "mutual" -> {
-                        val user = users.document(uid).get().await().toObject(User::class.java)!!
-                        val userList = mutableListOf<User>()
-                        for (u in user.followings) {
-                            val cur = users.document(u).get().await().toObject(User::class.java)!!
-                            userList.add(cur)
-                        }
-                        val curUser = users.document(auth.currentUser!!.uid).get().await()
-                            .toObject(User::class.java)!!
-                        val userList1 = mutableListOf<User>()
-                        for (u in curUser.followings) {
-                            val cur = users.document(u).get().await().toObject(User::class.java)!!
-                            userList1.add(cur)
-                        }
-                        return@safeCall Resource.Success((userList intersect userList1).toList())
-                    }
-                    else -> {
-                        return@safeCall Resource.Success(listOf())
-                    }
-                }
+                val currentUser = auth.currentUser?.uid!!
+                users.document(currentUser).update("followings", FieldValue.arrayRemove(uid))
+                    .await()
+                users.document(uid).update("follows", FieldValue.arrayRemove(currentUser))
+                    .await()
 
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                Resource.Success(user)
             }
         }
 
-    override suspend fun createComment(commentText: String, postId: String) =
+    override suspend fun getUsersLiked(uid: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val userList = mutableListOf<User>()
+
+                val post = posts.document(uid).get().await().toObject(Post::class.java)!!
+
+                post.likedBy.forEach {
+                    val user = users.document(it).get().await().toObject(User::class.java)!!
+                    userList.add(user)
+                }
+
+                return@safeCall Resource.Success(userList)
+            }
+        }
+
+    override suspend fun getFollowersList(uid: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                val userList = mutableListOf<User>()
+
+                for (u in user.follows) {
+                    val cur = users.document(u).get().await().toObject(User::class.java)!!
+                    userList.add(cur)
+                }
+
+                return@safeCall Resource.Success(userList)
+            }
+        }
+
+    override suspend fun getFollowingList(uid: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                val userList = mutableListOf<User>()
+
+                for (u in user.followings) {
+                    val cur =
+                        users.document(u).get().await().toObject(User::class.java)!!
+                    userList.add(cur)
+                }
+                return@safeCall Resource.Success(userList)
+            }
+        }
+
+    override suspend fun getMutualList(uid: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                val userList = mutableListOf<User>()
+
+                for (u in user.followings) {
+                    val cur =
+                        users.document(u).get().await().toObject(User::class.java)!!
+                    userList.add(cur)
+                }
+                val curUser = users.document(auth.currentUser!!.uid).get().await()
+                    .toObject(User::class.java)!!
+                val userList1 = mutableListOf<User>()
+                for (u in curUser.followings) {
+                    val cur =
+                        users.document(u).get().await().toObject(User::class.java)!!
+                    userList1.add(cur)
+                }
+                return@safeCall Resource.Success((userList intersect userList1).toList())
+            }
+        }
+
+    override suspend fun getSuggestionList(uid: String): Resource<List<User>> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                val c = FirebaseAuth.getInstance().currentUser!!
+                val curUser =
+                    users.document(c.uid).get().await().toObject(User::class.java)!!
+                val interests = curUser.credential.interest
+                val userList = mutableSetOf<User>()
+
+                val user = users.document(uid).get().await().toObject(User::class.java)!!
+                val followers = user.follows
+                val followings = user.followings
+
+                for (i in followers) {
+                    val cur = users.document(i).get().await().toObject(User::class.java)!!
+                    if ((interests.intersect(cur.credential.interest)).isNotEmpty() or
+                        (user.credential.interest.intersect(cur.credential.interest).isNotEmpty())
+                    ) {
+                        if (cur != curUser) {
+                            userList.add(cur)
+                        }
+                    }
+                }
+
+                for (i in followings) {
+                    val cur = users.document(i).get().await().toObject(User::class.java)!!
+                    if ((interests.intersect(cur.credential.interest)).isNotEmpty() or
+                        (user.credential.interest.intersect(cur.credential.interest).isNotEmpty())
+                    ) {
+                        if (cur != curUser) {
+                            userList.add(cur)
+                        }
+                    }
+                }
+
+                return@safeCall Resource.Success(userList.toList())
+            }
+        }
+
+
+    override suspend fun createComment(commentText: String, postId: String, parentId: String?) =
         withContext(Dispatchers.IO) {
             safeCall {
                 val uid = auth.uid!!
                 val commentId = UUID.randomUUID().toString()
                 val user = getUser(uid).data!!
                 val comment = Comment(
-                    commentId,
-                    postId,
-                    uid,
-                    user.userName,
-                    user.profilePicture,
-                    commentText
+                    commentId = commentId,
+                    postId = postId,
+                    uid = uid,
+                    username = user.userName,
+                    profilePicture = user.profilePicture,
+                    comment = commentText,
+                    parentId = parentId,
                 )
                 comments.document(commentId).set(comment).await()
+                if (parentId != null) {
+                    comments.document(parentId)
+                        .update("repliedComments", FieldValue.arrayUnion(comment.commentId))
+                }
                 Resource.Success(comment)
             }
         }
 
     override suspend fun getCommentFromPost(postId: String) = withContext(Dispatchers.IO) {
         safeCall {
-            val commentsForPost = comments
+
+            val newList = mutableListOf<Comment>()
+
+            comments
                 .whereEqualTo("postId", postId)
-                .orderBy("data", Query.Direction.DESCENDING)
+                .orderBy("date", Query.Direction.DESCENDING)
                 .get()
                 .await()
                 .toObjects(Comment::class.java)
                 .onEach { comment ->
                     val user = getUser(comment.uid).data!!
-                    comment.uesrname = user.userName
+                    comment.username = user.userName
                     comment.profilePicture = user.profilePicture
+                }.forEach {
+                    if (it.parentId == null) {
+                        newList.add(it)
+                    }
                 }
-            Resource.Success(commentsForPost)
+
+            Resource.Success(newList.toList())
         }
     }
 
     override suspend fun deletePost(post: Post) = withContext(Dispatchers.IO) {
         safeCall {
+            comments.whereEqualTo("postId", post.id).get().await()
+                .toObjects(Comment::class.java).forEach {
+                    comments.document(it.commentId).delete().await()
+                }
             posts.document(post.id).delete().await()
             storage.getReferenceFromUrl(post.imageUrl).delete().await()
             Resource.Success(post)
         }
     }
 
+    override suspend fun deleteDraftPost(post: Post): Resource<Post> =
+        withContext(Dispatchers.IO) {
+            safeCall {
+                draftPosts.document(post.id).delete().await()
+                if (post.imageUrl.isNotEmpty())
+                    storage.getReferenceFromUrl(post.imageUrl).delete().await()
+                Resource.Success(post)
+            }
+        }
+
 
     override suspend fun deleteComment(comment: Comment) = withContext(Dispatchers.IO) {
         safeCall {
-            comments.document(comment.commentId).delete().await()
+            val open = mutableListOf<String>()
+            val close = mutableListOf<String>()
+
+            open.add(comment.commentId)
+
+            while (open.isNotEmpty()) {
+                val cur = open.removeAt(0)
+                val curComment =
+                    comments.document(cur).get().await().toObject(Comment::class.java)!!
+                open.addAll(curComment.repliedComments)
+                close.add(cur)
+            }
+
+            for (c in close) {
+                val curComment =
+                    comments.document(c).get().await().toObject(Comment::class.java)!!
+                if (curComment.parentId != null) {
+                    comments.document(curComment.parentId)
+                        .update("repliedComments", FieldValue.arrayRemove(c))
+                }
+                comments.document(c).delete().await()
+            }
+
             Resource.Success(comment)
         }
     }

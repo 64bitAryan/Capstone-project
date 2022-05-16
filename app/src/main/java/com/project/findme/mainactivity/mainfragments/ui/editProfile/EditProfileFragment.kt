@@ -1,16 +1,25 @@
 package com.project.findme.mainactivity.mainfragments.ui.editProfile
 
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.text.Html
 import android.view.View
 import android.view.WindowManager
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.RequestManager
+import com.canhub.cropper.CropImageContract
+import com.canhub.cropper.CropImageView
+import com.canhub.cropper.options
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.project.findme.data.entity.UpdateCredentials
@@ -24,6 +33,7 @@ import com.ryan.findme.databinding.FragmentEditProfileBinding
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
 
@@ -31,8 +41,11 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     lateinit var glide: RequestManager
     private val viewModel: EditProfileViewModel by viewModels()
     private lateinit var binding: FragmentEditProfileBinding
+    private var curImageUri: Uri =
+        "https://firebasestorage.googleapis.com/v0/b/social-network-662a2.appspot.com/o/avatar.png?alt=media&token=69f56ce2-8fe2-4051-9e61-9e52182384c9".toUri()
     private var interests = mutableSetOf<String>()
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentEditProfileBinding.bind(view)
@@ -42,13 +55,13 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
         val adapter: ArrayAdapter<String> = ArrayAdapter<String>(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            Constants.professions
+            Constants.PROFFESSIONS
         )
 
         val adapterHobbies: ArrayAdapter<String> = ArrayAdapter<String>(
             requireContext(),
             android.R.layout.simple_dropdown_item_1line,
-            Constants.hobbies
+            Constants.HOBBIES
         )
 
         binding.apply {
@@ -68,10 +81,68 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
                 }
             }
 
+            ivProfilePictureEditUser.setOnClickListener {
+                showImagePicDialog()
+            }
+
             btnUpdateProfile.setOnClickListener {
                 viewModel.updateProfile(viewToObject())
             }
         }
+    }
+
+    private val cropImage = registerForActivityResult(CropImageContract()) { result ->
+        if (result.isSuccessful) {
+            curImageUri = result.uriContent!!
+            viewModel.setCurrentImageUri(curImageUri)
+        } else {
+            val exception = result.error
+            snackbar(exception.toString())
+        }
+    }
+
+    private fun showConfirmationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Remove Profile Picture")
+            .setMessage("Are you sure you want to remove profile picture?")
+            .setPositiveButton(
+                "Yes"
+            ) { _, _ ->
+                viewModel.removeProfilePicture()
+            }
+            .setNegativeButton("No", null)
+            .setIcon(android.R.drawable.ic_dialog_alert)
+            .show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun showImagePicDialog() {
+        val options = arrayOf(
+            "New profile photo",
+            Html.fromHtml("<font color='#FF0000'> Remove profile photo </font>", 0)
+        )
+        val builder: AlertDialog.Builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Change Profile Picture")
+        builder.setItems(options) { _, which ->
+            if (which == 0) {
+                startCrop()
+            } else if (which == 1) {
+                showConfirmationDialog()
+            }
+        }
+        builder.create().show()
+    }
+
+
+    private fun startCrop() {
+        cropImage.launch(
+            options {
+                setGuidelines(CropImageView.Guidelines.ON)
+                setAspectRatio(1, 1)
+                setCropShape(CropImageView.CropShape.OVAL)
+                setOutputCompressFormat(Bitmap.CompressFormat.JPEG)
+            }
+        )
     }
 
     private fun viewToObject(): UpdateUser {
@@ -83,7 +154,13 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
             val profession = etProfessionEditProfile.text.toString()
             val uid = FirebaseAuth.getInstance().uid!!
             val cred = UpdateCredentials(profession, inte)
-            user = UpdateUser(uid, name, description, cred)
+            user = UpdateUser(
+                uid,
+                name,
+                description,
+                cred,
+                curImageUri
+            )
         }
         return user
     }
@@ -122,6 +199,14 @@ class EditProfileFragment : Fragment(R.layout.fragment_edit_profile) {
     }
 
     private fun subscribeToObserver() {
+
+        viewModel.curImageUri.observe(viewLifecycleOwner) {
+            curImageUri = it
+            binding.apply {
+                glide.load(curImageUri).into(ivProfilePictureEditUser)
+            }
+        }
+
         viewModel.userProfileStatus.observe(viewLifecycleOwner, EventObserver(
             onError = { error ->
                 showProgress(false)
