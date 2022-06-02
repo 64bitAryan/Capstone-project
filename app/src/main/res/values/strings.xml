@@ -48,4 +48,7 @@
     <string name="comments">Comments</string>
     <string name="drawer_open">Open</string>
     <string name="drawer_close">Close</string>
+    <string name="obi_wan_kenobi">Obi-Wan Kenobi</string>
+    <string name="conquer_the_world">conquer the world</string>
+    <string name="random_text">this is a random text and should be used every where when needed</string>
 </resources>
