@@ -1,5 +1,7 @@
 package com.project.findme.mainactivity
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -24,6 +26,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.project.findme.utils.Constants.FRAGMENTS_LIST
 import com.project.findme.utils.Constants.FRAGMENTS_LIST_BOTTOM_NAV
+import com.project.findme.utils.Constants.SLACK_COMMUNITY_JOINING_LINK
 import com.ryan.findme.R
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -81,6 +84,13 @@ class MainActivity : AppCompatActivity() {
             } else {
                 bottomNavBar.visibility = View.VISIBLE
             }
+        }
+
+        navView.menu.findItem(R.id.openForum).setOnMenuItemClickListener {
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(SLACK_COMMUNITY_JOINING_LINK))
+            startActivity(browserIntent)
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
         }
 
         val headerView: View = navView.getHeaderView(0)

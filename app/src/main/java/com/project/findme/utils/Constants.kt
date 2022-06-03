@@ -6,6 +6,8 @@ import com.ryan.findme.R
 object Constants {
     const val DEFAULT_PROFILE_PICTURE_URL =
         "https://firebasestorage.googleapis.com/v0/b/social-network-662a2.appspot.com/o/avatar.png?alt=media&token=69f56ce2-8fe2-4051-9e61-9e52182384c9"
+    const val SLACK_COMMUNITY_JOINING_LINK =
+        "https://join.slack.com/t/teamfindme/shared_invite/zt-19skou62t-8~rxwg3kFyRwL6XqPxgkgQ"
     const val MAX_USERNAME_LENGTH = 8
     const val MIN_USERNAME_LENGTH = 3
     const val MIN_PASSWORD_LENGTH = 8

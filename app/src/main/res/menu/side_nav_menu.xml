@@ -14,6 +14,9 @@
             <item
                 android:id="@+id/draftPostFragment"
                 android:title="Drafts" />
+            <item
+                android:id="@+id/openForum"
+                android:title="Give Feedback" />
         </menu>
     </item>
 
