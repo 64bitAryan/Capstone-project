@@ -84,7 +84,7 @@ class SearchedProfileFragment : Fragment(R.layout.fragment_searched_profile) {
             }
 
             btnMessageUser.setOnClickListener {
-                findNavController().navigate(SearchedProfileFragmentDirections.actionSearchedProfileFragmentToChatFragment())
+                findNavController().navigate(SearchedProfileFragmentDirections.actionSearchedProfileFragmentToAllUsers())
             }
 
             tvFollowersSearchedProfile.setOnClickListener {

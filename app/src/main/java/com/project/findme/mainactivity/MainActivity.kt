@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             setOf(
                 R.id.homeFragment,
                 R.id.personSearchFragment,
-                R.id.chatFragment,
+                R.id.allUsers,
                 R.id.userProfileFragment,
                 R.id.signOutDialogFragment,
             )
